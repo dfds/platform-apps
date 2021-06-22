@@ -13,5 +13,3 @@ spec:
         name: traefik
   interval: 10m0s
   releaseName: traefik
-  targetNamespace: traefik
-
