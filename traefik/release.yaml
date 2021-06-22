@@ -10,7 +10,8 @@ spec:
       chart: traefik
       sourceRef:
         kind: HelmRepository
-        name: flux-system
+        name: traefik
+        namespace: flux-system
   interval: 10m0s
   releaseName: traefik
   targetNamespace: traefik
