@@ -17,3 +17,27 @@ spec:
   install:
     remediation:
       retries: 3
+  values:
+    ingressRoute:
+      dashboard:
+        enabled: "true"
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      labels:
+        scrape-service-metrics: "true"
+    ports:
+      web:
+        nodePort: 31000
+      websecure:
+        nodePort: 31001
+    service:
+      enabled: "true"
+      type: NodePort
+      annotations:
+        prometheus.io/port: "8080"
+        prometheus.io/scrape: "true"
+      labels:
+        scrape-service-metrics: "true"
+      spec:
+        externalTrafficPolicy: Cluster
