@@ -26,11 +26,6 @@ spec:
         prometheus.io/scrape: "true"
       labels:
         scrape-service-metrics: "true"
-    ports:
-      web:
-        nodePort: 31000
-      websecure:
-        nodePort: 31001
     service:
       enabled: "true"
       type: NodePort
