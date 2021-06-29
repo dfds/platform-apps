@@ -38,7 +38,7 @@ spec:
         level: ERROR
         format: json
       access:
-        enabled: false
+        enabled: true
         filters:
           statuscodes: "300-399,400-499,500-599"
         
