@@ -31,6 +31,8 @@ spec:
     ports:
       traefik:
         expose: true
+      websecure:
+        expose: false
     globalArguments:
       - "--global.checknewversion"
     logs:
@@ -41,4 +43,3 @@ spec:
         enabled: true
         filters:
           statuscodes: "300-399,400-499,500-599"
-        
