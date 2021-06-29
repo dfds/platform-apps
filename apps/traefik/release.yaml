@@ -36,3 +36,6 @@ spec:
         scrape-service-metrics: "true"
       spec:
         externalTrafficPolicy: Cluster
+    ports:
+      traefik:
+        expose: true
