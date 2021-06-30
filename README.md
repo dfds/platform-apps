@@ -77,7 +77,7 @@ spec:
     ports:
       web:
         nodePort: 31000
-      websecure:
+      traefik:
         nodePort: 31001
 ```
 
