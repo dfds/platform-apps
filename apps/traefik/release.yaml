@@ -35,6 +35,8 @@ spec:
         expose: false
     globalArguments:
       - "--global.checknewversion"
+    additionalArguments:
+      - "--metrics.prometheus"
     logs:
       general:
         level: ERROR
