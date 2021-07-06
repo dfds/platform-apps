@@ -20,12 +20,12 @@ spec:
   values:
     ingressRoute:
       dashboard:
-        enabled: "true"
+        enabled: true
     service:
-      enabled: "true"
+      enabled: true
       type: NodePort
       labels:
-        scrape-service-metrics: "true"
+        scrape-service-metrics: true
       spec:
         externalTrafficPolicy: Cluster
     ports:
