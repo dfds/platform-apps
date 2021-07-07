@@ -5,3 +5,5 @@ namespace: traefik
 resources:
   - namespace.yaml
   - release.yaml
+patchesStrategicMerge:
+  - pod-topology-spread-constraint.yaml
