@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: traefik
         namespace: flux-system
-  interval: 5m0s
+  interval: 1m0s
   install:
     remediation:
       retries: 3
