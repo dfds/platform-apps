@@ -35,6 +35,7 @@ spec:
         expose: false
     globalArguments:
       - "--global.checknewversion"
+      - "--entryPoints.web.forwardedHeaders.insecure"
     additionalArguments:
       - "--metrics.prometheus"
     logs:
