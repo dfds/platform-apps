@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - traefik.yaml
   - flux.yaml
+  - prometheus-community.yaml
