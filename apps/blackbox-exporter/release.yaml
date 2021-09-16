@@ -1,0 +1,19 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: prometheus-blackbox-exporter
+  namespace: monitoring
+spec:
+  releaseName: prometheus-blackbox-exporter
+  chart:
+    spec:
+      chart: prometheus-community/prometheus-blackbox-exporter
+      sourceRef:
+        kind: HelmRepository
+        name: prometheus-community
+        namespace: flux-system
+  interval: 1m0s
+  install:
+    remediation:
+      retries: 3
