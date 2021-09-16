@@ -8,7 +8,7 @@ spec:
   releaseName: prometheus-blackbox-exporter
   chart:
     spec:
-      chart: prometheus-community/prometheus-blackbox-exporter
+      chart: prometheus-blackbox-exporter
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
