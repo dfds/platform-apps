@@ -5,12 +5,13 @@ metadata:
     app: traefik-metrics
     scrape-service-metrics: "true"
   name: traefik-metrics
+  namespace: traefik
 spec:
   ports:
-  - name: metrics
-    port: 9100
-    protocol: TCP
-    targetPort: 9100
+    - name: metrics
+      port: 9100
+      protocol: TCP
+      targetPort: 9100
   selector:
     app.kubernetes.io/instance: traefik
     app.kubernetes.io/name: traefik
