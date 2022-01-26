@@ -5,3 +5,4 @@ resources:
   - traefik.yaml
   - flux.yaml
   - prometheus-community.yaml
+  - podinfo.yaml
