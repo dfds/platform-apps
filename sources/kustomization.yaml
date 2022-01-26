@@ -6,3 +6,5 @@ resources:
   - flux.yaml
   - prometheus-community.yaml
   - podinfo.yaml
+  - stable.yaml
+  - vmware-tanzu.yaml
