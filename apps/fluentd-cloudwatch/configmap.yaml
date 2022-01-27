@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: fluentd-cloudwatch
+  namespace: fluentd
+  labels:
+    app: fluentd-cloudwatch
+data:
+  #filters.conf: |-
+    # Discard kube-system namespace
+    #<match kubernetes.var.log.containers.**_kube-system_**>
+      #@type null
+    #</match>
+
+  00-exceptions.conf: |-
+    # Add an extra record with the original tag
+    <filter raw.kubernetes.**>
+      @type record_modifier
+      <record>
+        original_tag ${tag}
+      </record>
+    </filter>
+
+    # Bundle exceptions into multilines
+    <match raw.kubernetes.**>
+      @id raw.kubernetes
+      @type detect_exceptions
+      remove_tag_prefix raw
+      message log
+      languages all
+      stream stream
+      multiline_flush_interval 5
+      max_bytes 500000
+      max_lines 1000
+    </match>
+
+  01-filter.conf: |-
+    # Because we cannot use nested objects as key
+    <filter kubernetes.**>
+      @type record_modifier
+      <record>
+        stream_name ${record["kubernetes"]["pod_name"]}
+      </record>
+    </filter>
+
+    # Parse json logs
+    <filter kubernetes.**>
+      @type parser
+      key_name log
+      reserve_data true
+        <parse>
+          @type multi_format
+          <pattern>
+            format json
+          </pattern>
+          <pattern>
+            format none
+          </pattern>
+        </parse>
+    </filter>
+
+  02-tag.conf: |-
+    # Tag with namespace and prefix with clustername
+    <match kubernetes.**>
+      @type rewrite_tag_filter
+      <rule>
+        key $.kubernetes.namespace_name
+        pattern ^(.+)$
+        tag /k8s/default/$1
+      </rule>
+    </match>
+
+  03-out.conf: |-
+    # Ship logs to cloudwatch
+    <match **>
+      @type cloudwatch_logs
+      @id out_cloudwatch_logs_1
+      use_tag_as_group true
+      auto_create_stream true
+      log_stream_name_key stream_name
+      log_rejected_request true
+      retention_in_days "#{ENV['RETENTION_IN_DAYS'] || 'nil'}"
+      json_handler yajl # To avoid UndefinedConversionError
+      log_rejected_request "#{ENV['LOG_REJECTED_REQUEST']}" # Log rejected request for missing parts
+    </match>

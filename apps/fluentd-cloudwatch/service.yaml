@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: fluentd-cloudwatch
+  namespace: fluentd
+  labels:
+    scrape-service-metrics: "true"
+spec:
+  selector:
+    app: fluentd-cloudwatch
+  ports:
+    - protocol: TCP
+      name: metrics
+      port: 24231
+      targetPort: 24231
