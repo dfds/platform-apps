@@ -8,6 +8,7 @@ spec:
   chart:
     spec:
       chart: podinfo
+      version: ">=1.0.0"
       sourceRef:
         kind: HelmRepository
         name: podinfo-demo
