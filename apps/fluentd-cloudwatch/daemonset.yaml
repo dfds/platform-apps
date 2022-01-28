@@ -26,7 +26,7 @@ spec:
       terminationGracePeriodSeconds: 30
       containers:
         - name: fluentd-cloudwatch
-          image: fluent/fluentd-kubernetes-daemonset:INVALID
+          image: fluent/fluentd-kubernetes-daemonset:v1.11-debian-cloudwatch-1
           command:
             - sh
             - "-c"
