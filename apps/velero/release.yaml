@@ -1,0 +1,56 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: velero
+  namespace: flux-system
+spec:
+  releaseName: velero
+  chart:
+    spec:
+      chart: velero
+      version: "2.23.12"
+      sourceRef:
+        kind: HelmRepository
+        name: vmware-tanzu-helm
+        namespace: flux-system
+  interval: 1m
+  values:
+    image:
+      name: velero/velero
+      tag: v1.5.3
+    cleanUpCRDs: true
+    credentials:
+      useSecret: false
+    podAnnotations:
+      iam.amazonaws.com/role: "arn:aws:iam::<AWS_ACCOUNT_ID>:role/<VELERO_ROLE_NAME>"
+    snapshotsEnabled: true
+    configuration:
+      logLevel: info
+      logFormat: json
+      provider: aws
+      backupStorageLocation:
+        bucket: velero-storage
+        config:
+          region: eu-west-1
+      volumeSnapshotLocation:
+        name: velero-snapshot
+        config:
+          region: eu-west-1
+    initContainers:
+      - name: velero-plugin-for-aws
+        image: velero/velero-plugin-for-aws:v1.2.0
+        volumeMounts:
+          - mountPath: /target
+            name: plugins
+      - name: velero-plugin-for-csi
+        image: velero/velero-plugin-for-csi:v0.1.2
+        volumeMounts:
+          - mountPath: /target
+            name: plugins
+    priorityClassName: "service-critical"
+    metrics:
+      serviceMonitor:
+        enabled: false
+        additionalLabels:
+          release: monitoring
