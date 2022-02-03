@@ -51,7 +51,7 @@ spec:
     priorityClassName: "service-critical"
     metrics:
       serviceMonitor:
-        enabled: false
+        enabled: true
         additionalLabels:
           release: monitoring
     resources:
