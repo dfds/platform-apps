@@ -16,7 +16,7 @@ spec:
         namespace: flux-system
   interval: 1m
   upgrade:
-    force: true
+    force: false
   values:
     image:
       name: velero/velero
