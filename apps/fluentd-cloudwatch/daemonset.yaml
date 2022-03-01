@@ -9,6 +9,9 @@ spec:
   selector:
     matchLabels:
       app: fluentd-cloudwatch
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 33%
   template:
     metadata:
       labels:
