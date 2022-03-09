@@ -8,3 +8,4 @@ resources:
   - podinfo.yaml
   - stable.yaml
   - vmware-tanzu.yaml
+  - dfds.yaml
