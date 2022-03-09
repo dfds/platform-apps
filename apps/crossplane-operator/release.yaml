@@ -1,0 +1,22 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: crossplane-operator
+  namespace: upbound-system
+spec:
+  releaseName: crossplane-operator-dfds
+  chart:
+    spec:
+      chart: crossplane-operator-dfds
+      sourceRef:
+        kind: HelmRepository
+        name: dfds
+        namespace: flux-system
+  interval: 1m0s
+  install:
+    crds: CreateReplace
+    remediation:
+      retries: 3
+  upgrade:
+    crds: CreateReplace
