@@ -9,3 +9,4 @@ resources:
   - stable.yaml
   - vmware-tanzu.yaml
   - dfds.yaml
+  - crossplane.yaml
