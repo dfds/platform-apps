@@ -10,3 +10,4 @@ resources:
   - vmware-tanzu.yaml
   - dfds.yaml
   - crossplane.yaml
+  - kyverno.yaml

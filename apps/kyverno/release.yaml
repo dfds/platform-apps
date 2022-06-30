@@ -1,0 +1,24 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: kyverno
+  namespace: kyverno
+spec:
+  releaseName: kyverno
+  chart:
+    spec:
+      chart: kyverno
+      sourceRef:
+        kind: HelmRepository
+        name: kyverno
+        namespace: flux-system
+  interval: 1m0s
+  install:
+    remediation:
+      retries: 3
+  values:
+    resources:
+      limits:
+        memory: "2048Mi"
+    replicaCount: 3
