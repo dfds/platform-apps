@@ -22,3 +22,13 @@ spec:
       limits:
         memory: "2048Mi"
     replicaCount: 3
+    webhooks:
+      - namespaceSelector:
+          matchExpressions:
+          - key: kubernetes.io/metadata.name
+            operator: NotIn
+            values:
+              - kube-system
+              - kyverno
+              - flux-system
+              - monitoring
