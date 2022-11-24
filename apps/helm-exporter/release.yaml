@@ -1,0 +1,25 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: prometheus-helm-exporter
+  namespace: monitoring
+spec:
+  releaseName: prometheus-helm-exporter
+  chart:
+    spec:
+      chart: prometheus-helm-exporter
+      sourceRef:
+        kind: HelmRepository
+        name: sstarcher
+        namespace: flux-system
+  interval: 1m0s
+  install:
+    remediation:
+      retries: 3
+  values:
+    service:
+      labels:
+        scrape-service-metrics: "true"
+   
+             
