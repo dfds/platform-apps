@@ -11,3 +11,4 @@ resources:
   - dfds.yaml
   - crossplane.yaml
   - kyverno.yaml
+  - sstarcher.yaml
