@@ -8,7 +8,7 @@ spec:
   releaseName: prometheus-helm-exporter
   chart:
     spec:
-      chart: prometheus-helm-exporter
+      chart: helm-exporter
       sourceRef:
         kind: HelmRepository
         name: sstarcher
