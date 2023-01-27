@@ -18,8 +18,10 @@ spec:
     remediation:
       retries: 3
   values:
-    service:
-      labels:
-        scrape-service-metrics: "true"
+    serviceMonitor:
+      create: true
+      scrapeTimeout: 10s
+      additionalLabels:
+        release: monitoring
    
              
