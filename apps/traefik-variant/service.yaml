@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: traefik-variant-metrics
+    scrape-service-metrics: "true"
+  name: traefik-variant-metrics
+  namespace: traefik-variant
+spec:
+  ports:
+    - name: metrics
+      port: 9100
+      protocol: TCP
+      targetPort: 9100
+  selector:
+    app.kubernetes.io/instance: traefik-variant
+    app.kubernetes.io/name: traefik
+  type: ClusterIP
