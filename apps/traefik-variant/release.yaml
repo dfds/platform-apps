@@ -18,6 +18,9 @@ spec:
     remediation:
       retries: 3
   values:
+    ingressClass:
+      enabled: true
+      isDefaultClass: false
     ingressRoute:
       dashboard:
         enabled: true
