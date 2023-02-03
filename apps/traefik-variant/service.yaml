@@ -13,6 +13,6 @@ spec:
       protocol: TCP
       targetPort: 9100
   selector:
-    app.kubernetes.io/instance: traefik-variant
+    app.kubernetes.io/instance: traefik-variant-traefik-variant
     app.kubernetes.io/name: traefik
   type: ClusterIP
