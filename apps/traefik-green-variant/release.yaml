@@ -2,10 +2,10 @@
 apiVersion: helm.toolkit.fluxcd.io/v2beta1
 kind: HelmRelease
 metadata:
-  name: traefik-variant
-  namespace: traefik-variant
+  name: traefik-green-variant
+  namespace: traefik-green-variant
 spec:
-  releaseName: traefik-variant
+  releaseName: traefik-green-variant
   chart:
     spec:
       chart: traefik
