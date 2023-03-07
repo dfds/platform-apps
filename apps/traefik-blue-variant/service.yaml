@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: traefik-blue-variant-metrics
+    scrape-service-metrics: "true"
+  name: traefik-blue-variant-metrics
+  namespace: traefik-blue-variant
+spec:
+  ports:
+    - name: metrics
+      port: 9100
+      protocol: TCP
+      targetPort: 9100
+  selector:
+    app.kubernetes.io/instance: traefik-blue-variant-traefik-blue-variant
+    app.kubernetes.io/name: traefik
+  type: ClusterIP
