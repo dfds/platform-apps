@@ -59,6 +59,12 @@ spec:
             - name: config-volume
               mountPath: /fluentd/etc/conf.d
               readOnly: false
+          livenessProbe:
+            httpGet:
+              path: /metrics
+              port: 9882
+            initialDelaySeconds: 10
+            periodSeconds: 10
       volumes:
         - name: varlog
           hostPath:
