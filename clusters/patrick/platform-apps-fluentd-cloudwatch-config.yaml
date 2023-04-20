@@ -1,1 +1,0 @@
-{"apiVersion":"kustomize.toolkit.fluxcd.io/v1beta2","kind":"Kustomization","metadata":{"name":"platform-apps-fluentd-cloudwatch-config","namespace":"flux-system"},"spec":{"interval":"1m0s","path":"./platform-apps/patrick/fluentd-cloudwatch/config","prune":true,"sourceRef":{"kind":"GitRepository","name":"flux-system"}}}
