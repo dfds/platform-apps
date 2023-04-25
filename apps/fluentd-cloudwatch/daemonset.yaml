@@ -5,10 +5,6 @@ metadata:
   namespace: fluentd
   labels:
     app: fluentd-cloudwatch
-  annotations:
-    prometheus.io/scrape: "true"
-    prometheus.io/path: "/metrics"
-    prometheus.io/port: "24231"
 spec:
   selector:
     matchLabels:
@@ -20,10 +16,6 @@ spec:
     metadata:
       labels:
         app: fluentd-cloudwatch
-      annotations:
-        prometheus.io/scrape: "true"
-        prometheus.io/path: "/metrics"
-        prometheus.io/port: "24231"
     spec:
       priorityClassName: cluster-monitoring
       serviceAccountName: fluentd-cloudwatch
@@ -39,7 +31,7 @@ spec:
           command:
             - sh
             - "-c"
-            - sed -i "s/match **/match disablethis/g" /fluentd/etc/fluent.conf && tini -- /fluentd/entrypoint.sh
+            - sed -i "s/match \*\*/match disablethis/g" /fluentd/etc/fluent.conf && tini -- /fluentd/entrypoint.sh
           resources:
             requests:
               cpu: 100m
@@ -68,15 +60,25 @@ spec:
               mountPath: /fluentd/etc/conf.d
               readOnly: false
           livenessProbe:
-            httpGet:
-              path: /metrics
-              port: 24231
-              targetPort: 24231
-            initialDelaySeconds: 30
-            timeoutSeconds: 5
-            periodSeconds: 10
-            successThreshold: 1
-            failureThreshold: 3
+              httpGet:
+                path: /metrics
+                port: 24231
+                scheme: HTTP
+              initialDelaySeconds: 30
+              timeoutSeconds: 5
+              periodSeconds: 10
+              successThreshold: 1
+              failureThreshold: 3
+          readinessProbe:
+              httpGet:
+                path: /ready
+                port: 9880
+                scheme: HTTP
+              initialDelaySeconds: 10
+              timeoutSeconds: 5
+              periodSeconds: 10
+              successThreshold: 1
+              failureThreshold: 3
       volumes:
         - name: varlog
           hostPath:
