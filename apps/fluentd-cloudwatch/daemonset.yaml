@@ -62,9 +62,12 @@ spec:
           livenessProbe:
             httpGet:
               path: /metrics
-              port: 9882
-            initialDelaySeconds: 10
-            periodSeconds: 10
+              port: 24231
+              targetPort: 24231
+            initialDelaySeconds: 30
+            timeoutSeconds: 10
+            periodSeconds: 15
+            failureThreshold: 3
       volumes:
         - name: varlog
           hostPath:
