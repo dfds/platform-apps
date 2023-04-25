@@ -63,18 +63,9 @@ spec:
               httpGet:
                 path: /metrics
                 port: 24231
+                targetPort: 24231
                 scheme: HTTP
               initialDelaySeconds: 30
-              timeoutSeconds: 5
-              periodSeconds: 10
-              successThreshold: 1
-              failureThreshold: 3
-          readinessProbe:
-              httpGet:
-                path: /ready
-                port: 9880
-                scheme: HTTP
-              initialDelaySeconds: 10
               timeoutSeconds: 5
               periodSeconds: 10
               successThreshold: 1
