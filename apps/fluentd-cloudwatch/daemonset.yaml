@@ -63,9 +63,7 @@ spec:
               httpGet:
                 path: /metrics
                 port: 24231
-                targetPort: 24231
                 scheme: HTTP
-                host: 0.0.0.0
               initialDelaySeconds: 30
               timeoutSeconds: 10
               periodSeconds: 15
