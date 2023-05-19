@@ -11,3 +11,4 @@ resources:
   - crossplane.yaml
   - kyverno.yaml
   - sstarcher.yaml
+  - datadog.yaml
