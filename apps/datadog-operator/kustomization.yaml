@@ -4,4 +4,3 @@ namespace: datadog
 resources:
   - namespace.yaml
   - helm-release.yaml
-  - agent.yaml
