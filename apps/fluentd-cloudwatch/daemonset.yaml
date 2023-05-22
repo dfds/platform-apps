@@ -34,10 +34,9 @@ spec:
             - sed -i "s/match \*\*/match disablethis/g" /fluentd/etc/fluent.conf && tini -- /fluentd/entrypoint.sh
           resources:
             requests:
-              cpu: 100m
-              memory: 256Mi
+              cpu: 50m
+              memory: 768Mi
             limits:
-              cpu: 750m
               memory: 768Mi
           env:
             - name: FLUENTD_ARGS
