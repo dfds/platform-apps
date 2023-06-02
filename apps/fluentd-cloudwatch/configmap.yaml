@@ -82,6 +82,10 @@ data:
       retention_in_days "#{ENV['RETENTION_IN_DAYS'] || 'nil'}"
       json_handler yajl # To avoid UndefinedConversionError
       log_rejected_request "#{ENV['LOG_REJECTED_REQUEST']}" # Log rejected request for missing parts
+      <secondary>
+        # On failure to flush, dump the chunk.
+        @type null
+      </secondary>
       <buffer>
         @type memory
         disable_chunk_backup true
