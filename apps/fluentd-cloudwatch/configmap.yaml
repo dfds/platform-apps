@@ -90,16 +90,8 @@ data:
         @type file
         path /var/log/fluentd-buffer
         chunk_limit_size 256MB
-        total_limit_size 16GB
-        flush_at_shutdown true # match memory buffer
+        total_limit_size 8GB
+        flush_at_shutdown true
         disable_chunk_backup true
-        retry_forever false
-        retry_timeout 10s
-        retry_max_times 3
-        retry_type exponential_backoff
-        retry_wait 1s
-        retry_exponential_backoff_base 2
-        retry_max_interval 30s
-        retry_randomize true
       </buffer>
     </match>
