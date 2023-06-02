@@ -12,6 +12,12 @@ data:
   #@type null
   #</match>
 
+  00-logging.conf: |-
+    # Change the log level
+    <system>
+      log_level trace
+    </system>
+
   00-exceptions.conf: |-
     # Add an extra record with the original tag
     <filter raw.kubernetes.**>
