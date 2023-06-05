@@ -7,10 +7,10 @@ metadata:
     app: fluentd-cloudwatch
 data:
   #filters.conf: |-
-    # Discard kube-system namespace
-    #<match kubernetes.var.log.containers.**_kube-system_**>
-      #@type null
-    #</match>
+  # Discard kube-system namespace
+  #<match kubernetes.var.log.containers.**_kube-system_**>
+  #@type null
+  #</match>
 
   00-exceptions.conf: |-
     # Add an extra record with the original tag
@@ -82,4 +82,16 @@ data:
       retention_in_days "#{ENV['RETENTION_IN_DAYS'] || 'nil'}"
       json_handler yajl # To avoid UndefinedConversionError
       log_rejected_request "#{ENV['LOG_REJECTED_REQUEST']}" # Log rejected request for missing parts
+      <secondary>
+        # On failure to flush, dump the chunk.
+        @type null
+      </secondary>
+      <buffer>
+        @type file
+        path /var/log/fluentd-buffer
+        chunk_limit_size 256MB
+        total_limit_size 8GB
+        flush_at_shutdown true
+        disable_chunk_backup true
+      </buffer>
     </match>
