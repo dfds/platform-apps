@@ -28,15 +28,17 @@ spec:
     configuration:
       logLevel: info
       logFormat: json
-      provider: aws
       backupStorageLocation:
-        bucket: velero-storage
-        config:
-          region: eu-west-1
+        - name: velero-storage
+          provider: aws
+          bucket: velero-storage
+          config:
+            region: eu-west-1
       volumeSnapshotLocation:
-        name: velero-snapshot
-        config:
-          region: eu-west-1
+        - name: velero-snapshot
+          provider: aws
+          config:
+            region: eu-west-1
     initContainers:
       - name: velero-plugin-for-aws
         image: velero/velero-plugin-for-aws:v1.2.0
