@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: velero
-      version: "2.23.12"
+      version: 4.0.3
       sourceRef:
         kind: HelmRepository
         name: vmware-tanzu
@@ -20,7 +20,7 @@ spec:
   values:
     image:
       name: velero/velero
-      tag: v1.5.3
+      tag: v1.11.0
     cleanUpCRDs: true
     credentials:
       useSecret: false
@@ -28,27 +28,28 @@ spec:
     configuration:
       logLevel: info
       logFormat: json
-      provider: aws
       backupStorageLocation:
+      - provider: aws
         bucket: velero-storage
         config:
           region: eu-west-1
       volumeSnapshotLocation:
-        name: velero-snapshot
+      - name: velero-snapshot
+        provider: aws
         config:
           region: eu-west-1
     initContainers:
       - name: velero-plugin-for-aws
-        image: velero/velero-plugin-for-aws:v1.2.0
+        image: velero/velero-plugin-for-aws:v1.7.0
         volumeMounts:
           - mountPath: /target
             name: plugins
       - name: velero-plugin-for-csi
-        image: velero/velero-plugin-for-csi:v0.1.2
+        image: velero/velero-plugin-for-csi:v0.5.0
         volumeMounts:
           - mountPath: /target
             name: plugins
-    priorityClassName: "service-critical"
+    priorityClassName: service-critical
     metrics:
       serviceMonitor:
         enabled: true
