@@ -29,7 +29,7 @@ spec:
       logLevel: info
       logFormat: json
       backupStorageLocation:
-      - provider: velero.io/aws
+      - provider: aws
         bucket: velero-storage
         config:
           region: eu-west-1
