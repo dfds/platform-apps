@@ -17,7 +17,7 @@ In order to implement the resources in this repository you need the following on
 
 ```yaml
 ---
-apiVersion: source.toolkit.fluxcd.io/v1beta1
+apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
   name: platform-apps-git
@@ -28,7 +28,7 @@ spec:
     branch: main
   url: https://github.com/dfds/platform-apps
 ---
-apiVersion: kustomize.toolkit.fluxcd.io/v1beta2
+apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
   name: platform-apps-sources
