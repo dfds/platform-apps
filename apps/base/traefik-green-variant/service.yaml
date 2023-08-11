@@ -4,7 +4,6 @@ metadata:
   labels:
     app: traefik-green-variant-metrics
     scrape-service-metrics: "true"
-    test: "yes"
   name: traefik-green-variant-metrics
   namespace: traefik-green-variant
 spec:
