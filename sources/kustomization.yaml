@@ -12,3 +12,4 @@ resources:
   - kyverno.yaml
   - sstarcher.yaml
   - datadog.yaml
+  - external-secrets.yaml
