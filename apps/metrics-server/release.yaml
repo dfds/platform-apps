@@ -1,0 +1,22 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: metrics-server
+  namespace: metrics-server
+spec:
+  releaseName: metrics-server
+  chart:
+    spec:
+      chart: metrics-server
+      sourceRef:
+        kind: HelmRepository
+        name: metrics-server
+        namespace: flux-system
+  interval: 1m0s
+  install:
+    remediation:
+      retries: 3
+  values:
+    args:
+      - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
