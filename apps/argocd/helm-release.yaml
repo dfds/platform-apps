@@ -1,0 +1,71 @@
+apiVersion: helm.toolkit.fluxcd.io/v2beta1
+kind: HelmRelease
+metadata:
+  name: primary
+  namespace: argocd
+spec:
+  chart:
+    spec:
+      chart: argo-cd
+      sourceRef:
+        kind: HelmRepository
+        name: argocd
+        namespace: flux-system
+  interval: 1m
+  values:
+    redis-ha:
+      enabled: true
+    controller:
+      replicas: 1
+    repoServer:
+      replicas: 2
+    createClusterRoles: true
+    applicationSet:
+      replicas: 2
+      extraArgs:
+        - "--applicationset-namespaces=argocd"
+        - "--allowed-scm-providers=github,gitlab,gitea"
+    configs:
+      cm:
+        accounts.image-updater: apiKey
+        admin.enabled: false
+        url: https://argo.dfds.cloud
+        resource.inclusions: |
+          - apiGroups:
+            - "networking.k8s.io"
+            kinds:
+            - "ingress"
+            clusters:
+            - "*"
+          - apiGroups:
+            - ""
+            - "apps"
+            - "traefik.containo.us"
+            - "postgresql.cnpg.io"
+            - "external-secrets.io"
+            kinds:
+            - "*"
+            clusters:
+            - "*"
+        oidc.config: |
+          name: DFDS login
+          issuer: https://login.microsoftonline.com/73a99466-ad05-4221-9f90-e7142aa2f6c1/v2.0/
+          clientID: 156d89bd-a625-46e3-9047-76315f1274cd
+          clientSecret: $argo-sso:oidc.clientSecret
+      rbac:
+        scopes: "[groups, email]"
+        policy.csv: |
+          p, role:image-updater, applications, get, */*, allow
+          p, role:image-updater, applications, update, */*, allow
+          g, image-updater, role:image-updater
+
+          g, seq.tf - tier0, role:admin
+          g, emcla@dfds.com, role:admin
+      params:
+        server.insecure: true
+    crds:
+      install: true
+    server:
+      replicas: 2
+      ingress:
+        enabled: false
