@@ -29,7 +29,7 @@ spec:
       cm:
         accounts.image-updater: apiKey
         admin.enabled: false
-        url: https://argo.dfds.cloud
+        url: https://argo.dev.dfds.cloud
         resource.inclusions: |
           - apiGroups:
             - "networking.k8s.io"
