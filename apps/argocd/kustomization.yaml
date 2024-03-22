@@ -3,4 +3,5 @@ kind: Kustomization
 namespace: argocd
 resources:
   - namespace.yaml
+  - externalsecret.yaml
   - helm-release.yaml
