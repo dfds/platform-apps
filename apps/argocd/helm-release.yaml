@@ -24,7 +24,7 @@ spec:
       replicas: 2
       extraArgs:
         - "--applicationset-namespaces=argocd"
-        - "--allowed-scm-providers=github,gitlab,gitea"
+        - "--allowed-scm-providers=github"
     configs:
       cm:
         accounts.image-updater: apiKey
