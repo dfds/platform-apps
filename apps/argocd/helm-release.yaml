@@ -64,7 +64,7 @@ spec:
       params:
         server.insecure: true
     crds:
-      install: true
+      install: false
     server:
       replicas: 2
       ingress:
