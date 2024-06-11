@@ -26,7 +26,7 @@
                 "minor"
             ],
             "minimumReleaseAge": "7 days",
-            "automerge": true,
+            "automerge": false,
             "matchCurrentVersion": "!/^0/",
             "ignoreTests": true,
             "dependencyDashboardApproval": false
