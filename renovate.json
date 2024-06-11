@@ -5,7 +5,7 @@
         "dfds/platform-apps"
     ],
     "flux": {
-        "fileMatch": ["apps\/.+\\.yaml$"]
+        "fileMatch": ["\\.yaml$"]
     },
     "packageRules": [
         {
