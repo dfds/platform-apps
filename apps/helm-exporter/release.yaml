@@ -21,7 +21,3 @@ spec:
     serviceMonitor:
       create: true
       scrapeTimeout: 10s
-      additionalLabels:
-        release: monitoring
-   
-             
