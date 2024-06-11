@@ -53,8 +53,6 @@ spec:
     metrics:
       serviceMonitor:
         enabled: true
-        additionalLabels:
-          release: monitoring
     resources:
       requests:
         cpu: 500m
