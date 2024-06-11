@@ -1,0 +1,44 @@
+{
+    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+    "branchPrefix": "feature/renovate/",
+    "repositories": [
+        "dfds/platform-apps"
+    ],
+    "flux": {
+        "fileMatch": ["\\.yaml$"]
+    },
+    "packageRules": [
+        {
+            "matchUpdateTypes": [
+                "pin",
+                "digest",
+                "patch",
+                "lockFileMaintenance"
+            ],
+            "minimumReleaseAge": "1 day",
+            "automerge": true,
+            "matchCurrentVersion": "!/^0/",
+            "ignoreTests": true,
+            "dependencyDashboardApproval": false
+        },
+        {
+            "matchUpdateTypes": [
+                "minor"
+            ],
+            "minimumReleaseAge": "7 days",
+            "automerge": false,
+            "matchCurrentVersion": "!/^0/",
+            "ignoreTests": true,
+            "dependencyDashboardApproval": false
+        },
+        {
+            "matchUpdateTypes": [
+                "major"
+            ],
+            "minimumReleaseAge": "14 days",
+            "automerge": false,
+            "dependencyDashboard": true,
+            "dependencyDashboardApproval": false
+        }
+    ]
+}
