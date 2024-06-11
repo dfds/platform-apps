@@ -10,7 +10,7 @@
     ],
     "flux": {
         "fileMatch": ["apps/.+\\.yaml$"]
-    }
+    },
     "packageRules": [
         {
             "matchUpdateTypes": [
