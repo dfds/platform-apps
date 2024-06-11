@@ -8,6 +8,9 @@
     "repositories": [
         "dfds/platform-apps"
     ],
+    "flux": {
+        "fileMatch": ["apps/.+\\.yaml$"]
+    }
     "packageRules": [
         {
             "matchUpdateTypes": [
