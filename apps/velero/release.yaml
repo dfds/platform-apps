@@ -20,7 +20,7 @@ spec:
   values:
     image:
       name: velero/velero
-      tag: v1.11.0
+      tag: v1.12.4
     cleanUpCRDs: true
     credentials:
       useSecret: false
