@@ -13,3 +13,4 @@ resources:
   - sstarcher.yaml
   - external-secrets.yaml
   - metrics-server.yaml
+  - goldpinger.yaml
