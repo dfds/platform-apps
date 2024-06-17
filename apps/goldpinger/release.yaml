@@ -4,6 +4,7 @@ metadata:
   name: goldpinger
   namespace: flux-system
 spec:
+  releaseName: goldpinger
   chart:
     spec:
       chart: goldpinger
@@ -12,6 +13,10 @@ spec:
         kind: HelmRepository
         name: goldpinger
         namespace: flux-system
+  interval: 1m0s
+  install:
+    remediation:
+      retries: 3
   values:
     priorityClassName: cluster-monitoring
     serviceMonitor:
@@ -30,6 +35,3 @@ spec:
         operator: Exists
       - effect: NoSchedule
         operator: Exists
-  interval: 1m0s
-  releaseName: goldpinger
-  targetNamespace: goldpinger
