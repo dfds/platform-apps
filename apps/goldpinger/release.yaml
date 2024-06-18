@@ -21,8 +21,6 @@ spec:
     priorityClassName: cluster-monitoring
     serviceMonitor:
       enabled: true
-      selector:
-        release: monitoring
     resources:
       limits:
         cpu: 100m
