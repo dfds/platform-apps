@@ -4,7 +4,7 @@ metadata:
   name: grafana-k8s-monitoring
   namespace: flux-system
 spec:
-  releaseName: grafana-agent
+  releaseName: grafana-k8s-monitoring
   chart:
     spec:
       chart: k8s-monitoring
