@@ -14,4 +14,4 @@ resources:
   - external-secrets.yaml
   - metrics-server.yaml
   - goldpinger.yaml
-  - grafana-agent.yaml
+  - grafana.yaml
