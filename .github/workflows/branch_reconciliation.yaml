@@ -15,7 +15,7 @@ jobs:
         with:
           type: now
           from_branch: main
-          target_branch: qa_test
+          target_branch: qa
           github_token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Notify
