@@ -17,6 +17,3 @@ spec:
   install:
     remediation:
       retries: 3
-  values:
-    nodeSelector:
-      karpenter.k8s.aws/instance-gpu-manufacturer: nvidia
