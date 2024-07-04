@@ -2,7 +2,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: nvidia-device-plugin
-  namespace: nvidia-device-plugin
+  namespace: flux-system
 spec:
   releaseName: nvidia-device-plugin
   chart:
@@ -13,7 +13,7 @@ spec:
         kind: HelmRepository
         name: nvidia-k8s-device-plugin
         namespace: flux-system
-  interval: 1h0m0s
+  interval: 1m0s
   install:
     remediation:
       retries: 3
