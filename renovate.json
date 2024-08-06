@@ -1,9 +1,6 @@
 {
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "branchPrefix": "feature/renovate/",
-    "repositories": [
-        "dfds/platform-apps"
-    ],
     "flux": {
         "fileMatch": ["\\.yaml$"]
     },

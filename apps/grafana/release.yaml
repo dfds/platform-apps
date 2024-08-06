@@ -37,19 +37,18 @@ spec:
             job         = "integrations/kubernetes/worker-node",
           }]
         }
-    
+
         loki.source.file "worker_nodes_logs" {
           targets    = local.file_match.worker_nodes_logs.targets
           forward_to = [loki.process.worker_nodes_logs.receiver]
         }
-    
+
         loki.process "worker_nodes_logs" {
           forward_to = [
             loki.process.logs_service.receiver,
           ]
         }
-        
-    alloy-events: { }
+    alloy-events: {}
     alloy-logs: {}
     metrics:
       enabled: true
@@ -63,7 +62,8 @@ spec:
           useDefaultAllowList: false
       serviceMonitors:
         enabled: true
-        selector: |- # TODO: Delete this block when shutting down the old Prometheus
+        selector:
+          |- # TODO: Delete this block when shutting down the old Prometheus
           match_expression {
             key = "release"
             operator = "NotIn"
@@ -102,9 +102,7 @@ spec:
         monitor: # TODO: Delete this block when shutting down the old Prometheus
           enabled: true
           jobLabel: jobLabel # Used for Prometheus to name the job. If jobLabel has not been set on the Service then default value will come from app.kubernetes.io/name
-          additionalLabels: {
-            release: monitoring
-          }
+          additionalLabels: { release: monitoring }
     prometheus-operator-crds:
       # Set this to true when removing the old Prometheus stack
       enabled: false
