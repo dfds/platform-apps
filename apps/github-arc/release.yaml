@@ -8,7 +8,7 @@ spec:
   releaseName: arc
   chart:
     spec:
-      chart: arc
+      chart: gha-runner-scale-set-controller
       version: 0.9.3
       sourceRef:
         kind: HelmRepository
