@@ -16,3 +16,4 @@ resources:
   - goldpinger.yaml
   - grafana.yaml
   - nvidia-device-plugin.yaml
+  - github-arc.yaml
