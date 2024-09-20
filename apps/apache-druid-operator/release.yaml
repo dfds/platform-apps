@@ -7,7 +7,6 @@ spec:
   chart:
     spec:
       chart: druid-operator
-      version: 1.2.4
       sourceRef:
         kind: HelmRepository
         name: datainfra
