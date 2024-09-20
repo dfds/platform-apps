@@ -1,0 +1,17 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: druid-operator
+  namespace: druid-operator-system
+spec:
+  chart:
+    spec:
+      chart: druid-operator
+      version: 1.2.4
+      sourceRef:
+        kind: HelmRepository
+        name: datainfra
+        namespace: flux-system
+  interval: 1m
+  values:
+    installCRDS: true
