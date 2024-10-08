@@ -77,8 +77,6 @@ spec:
           useDefaultAllowList: false
       apiserver:
         enabled: true
-      kubeControllerManager:
-        enabled: true
     kube-state-metrics:
       enabled: true
       customLabels:
