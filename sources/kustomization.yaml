@@ -17,4 +17,3 @@ resources:
   - grafana.yaml
   - nvidia-device-plugin.yaml
   - github-arc.yaml
-  - datainfra.yaml
