@@ -234,7 +234,7 @@ spec:
         kubernetes.io/ingress.class: traefik
       host: alias-two.example.tld # Patch this from Terraform
     logLevel: info
-    orgAllowlist: [] # Patch this from Terraform
+    orgAllowlist: "" # Patch this from Terraform
     repoConfig: |
       ---
       repos:
