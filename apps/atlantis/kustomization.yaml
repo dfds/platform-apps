@@ -3,7 +3,7 @@ kind: Kustomization
 namespace: atlantis
 resources:
   - namespace.yaml
+  - limitrange.yaml
   - secretstore.yaml
   - externalsecret.yaml
-  - limitrange.yaml
   - release.yaml
