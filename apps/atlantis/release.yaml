@@ -224,13 +224,14 @@ spec:
       enabled: true
       path: /
       annotations:
-        # trunk-ignore(checkov/CKV_SECRET_6)
-        traefik.ingress.kubernetes.io/auth-secret: atlantis-dashboard
-        traefik.ingress.kubernetes.io/auth-type: basic
+        kubernetes.io/ingress.class: traefik
+        traefik.ingress.kubernetes.io/router.middlewares: atlantis-atlantis-dashboard@kubernetescrd
       host: alias.example.tld # Patch this from Terraform
     webhook_ingress:
       enabled: true
       path: /
+      annotations:
+        kubernetes.io/ingress.class: traefik
       host: alias-two.example.tld # Patch this from Terraform
     logLevel: info
     orgAllowlist: "" # Patch this from Terraform
