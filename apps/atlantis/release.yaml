@@ -18,6 +18,7 @@ spec:
     remediation:
       retries: 3
   values:
+    basicAuth: {} # Patch this from Terraform
     disableApply: true
     disableApplyAll: true
     environmentSecrets:
@@ -225,7 +226,6 @@ spec:
       path: /
       annotations:
         kubernetes.io/ingress.class: traefik
-        #traefik.ingress.kubernetes.io/router.middlewares: atlantis-dashboard-auth@kubernetescrd
       host: alias.example.tld # Patch this from Terraform
     logLevel: info
     orgAllowlist: "" # Patch this from Terraform
@@ -244,12 +244,12 @@ spec:
         memory: 1536Mi
     service:
       type: ClusterIP
+    serviceAccount:
+      create: true
+      annotations: {} # Patch this from Terraform when using IRSA
     statefulSet:
       securityContext:
         runAsUser: 200
     volumeClaim: # Patch this from Terraform
       dataStorage: 5Gi
       storageClassName: csi-gp3
-    serviceAccount:
-      create: true
-      annotations: {} # Patch this from Terraform when using IRSA
