@@ -4,6 +4,7 @@ namespace: atlantis
 resources:
   - namespace.yaml
   - limitrange.yaml
+  - secret.yaml
   - secretstore.yaml
   - externalsecret.yaml
   - release.yaml

@@ -222,8 +222,8 @@ spec:
       tag: 2.0.2
     ingress:
       enabled: true
+      path: /
       annotations:
-        kubernetes.io/ingress.class: traefik
         # trunk-ignore(checkov/CKV_SECRET_6)
         traefik.ingress.kubernetes.io/auth-secret: atlantis-dashboard
         traefik.ingress.kubernetes.io/auth-type: basic
