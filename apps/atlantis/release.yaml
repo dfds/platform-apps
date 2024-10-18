@@ -256,3 +256,6 @@ spec:
     volumeClaim: # Patch this from Terraform
       dataStorage: 5Gi
       storageClassName: csi-gp3
+    serviceAccount:
+      create: true
+      annotations: {} # Patch this from Terraform when using IRSA
