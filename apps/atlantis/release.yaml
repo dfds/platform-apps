@@ -230,8 +230,7 @@ spec:
       host: alias.example.tld # Patch this from Terraform
     webhook_ingress:
       enabled: true
-      annotations:
-        kubernetes.io/ingress.class: traefik
+      path: /
       host: alias-two.example.tld # Patch this from Terraform
     logLevel: info
     orgAllowlist: "" # Patch this from Terraform
