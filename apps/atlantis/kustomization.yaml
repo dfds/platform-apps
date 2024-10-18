@@ -7,4 +7,5 @@ resources:
   - secret.yaml
   - secretstore.yaml
   - externalsecret.yaml
+  - middleare.yaml
   - release.yaml
