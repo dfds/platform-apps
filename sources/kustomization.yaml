@@ -2,18 +2,19 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - traefik.yaml
-  - prometheus-community.yaml
-  - podinfo.yaml
-  - stable.yaml
-  - vmware-tanzu.yaml
-  - dfds.yaml
+  - atlantis.yaml
   - crossplane.yaml
-  - kyverno.yaml
-  - sstarcher.yaml
+  - dfds.yaml
   - external-secrets.yaml
-  - metrics-server.yaml
+  - github-arc.yaml
   - goldpinger.yaml
   - grafana.yaml
+  - kyverno.yaml
+  - metrics-server.yaml
   - nvidia-device-plugin.yaml
-  - github-arc.yaml
+  - podinfo.yaml
+  - prometheus-community.yaml
+  - sstarcher.yaml
+  - stable.yaml
+  - traefik.yaml
+  - vmware-tanzu.yaml
