@@ -1,0 +1,23 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: kafka-exporter
+  namespace: monitoring
+spec:
+  releaseName: kafka-exporter
+  chart:
+    spec:
+      chart: chart
+      sourceRef:
+        kind: GitRepository
+        name: kafka-exporter
+        namespace: flux-system
+  interval: 1m0s
+  install:
+    remediation:
+      retries: 3
+  values:
+    app:
+      cluster:
+        id: "replaceme"
+        environment: "replaceme"
