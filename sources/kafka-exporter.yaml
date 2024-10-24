@@ -1,0 +1,11 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: GitRepository
+metadata:
+  name: kafka-exporter
+  namespace: flux-system
+spec:
+  interval: 1m0s
+  ref:
+    branch: master
+  timeout: 60s
+  url: https://github.com/dfds/kafka-exporter
