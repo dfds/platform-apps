@@ -1,0 +1,15 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: argo
+  namespace: argocd
+spec:
+  routes:
+    - kind: Rule
+      match: Host(`argo.juna.cloud.seq.tf`)
+      priority: 10
+      services:
+        - kind: Service
+          name: argocd-server
+          namespace: argocd
+          port: 80

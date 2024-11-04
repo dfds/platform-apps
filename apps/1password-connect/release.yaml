@@ -1,0 +1,21 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: 1password-connect
+spec:
+  releaseName: 1password-connect
+  chart:
+    spec:
+      chart: connect
+      sourceRef:
+        kind: HelmRepository
+        name: 1password-connect
+        namespace: flux-system
+  interval: 1m0s
+  install:
+    remediation:
+      retries: 3
+  values:
+    operator:
+      create: true
