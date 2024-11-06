@@ -4,6 +4,7 @@ kind: Kustomization
 resources:
   - atlantis.yaml
   - crossplane.yaml
+  - datainfra.yaml
   - dfds.yaml
   - external-secrets.yaml
   - github-arc.yaml
