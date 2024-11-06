@@ -1,0 +1,21 @@
+apiVersion: v1
+kind: LimitRange
+metadata:
+  name: admission-resources
+  namespace: druid-system
+spec:
+  limits:
+    - default:
+        cpu: "1"
+        memory: 1Gi
+      defaultRequest:
+        cpu: 20m
+        memory: 64Mi
+      max:
+        cpu: "4"
+        memory: 16Gi
+      type: Container
+    - max:
+        cpu: "4"
+        memory: 16Gi
+      type: Pod
