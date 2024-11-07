@@ -1,0 +1,33 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: trivy-operator
+  namespace: trivy-system
+spec:
+  releaseName: trivy-operator
+  chart:
+    spec:
+      chart: trivy-operator
+      version: 0.24.1
+      sourceRef:
+        kind: HelmRepository
+        name: aquasecurity
+        namespace: flux-system
+  interval: 1m0s
+  install:
+    remediation:
+      retries: 3
+  values:
+    values:
+    service:
+      headless: false
+    serviceMonitor:
+      enabled: true
+      namespace: trivy-system
+    trivy:
+      ignoreUnfixed: true
+      labels:
+        scrape-service-metrics: "true"
+    operator:
+      labels:
+        scrape-service-metrics: "true"
