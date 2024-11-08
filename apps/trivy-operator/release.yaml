@@ -28,6 +28,5 @@ spec:
       labels:
         scrape-service-metrics: "true"
     operator:
-      metricsExposedSecretInfo: true
       labels:
         scrape-service-metrics: "true"
