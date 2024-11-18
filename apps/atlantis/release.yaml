@@ -54,6 +54,14 @@ spec:
         secretKeyRef:
           key: PRODUCTION_AWS_SECRET_ACCESS_KEY
           name: atlantis-environment
+      - name: PRODUCTION_DATALAKE_AWS_ACCESS_KEY_ID
+        secretKeyRef:
+          key: PRODUCTION_DATALAKE_AWS_ACCESS_KEY_ID
+          name: atlantis-environment
+      - name: PRODUCTION_DATALAKE_AWS_SECRET_ACCESS_KEY
+        secretKeyRef:
+          key: PRODUCTION_DATALAKE_AWS_SECRET_ACCESS_KEY
+          name: atlantis-environment
       - name: PRODUCTION_GRAFANA_1PASSWORD_API_KEY
         secretKeyRef:
           key: PRODUCTION_GRAFANA_1PASSWORD_API_KEY
