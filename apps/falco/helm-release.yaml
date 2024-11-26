@@ -15,11 +15,3 @@ spec:
         namespace: flux-system
   interval: 1m
   timeout: 15m
-  values:
-    driver:
-      enabled: true
-      kind: auto
-    falcosidekick:
-      enabled: true
-      webui:
-        enabled: true
