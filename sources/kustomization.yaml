@@ -8,6 +8,7 @@ resources:
   - datainfra.yaml
   - dfds.yaml
   - external-secrets.yaml
+  - falcosecurity.yaml
   - github-arc.yaml
   - goldpinger.yaml
   - grafana.yaml
