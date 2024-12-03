@@ -226,9 +226,9 @@ spec:
         secretKeyRef:
           key: STAGING_TF_VAR_falco_slack_alert_webhook_url
           name: atlantis-environment
-      - name: STAGING_TF_VAR_falco_slack_alert_webhook_url
+      - name: STAGING_TF_VAR_falco_stream_webhook_url
         secretKeyRef:
-          key: STAGING_TF_VAR_falco_slack_alert_webhook_url
+          key: STAGING_TF_VAR_falco_stream_webhook_url
           name: atlantis-environment
     extraArgs:
       - --parallel-pool-size=15
