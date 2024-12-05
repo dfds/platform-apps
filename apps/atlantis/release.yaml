@@ -122,6 +122,14 @@ spec:
         secretKeyRef:
           key: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_PRIVATE_KEY
           name: atlantis-environment
+      - name: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_ID
+        secretKeyRef:
+          key: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_ID
+          name: atlantis-environment
+      - name: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_SECRET
+        secretKeyRef:
+          key: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_SECRET
+          name: atlantis-environment
       - name: PRODUCTION_PREPRIME_AWS_ACCESS_KEY_ID
         secretKeyRef:
           key: PRODUCTION_PREPRIME_AWS_ACCESS_KEY_ID
