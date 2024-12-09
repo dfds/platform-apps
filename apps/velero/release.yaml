@@ -24,6 +24,7 @@ spec:
     credentials:
       useSecret: false
     snapshotsEnabled: true
+    deployNodeAgent: true
     configuration:
       logLevel: info
       logFormat: json
