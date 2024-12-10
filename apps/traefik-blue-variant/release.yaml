@@ -34,9 +34,11 @@ spec:
         externalTrafficPolicy: Cluster
     ports:
       traefik:
-        expose: true
+        expose:
+          default: true
       websecure:
-        expose: false
+        expose:
+          default: false
     globalArguments:
       - "--global.checknewversion"
       - "--entryPoints.web.forwardedHeaders.insecure"
