@@ -72,6 +72,17 @@ spec:
       kube-state-metrics:
         metricsTuning:
           useDefaultAllowList: false
+        rbac:
+          extraRules:
+            # - apiGroups: ["kustomize.toolkit.fluxcd.io", "source.toolkit.fluxcd.io"]
+            #   resources: ["gitrepositories", "kustomizations"]
+            #   verbs: ["list", "watch"]
+            - apiGroups:
+                - traefik.contanio.io
+                - traefik.io
+              resources:
+                - ingressroutes
+              verbs: [ "list", "watch" ]
         customResourceState:
           enabled: true
           config:
@@ -81,10 +92,22 @@ spec:
                     group: traefik.contanio.io
                     version: v1alpha1
                     kind: IngressRoute
-                  metricNamePrefix: traefik_ingressroute
+                  metricNamePrefix: traefik_ingressroute_old
                   metrics:
                     - name: "resource_info"
-                      help: "The current state of Traefik migration."
+                      help: "The current state of Traefik migration from old traefik ingressroute."
+                      each:
+                        type: Gauge
+                        gauge:
+                          path: [metadata, annotations]
+                - groupVersionKind:
+                    group: traefik.io
+                    version: v1alpha1
+                    kind: IngressRoute
+                  metricNamePrefix: traefik_ingressroute_new
+                  metrics:
+                    - name: "resource_info"
+                      help: "The current state of Traefik migration to new traefik ingressroute."
                       each:
                         type: Gauge
                         gauge:
