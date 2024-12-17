@@ -124,17 +124,15 @@ spec:
                   - name: "resource_info"
                     help: "The current state of Traefik migration to new traefik ingressroute."
                     each:
-                      type: Gauge
-                      gauge:
-                        # path: [status, active]
-                        # labelFromKey: type
-                        path:
-                        - metadata
-                        - creationTimestamp
-                        # labelsFromPath:
-                        #   bar: [bar]
-                        value: [count]
-                    #   type: Info
+                      # type: Gauge
+                      # gauge:
+                      #   path:
+                      #   - metadata
+                      #   value: [count]
+                      type: Info
+                      info:
+                        labelsFromPath:
+                          name: [ metadata, name ]
                       # gauge:
                       #   path: [metadata, name]
                     # each:
