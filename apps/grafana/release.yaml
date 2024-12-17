@@ -114,7 +114,7 @@ spec:
                     each:
                       type: Gauge
                       gauge:
-                        path: [metadata, apiVersion]
+                        path: [metadata]
               - groupVersionKind:
                   group: traefik.io
                   version: v1alpha1
@@ -126,7 +126,7 @@ spec:
                     each:
                       type: Gauge
                       gauge:
-                        path: [metadata, apiVersion]
+                        path: [metadata]
                     # each:
                     #   type: Info
                     #   info:
