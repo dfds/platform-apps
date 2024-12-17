@@ -103,18 +103,18 @@ spec:
         config:
           spec:
             resources:
-              - groupVersionKind:
-                  group: traefik.containo.us
-                  version: v1alpha1
-                  kind: IngressRoute
-                metricNamePrefix: traefik_ingressroute_old
-                metrics:
-                  - name: "resource_info"
-                    help: "The current state of Traefik migration from old traefik ingressroute."
-                    each:
-                      type: Info
-                      # gauge:
-                      #   path: [metadata, name]
+              # - groupVersionKind:
+              #     group: traefik.containo.us
+              #     version: v1alpha1
+              #     kind: IngressRoute
+              #   metricNamePrefix: traefik_ingressroute_old
+              #   metrics:
+              #     - name: "resource_info"
+              #       help: "The current state of Traefik migration from old traefik ingressroute."
+              #       each:
+              #         type: Info
+              #         # gauge:
+              #         #   path: [metadata, name]
               - groupVersionKind:
                   group: traefik.io
                   version: v1alpha1
@@ -127,7 +127,10 @@ spec:
                       type: Gauge
                       gauge:
                         # path: [status, active]
-                        labelFromKey: type
+                        # labelFromKey: type
+                        path:
+                        - metadata
+                        - creationTimestamp
                         # labelsFromPath:
                         #   bar: [bar]
                         value: [count]
