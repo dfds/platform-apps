@@ -113,8 +113,8 @@ spec:
                     help: "The current state of Traefik migration from old traefik ingressroute."
                     each:
                       type: Gauge
-                      gauge:
-                        path: [metadata, name]
+                      # gauge:
+                      #   path: [metadata, name]
               - groupVersionKind:
                   group: traefik.io
                   version: v1alpha1
@@ -125,8 +125,8 @@ spec:
                     help: "The current state of Traefik migration to new traefik ingressroute."
                     each:
                       type: Gauge
-                      gauge:
-                        path: [metadata, name]
+                      # gauge:
+                      #   path: [metadata, name]
                     # each:
                     #   type: Info
                     #   info:
