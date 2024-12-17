@@ -73,6 +73,7 @@ spec:
         metricsTuning:
           useDefaultAllowList: false
         rbac:
+          create: true
           extraRules:
             - apiGroups: ["traefik.contanio.io", "traefik.io"]
               resources: ["ingressroutes"]
