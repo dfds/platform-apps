@@ -74,14 +74,8 @@ spec:
           useDefaultAllowList: false
         rbac:
           extraRules:
-            # - apiGroups: ["kustomize.toolkit.fluxcd.io", "source.toolkit.fluxcd.io"]
-            #   resources: ["gitrepositories", "kustomizations"]
-            #   verbs: ["list", "watch"]
-            - apiGroups:
-                - traefik.contanio.io
-                - traefik.io
-              resources:
-                - ingressroutes
+            - apiGroups: ["traefik.contanio.io", "traefik.io"]
+              resources: ["ingressroutes"]
               verbs: [ "list", "watch" ]
         customResourceState:
           enabled: true
