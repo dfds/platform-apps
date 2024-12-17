@@ -72,6 +72,8 @@ spec:
       kube-state-metrics:
         metricsTuning:
           useDefaultAllowList: false
+        customResourceState:
+          enabled: true
       cadvisor:
         metricsTuning:
           useDefaultAllowList: false
