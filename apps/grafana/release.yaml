@@ -112,7 +112,7 @@ spec:
                   - name: "resource_info"
                     help: "The current state of Traefik migration from old traefik ingressroute."
                     each:
-                      type: Counter
+                      type: Info
                       # gauge:
                       #   path: [metadata, name]
               - groupVersionKind:
@@ -124,7 +124,7 @@ spec:
                   - name: "resource_info"
                     help: "The current state of Traefik migration to new traefik ingressroute."
                     each:
-                      type: Counter
+                      type: Info
                       # gauge:
                       #   path: [metadata, name]
                     # each:
