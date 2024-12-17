@@ -95,7 +95,7 @@ spec:
       rbac:
         create: true
         extraRules:
-          - apiGroups: ["traefik.contanio.io", "traefik.io"]
+          - apiGroups: ["traefik.containo.us", "traefik.io"]
             resources: ["ingressroutes"]
             verbs: [ "list", "watch" ]
       customResourceState:
@@ -104,7 +104,7 @@ spec:
           spec:
             resources:
               - groupVersionKind:
-                  group: traefik.contanio.io
+                  group: traefik.containo.us
                   version: v1alpha1
                   kind: IngressRoute
                 metricNamePrefix: traefik_ingressroute_old
