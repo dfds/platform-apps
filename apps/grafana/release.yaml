@@ -72,61 +72,6 @@ spec:
       kube-state-metrics:
         metricsTuning:
           useDefaultAllowList: false
-        rbac:
-          create: true
-          extraRules:
-            - apiGroups: ["traefik.contanio.io", "traefik.io"]
-              resources: ["ingressroutes"]
-              verbs: [ "list", "watch" ]
-        customResourceState:
-          enabled: true
-          config:
-            spec:
-              resources:
-                - groupVersionKind:
-                    group: traefik.contanio.io
-                    version: v1alpha1
-                    kind: IngressRoute
-                  metricNamePrefix: traefik_ingressroute_old
-                  metrics:
-                    - name: "resource_info"
-                      help: "The current state of Traefik migration from old traefik ingressroute."
-                      each:
-                        type: Gauge
-                        gauge:
-                          path: [metadata, annotations]
-                - groupVersionKind:
-                    group: traefik.io
-                    version: v1alpha1
-                    kind: IngressRoute
-                  metricNamePrefix: traefik_ingressroute_new
-                  metrics:
-                    - name: "resource_info"
-                      help: "The current state of Traefik migration to new traefik ingressroute."
-                      each:
-                        type: Gauge
-                        gauge:
-                          path: [metadata, annotations]
-                      # each:
-                      #   type: Info
-                      #   info:
-                      #     labelsFromPath:
-                      #       name: [ metadata, name ]
-                      # labelsFromPath:
-                      #   exported_namespace: [ metadata, namespace ]
-                      #   ready: [ status, conditions, "[type=Ready]", status ]
-                      #   suspended: [ spec, suspend ]
-                      #   revision: [ status, lastAppliedRevision ]
-                      #   source_name: [ spec, sourceRef, name ]
-        # - groupVersionKind:
-        #     group: myteam.io
-        #     kind: "Foo"
-        #     version: "v1"
-        #   metrics:
-        #     - name: "uptime"
-        #       help: "Foo uptime"
-        #       each:
-        #         path: [status, uptime]
       cadvisor:
         metricsTuning:
           useDefaultAllowList: false
@@ -147,6 +92,61 @@ spec:
           # additionalLabels: {
           #   release: monitoring
           # }
+      rbac:
+        create: true
+        extraRules:
+          - apiGroups: ["traefik.contanio.io", "traefik.io"]
+            resources: ["ingressroutes"]
+            verbs: [ "list", "watch" ]
+      customResourceState:
+        enabled: true
+        config:
+          spec:
+            resources:
+              - groupVersionKind:
+                  group: traefik.contanio.io
+                  version: v1alpha1
+                  kind: IngressRoute
+                metricNamePrefix: traefik_ingressroute_old
+                metrics:
+                  - name: "resource_info"
+                    help: "The current state of Traefik migration from old traefik ingressroute."
+                    each:
+                      type: Gauge
+                      gauge:
+                        path: [metadata, annotations]
+              - groupVersionKind:
+                  group: traefik.io
+                  version: v1alpha1
+                  kind: IngressRoute
+                metricNamePrefix: traefik_ingressroute_new
+                metrics:
+                  - name: "resource_info"
+                    help: "The current state of Traefik migration to new traefik ingressroute."
+                    each:
+                      type: Gauge
+                      gauge:
+                        path: [metadata, annotations]
+                    # each:
+                    #   type: Info
+                    #   info:
+                    #     labelsFromPath:
+                    #       name: [ metadata, name ]
+                    # labelsFromPath:
+                    #   exported_namespace: [ metadata, namespace ]
+                    #   ready: [ status, conditions, "[type=Ready]", status ]
+                    #   suspended: [ spec, suspend ]
+                    #   revision: [ status, lastAppliedRevision ]
+                    #   source_name: [ spec, sourceRef, name ]
+      # - groupVersionKind:
+      #     group: myteam.io
+      #     kind: "Foo"
+      #     version: "v1"
+      #   metrics:
+      #     - name: "uptime"
+      #       help: "Foo uptime"
+      #       each:
+      #         path: [status, uptime]
     prometheus-node-exporter:
       enabled: true
       podLabels:
