@@ -116,6 +116,7 @@ spec:
                       info:
                         labelsFromPath:
                           name: [ metadata, name ]
+                          namespace: [ metadata, namespace ]
               - groupVersionKind:
                   group: traefik.io
                   version: v1alpha1
@@ -129,6 +130,7 @@ spec:
                       info:
                         labelsFromPath:
                           name: [ metadata, name ]
+                          namespace: [ metadata, namespace ]
               - groupVersionKind:
                   group: traefik.containo.us
                   version: v1alpha1
@@ -142,6 +144,7 @@ spec:
                       info:
                         labelsFromPath:
                           name: [ metadata, name ]
+                          namespace: [ metadata, namespace ]
               - groupVersionKind:
                   group: traefik.containo.us
                   version: v1alpha1
@@ -155,6 +158,7 @@ spec:
                       info:
                         labelsFromPath:
                           name: [ metadata, name ]
+                          namespace: [ metadata, namespace ]
     prometheus-node-exporter:
       enabled: true
       podLabels:
