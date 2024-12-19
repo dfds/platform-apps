@@ -96,39 +96,35 @@ spec:
         create: true
         extraRules:
           - apiGroups: ["traefik.containo.us", "traefik.io"]
-            resources: ["ingressroutes"]
+            resources: ["ingressroutes", "middlewares"]
             verbs: [ "list", "watch" ]
       customResourceState:
         enabled: true
         config:
           spec:
             resources:
-              # - groupVersionKind:
-              #     group: traefik.containo.us
-              #     version: v1alpha1
-              #     kind: IngressRoute
-              #   metricNamePrefix: traefik_ingressroute_old
-              #   metrics:
-              #     - name: "resource_info"
-              #       help: "The current state of Traefik migration from old traefik ingressroute."
-              #       each:
-              #         type: Info
-              #         # gauge:
-              #         #   path: [metadata, name]
               - groupVersionKind:
                   group: traefik.io
                   version: v1alpha1
                   kind: IngressRoute
-                metricNamePrefix: traefik_ingressroute_new
+                metricNamePrefix: traefik_custom
                 metrics:
-                  - name: "resource_info"
-                    help: "The current state of Traefik migration to new traefik ingressroute."
+                  - name: "ingressroute"
+                    help: "The current state of Traefik ingressroutes migration to V3."
                     each:
-                      # type: Gauge
-                      # gauge:
-                      #   path:
-                      #   - metadata
-                      #   value: [count]
+                      type: Info
+                      info:
+                        labelsFromPath:
+                          name: [ metadata, name ]
+              - groupVersionKind:
+                  group: traefik.io
+                  version: v1alpha1
+                  kind: Middleware
+                metricNamePrefix: traefik_custom
+                metrics:
+                  - name: "middleware"
+                    help: "The current state of Traefik middlewares migration to V3."
+                    each:
                       type: Info
                       info:
                         labelsFromPath:
