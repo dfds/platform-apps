@@ -107,9 +107,9 @@ spec:
                   group: traefik.io
                   version: v1alpha1
                   kind: IngressRoute
-                metricNamePrefix: traefik_custom
+                # metricNamePrefix: traefik_custom # can be omitted. Default is kube_customresource
                 metrics:
-                  - name: "ingressroute"
+                  - name: "traefik" #"ingressroute"
                     help: "The current state of Traefik ingressroutes migration to V3."
                     each:
                       type: Info
@@ -122,7 +122,7 @@ spec:
                   kind: Middleware
                 metricNamePrefix: traefik_custom
                 metrics:
-                  - name: "middleware"
+                  - name: "traefik" #"middleware"
                     help: "The current state of Traefik middlewares migration to V3."
                     each:
                       type: Info
