@@ -110,7 +110,7 @@ spec:
                 # metricNamePrefix: traefik_custom # can be omitted. Default is kube_customresource
                 metrics:
                   - name: "traefik" #"ingressroute"
-                    help: "The current state of Traefik ingressroutes migration to V3."
+                    help: 'Monitor Traefik ingressroute resources that make use of "traefik.io" API group.'
                     each:
                       type: Info
                       info:
@@ -120,37 +120,41 @@ spec:
                   group: traefik.io
                   version: v1alpha1
                   kind: Middleware
-                metricNamePrefix: traefik_custom
+                # metricNamePrefix: traefik_custom
                 metrics:
                   - name: "traefik" #"middleware"
-                    help: "The current state of Traefik middlewares migration to V3."
+                    help: 'Monitor Traefik middleware resources that make use of "traefik.io" API group.'
                     each:
                       type: Info
                       info:
                         labelsFromPath:
                           name: [ metadata, name ]
-                      # gauge:
-                      #   path: [metadata, name]
-                    # each:
-                    #   type: Info
-                    #   info:
-                    #     labelsFromPath:
-                    #       name: [ metadata, name ]
-                    # labelsFromPath:
-                    #   exported_namespace: [ metadata, namespace ]
-                    #   ready: [ status, conditions, "[type=Ready]", status ]
-                    #   suspended: [ spec, suspend ]
-                    #   revision: [ status, lastAppliedRevision ]
-                    #   source_name: [ spec, sourceRef, name ]
-      # - groupVersionKind:
-      #     group: myteam.io
-      #     kind: "Foo"
-      #     version: "v1"
-      #   metrics:
-      #     - name: "uptime"
-      #       help: "Foo uptime"
-      #       each:
-      #         path: [status, uptime]
+              - groupVersionKind:
+                  group: traefik.containo.us
+                  version: v1alpha1
+                  kind: IngressRoute
+                # metricNamePrefix: traefik_custom # can be omitted. Default is kube_customresource
+                metrics:
+                  - name: "traefik" #"ingressroute"
+                    help: 'Monitor Traefik ingressroute resources that make use of "traefik.containo.us" API group.'
+                    each:
+                      type: Info
+                      info:
+                        labelsFromPath:
+                          name: [ metadata, name ]
+              - groupVersionKind:
+                  group: traefik.containo.us
+                  version: v1alpha1
+                  kind: Middleware
+                # metricNamePrefix: traefik_custom
+                metrics:
+                  - name: "traefik" #"middleware"
+                    help: 'Monitor Traefik middleware resources that make use of "traefik.containo.us" old API group.'
+                    each:
+                      type: Info
+                      info:
+                        labelsFromPath:
+                          name: [ metadata, name ]
     prometheus-node-exporter:
       enabled: true
       podLabels:
