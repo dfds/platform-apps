@@ -96,7 +96,7 @@ spec:
         create: true
         extraRules:
           - apiGroups: ["traefik.containo.us", "traefik.io"]
-            resources: ["ingressroutes", "middlewares"]
+            resources: ["ingressroutes", "middlewares", "tlsoptions"]
             verbs: [ "list", "watch" ]
       customResourceState:
         enabled: true
@@ -130,6 +130,19 @@ spec:
                           name: [ metadata, name ]
                           namespace: [ metadata, namespace ]
               - groupVersionKind:
+                  group: traefik.io
+                  version: v1alpha1
+                  kind: TLSOption
+                metrics:
+                  - name: "traefik"
+                    help: 'Monitor Traefik TLSOption resources that make use of "traefik.io" old API group.'
+                    each:
+                      type: Info
+                      info:
+                        labelsFromPath:
+                          name: [ metadata, name ]
+                          namespace: [ metadata, namespace ]
+              - groupVersionKind:
                   group: traefik.containo.us
                   version: v1alpha1
                   kind: IngressRoute
@@ -149,6 +162,19 @@ spec:
                 metrics:
                   - name: "traefik"
                     help: 'Monitor Traefik middleware resources that make use of "traefik.containo.us" old API group.'
+                    each:
+                      type: Info
+                      info:
+                        labelsFromPath:
+                          name: [ metadata, name ]
+                          namespace: [ metadata, namespace ]
+              - groupVersionKind:
+                  group: traefik.containo.us
+                  version: v1alpha1
+                  kind: TLSOption
+                metrics:
+                  - name: "traefik"
+                    help: 'Monitor Traefik TLSOption resources that make use of "traefik.containo.us" old API group.'
                     each:
                       type: Info
                       info:
