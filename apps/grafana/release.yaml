@@ -77,6 +77,14 @@ spec:
           useDefaultAllowList: false
       apiserver:
         enabled: true
+      kubelet:
+        enabled: true
+        metricsTuning:
+          useDefaultAllowList: true
+          includeMetrics:
+            - storage_operation_duration_seconds_bucket
+            - rest_client_request_duration_seconds_bucket
+      kube-controller-manager:
     kube-state-metrics:
       enabled: true
       customLabels:
