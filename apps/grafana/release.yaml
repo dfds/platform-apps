@@ -87,6 +87,7 @@ spec:
             - process_resident_memory_bytes
             - process_cpu_seconds_total
             - go_goroutines
+            - kubelet_runtime_operations_duration_seconds_bucket
       kube-controller-manager:
     kube-state-metrics:
       enabled: true
