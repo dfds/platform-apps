@@ -8,7 +8,7 @@ spec:
   chart:
     spec:
       chart: k8s-monitoring
-      version: 1.6.16
+      version: 1.6.17
       sourceRef:
         kind: HelmRepository
         name: grafana
@@ -82,13 +82,12 @@ spec:
         metricsTuning:
           useDefaultAllowList: true
           includeMetrics:
-            - kubelet_runtime_operations_duration_seconds_bucket
-            - storage_operation_errors_total
             - storage_operation_duration_seconds_bucket
             - rest_client_request_duration_seconds_bucket
             - process_resident_memory_bytes
             - process_cpu_seconds_total
             - go_goroutines
+            - kubelet_runtime_operations_duration_seconds_bucket
       kube-controller-manager:
     kube-state-metrics:
       enabled: true
@@ -110,7 +109,7 @@ spec:
         extraRules:
           - apiGroups: ["traefik.containo.us", "traefik.io"]
             resources: ["ingressroutes", "middlewares", "tlsoptions"]
-            verbs: [ "list", "watch" ]
+            verbs: ["list", "watch"]
       customResourceState:
         enabled: true
         config:
@@ -127,8 +126,8 @@ spec:
                       type: Info
                       info:
                         labelsFromPath:
-                          name: [ metadata, name ]
-                          namespace: [ metadata, namespace ]
+                          name: [metadata, name]
+                          namespace: [metadata, namespace]
               - groupVersionKind:
                   group: traefik.io
                   version: v1alpha1
@@ -140,8 +139,8 @@ spec:
                       type: Info
                       info:
                         labelsFromPath:
-                          name: [ metadata, name ]
-                          namespace: [ metadata, namespace ]
+                          name: [metadata, name]
+                          namespace: [metadata, namespace]
               - groupVersionKind:
                   group: traefik.io
                   version: v1alpha1
@@ -153,8 +152,8 @@ spec:
                       type: Info
                       info:
                         labelsFromPath:
-                          name: [ metadata, name ]
-                          namespace: [ metadata, namespace ]
+                          name: [metadata, name]
+                          namespace: [metadata, namespace]
               - groupVersionKind:
                   group: traefik.containo.us
                   version: v1alpha1
@@ -166,8 +165,8 @@ spec:
                       type: Info
                       info:
                         labelsFromPath:
-                          name: [ metadata, name ]
-                          namespace: [ metadata, namespace ]
+                          name: [metadata, name]
+                          namespace: [metadata, namespace]
               - groupVersionKind:
                   group: traefik.containo.us
                   version: v1alpha1
@@ -179,8 +178,8 @@ spec:
                       type: Info
                       info:
                         labelsFromPath:
-                          name: [ metadata, name ]
-                          namespace: [ metadata, namespace ]
+                          name: [metadata, name]
+                          namespace: [metadata, namespace]
               - groupVersionKind:
                   group: traefik.containo.us
                   version: v1alpha1
@@ -192,8 +191,8 @@ spec:
                       type: Info
                       info:
                         labelsFromPath:
-                          name: [ metadata, name ]
-                          namespace: [ metadata, namespace ]
+                          name: [metadata, name]
+                          namespace: [metadata, namespace]
     prometheus-node-exporter:
       enabled: true
       podLabels:
