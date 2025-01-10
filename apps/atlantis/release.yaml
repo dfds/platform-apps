@@ -26,6 +26,10 @@ spec:
         secretKeyRef:
           key: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_KEY
           name: atlantis-environment
+      - name: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_KEY
+        secretKeyRef:
+          key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_BROKER
+          name: atlantis-environment-1password
       # - name: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_SECRET
       #   secretKeyRef:
       #     key: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_SECRET
