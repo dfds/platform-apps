@@ -26,226 +26,226 @@ spec:
         secretKeyRef:
           key: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_KEY
           name: atlantis-environment
-      - name: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_SECRET
-        secretKeyRef:
-          key: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_SECRET
-          name: atlantis-environment
-      - name: PRODUCTION_AWS_ACCESS_KEY_ID
-        secretKeyRef:
-          key: PRODUCTION_AWS_ACCESS_KEY_ID
-          name: atlantis-environment
-      - name: PRODUCTION_AWS_ACCOUNT_MANIFESTS_HARDENED_MONITORING_SLACK_TOKEN
-        secretKeyRef:
-          key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_HARDENED_MONITORING_SLACK_TOKEN
-          name: atlantis-environment
-      - name: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_BROKER
-        secretKeyRef:
-          key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_BROKER
-          name: atlantis-environment
-      - name: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_PASSWORD
-        secretKeyRef:
-          key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_PASSWORD
-          name: atlantis-environment
-      - name: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_USERNAME
-        secretKeyRef:
-          key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_USERNAME
-          name: atlantis-environment
-      - name: PRODUCTION_AWS_SECRET_ACCESS_KEY
-        secretKeyRef:
-          key: PRODUCTION_AWS_SECRET_ACCESS_KEY
-          name: atlantis-environment
-      - name: PRODUCTION_DATALAKE_AWS_ACCESS_KEY_ID
-        secretKeyRef:
-          key: PRODUCTION_DATALAKE_AWS_ACCESS_KEY_ID
-          name: atlantis-environment
-      - name: PRODUCTION_DATALAKE_AWS_SECRET_ACCESS_KEY
-        secretKeyRef:
-          key: PRODUCTION_DATALAKE_AWS_SECRET_ACCESS_KEY
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_1PASSWORD_API_KEY
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_1PASSWORD_API_KEY
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_AGENT_API_TOKEN
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_AGENT_API_TOKEN
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_AGENT_LOKI_URL
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_AGENT_LOKI_URL
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_AGENT_LOKI_USERNAME
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_AGENT_LOKI_USERNAME
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_AGENT_PROMETHEUS_URL
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_AGENT_PROMETHEUS_URL
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_AGENT_PROMETHEUS_USERNAME
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_AGENT_PROMETHEUS_USERNAME
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_AGENT_TEMPO_URL
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_AGENT_TEMPO_URL
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_AGENT_TEMPO_USERNAME
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_AGENT_TEMPO_USERNAME
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_CLOUD_API_KEY
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_CLOUD_API_KEY
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_CLOUD_ARM_CLIENT_ID
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_CLOUD_ARM_CLIENT_ID
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_CLOUD_ARM_CLIENT_SECRET
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_CLOUD_ARM_CLIENT_SECRET
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_CLOUD_ARM_TENANT_ID
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_CLOUD_ARM_TENANT_ID
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_CERTIFICATE
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_CERTIFICATE
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_IDP_METADATA_URL
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_IDP_METADATA_URL
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_PRIVATE_KEY
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_PRIVATE_KEY
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_ID
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_ID
-          name: atlantis-environment
-      - name: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_SECRET
-        secretKeyRef:
-          key: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_SECRET
-          name: atlantis-environment
-      - name: PRODUCTION_PREPRIME_AWS_ACCESS_KEY_ID
-        secretKeyRef:
-          key: PRODUCTION_PREPRIME_AWS_ACCESS_KEY_ID
-          name: atlantis-environment
-      - name: PRODUCTION_PREPRIME_AWS_SECRET_ACCESS_KEY
-        secretKeyRef:
-          key: PRODUCTION_PREPRIME_AWS_SECRET_ACCESS_KEY
-          name: atlantis-environment
-      - name: PRODUCTION_PREPRIME_BACKUP_REPORTS_SLACK_WEBHOOK_URL
-        secretKeyRef:
-          key: PRODUCTION_PREPRIME_BACKUP_REPORTS_SLACK_WEBHOOK_URL
-          name: atlantis-environment
-      - name: PRODUCTION_PRIME_AWS_ACCESS_KEY_ID
-        secretKeyRef:
-          key: PRODUCTION_PRIME_AWS_ACCESS_KEY_ID
-          name: atlantis-environment
-      - name: PRODUCTION_PRIME_AWS_SECRET_ACCESS_KEY
-        secretKeyRef:
-          key: PRODUCTION_PRIME_AWS_SECRET_ACCESS_KEY
-          name: atlantis-environment
-      - name: PRODUCTION_TF_VAR_monitoring_kube_prometheus_stack_slack_webhook
-        secretKeyRef:
-          key: PRODUCTION_TF_VAR_monitoring_kube_prometheus_stack_slack_webhook
-          name: atlantis-environment
-      - name: PRODUCTION_TF_VAR_slack_webhook_url
-        secretKeyRef:
-          key: PRODUCTION_TF_VAR_slack_webhook_url
-          name: atlantis-environment
-      - name: SHARED_ARM_CLIENT_ID
-        secretKeyRef:
-          key: SHARED_ARM_CLIENT_ID
-          name: atlantis-environment
-      - name: SHARED_ARM_CLIENT_SECRET
-        secretKeyRef:
-          key: SHARED_ARM_CLIENT_SECRET
-          name: atlantis-environment
-      - name: SHARED_ARM_SUBSCRIPTION_ID
-        secretKeyRef:
-          key: SHARED_ARM_SUBSCRIPTION_ID
-          name: atlantis-environment
-      - name: SHARED_ARM_TENANT_ID
-        secretKeyRef:
-          key: SHARED_ARM_TENANT_ID
-          name: atlantis-environment
-      - name: SHARED_TF_VAR_atlantis_github_token
-        secretKeyRef:
-          key: SHARED_TF_VAR_atlantis_github_token
-          name: atlantis-environment
-      - name: SHARED_TF_VAR_fluxcd_bootstrap_repo_owner_token
-        secretKeyRef:
-          key: SHARED_TF_VAR_fluxcd_bootstrap_repo_owner_token
-          name: atlantis-environment
-      - name: SHARED_TF_VAR_monitoring_kube_prometheus_stack_azure_tenant_id
-        secretKeyRef:
-          key: SHARED_TF_VAR_monitoring_kube_prometheus_stack_azure_tenant_id
-          name: atlantis-environment
-      - name: STAGING_AWS_ACCESS_KEY_ID
-        secretKeyRef:
-          key: STAGING_AWS_ACCESS_KEY_ID
-          name: atlantis-environment
-      - name: STAGING_AWS_SECRET_ACCESS_KEY
-        secretKeyRef:
-          key: STAGING_AWS_SECRET_ACCESS_KEY
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_API_TOKEN
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_API_TOKEN
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_LOKI_URL
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_LOKI_URL
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_LOKI_USERNAME
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_LOKI_USERNAME
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_PROMETHEUS_URL
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_PROMETHEUS_URL
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_PROMETHEUS_USERNAME
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_PROMETHEUS_USERNAME
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_TEMPO_URL
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_TEMPO_URL
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_TEMPO_USERNAME
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_TEMPO_USERNAME
-          name: atlantis-environment
-      - name: STAGING_TF_VAR_monitoring_kube_prometheus_stack_slack_webhook
-        secretKeyRef:
-          key: STAGING_TF_VAR_monitoring_kube_prometheus_stack_slack_webhook
-          name: atlantis-environment
-      - name: STAGING_TF_VAR_slack_webhook_url
-        secretKeyRef:
-          key: STAGING_TF_VAR_slack_webhook_url
-          name: atlantis-environment
-      - name: STAGING_TF_VAR_falco_slack_alert_webhook_url
-        secretKeyRef:
-          key: STAGING_TF_VAR_falco_slack_alert_webhook_url
-          name: atlantis-environment
-      - name: STAGING_TF_VAR_falco_stream_webhook_url
-        secretKeyRef:
-          key: STAGING_TF_VAR_falco_stream_webhook_url
-          name: atlantis-environment
-      - name: PRODUCTION_TF_VAR_falco_slack_alert_webhook_url
-        secretKeyRef:
-          key: PRODUCTION_TF_VAR_falco_slack_alert_webhook_url
-          name: atlantis-environment
-      - name: PRODUCTION_TF_VAR_falco_stream_webhook_url
-        secretKeyRef:
-          key: PRODUCTION_TF_VAR_falco_stream_webhook_url
-          name: atlantis-environment
+      # - name: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_SECRET
+      #   secretKeyRef:
+      #     key: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_SECRET
+      #     name: atlantis-environment
+      # - name: PRODUCTION_AWS_ACCESS_KEY_ID
+      #   secretKeyRef:
+      #     key: PRODUCTION_AWS_ACCESS_KEY_ID
+      #     name: atlantis-environment
+      # - name: PRODUCTION_AWS_ACCOUNT_MANIFESTS_HARDENED_MONITORING_SLACK_TOKEN
+      #   secretKeyRef:
+      #     key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_HARDENED_MONITORING_SLACK_TOKEN
+      #     name: atlantis-environment
+      # - name: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_BROKER
+      #   secretKeyRef:
+      #     key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_BROKER
+      #     name: atlantis-environment
+      # - name: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_PASSWORD
+      #   secretKeyRef:
+      #     key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_PASSWORD
+      #     name: atlantis-environment
+      # - name: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_USERNAME
+      #   secretKeyRef:
+      #     key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_USERNAME
+      #     name: atlantis-environment
+      # - name: PRODUCTION_AWS_SECRET_ACCESS_KEY
+      #   secretKeyRef:
+      #     key: PRODUCTION_AWS_SECRET_ACCESS_KEY
+      #     name: atlantis-environment
+      # - name: PRODUCTION_DATALAKE_AWS_ACCESS_KEY_ID
+      #   secretKeyRef:
+      #     key: PRODUCTION_DATALAKE_AWS_ACCESS_KEY_ID
+      #     name: atlantis-environment
+      # - name: PRODUCTION_DATALAKE_AWS_SECRET_ACCESS_KEY
+      #   secretKeyRef:
+      #     key: PRODUCTION_DATALAKE_AWS_SECRET_ACCESS_KEY
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_1PASSWORD_API_KEY
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_1PASSWORD_API_KEY
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_AGENT_API_TOKEN
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_AGENT_API_TOKEN
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_AGENT_LOKI_URL
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_AGENT_LOKI_URL
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_AGENT_LOKI_USERNAME
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_AGENT_LOKI_USERNAME
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_AGENT_PROMETHEUS_URL
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_AGENT_PROMETHEUS_URL
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_AGENT_PROMETHEUS_USERNAME
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_AGENT_PROMETHEUS_USERNAME
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_AGENT_TEMPO_URL
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_AGENT_TEMPO_URL
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_AGENT_TEMPO_USERNAME
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_AGENT_TEMPO_USERNAME
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_CLOUD_API_KEY
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_CLOUD_API_KEY
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_CLOUD_ARM_CLIENT_ID
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_CLOUD_ARM_CLIENT_ID
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_CLOUD_ARM_CLIENT_SECRET
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_CLOUD_ARM_CLIENT_SECRET
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_CLOUD_ARM_TENANT_ID
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_CLOUD_ARM_TENANT_ID
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_CERTIFICATE
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_CERTIFICATE
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_IDP_METADATA_URL
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_IDP_METADATA_URL
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_PRIVATE_KEY
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_CLOUD_SSO_SAML_PRIVATE_KEY
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_ID
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_ID
+      #     name: atlantis-environment
+      # - name: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_SECRET
+      #   secretKeyRef:
+      #     key: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_SECRET
+      #     name: atlantis-environment
+      # - name: PRODUCTION_PREPRIME_AWS_ACCESS_KEY_ID
+      #   secretKeyRef:
+      #     key: PRODUCTION_PREPRIME_AWS_ACCESS_KEY_ID
+      #     name: atlantis-environment
+      # - name: PRODUCTION_PREPRIME_AWS_SECRET_ACCESS_KEY
+      #   secretKeyRef:
+      #     key: PRODUCTION_PREPRIME_AWS_SECRET_ACCESS_KEY
+      #     name: atlantis-environment
+      # - name: PRODUCTION_PREPRIME_BACKUP_REPORTS_SLACK_WEBHOOK_URL
+      #   secretKeyRef:
+      #     key: PRODUCTION_PREPRIME_BACKUP_REPORTS_SLACK_WEBHOOK_URL
+      #     name: atlantis-environment
+      # - name: PRODUCTION_PRIME_AWS_ACCESS_KEY_ID
+      #   secretKeyRef:
+      #     key: PRODUCTION_PRIME_AWS_ACCESS_KEY_ID
+      #     name: atlantis-environment
+      # - name: PRODUCTION_PRIME_AWS_SECRET_ACCESS_KEY
+      #   secretKeyRef:
+      #     key: PRODUCTION_PRIME_AWS_SECRET_ACCESS_KEY
+      #     name: atlantis-environment
+      # - name: PRODUCTION_TF_VAR_monitoring_kube_prometheus_stack_slack_webhook
+      #   secretKeyRef:
+      #     key: PRODUCTION_TF_VAR_monitoring_kube_prometheus_stack_slack_webhook
+      #     name: atlantis-environment
+      # - name: PRODUCTION_TF_VAR_slack_webhook_url
+      #   secretKeyRef:
+      #     key: PRODUCTION_TF_VAR_slack_webhook_url
+      #     name: atlantis-environment
+      # - name: SHARED_ARM_CLIENT_ID
+      #   secretKeyRef:
+      #     key: SHARED_ARM_CLIENT_ID
+      #     name: atlantis-environment
+      # - name: SHARED_ARM_CLIENT_SECRET
+      #   secretKeyRef:
+      #     key: SHARED_ARM_CLIENT_SECRET
+      #     name: atlantis-environment
+      # - name: SHARED_ARM_SUBSCRIPTION_ID
+      #   secretKeyRef:
+      #     key: SHARED_ARM_SUBSCRIPTION_ID
+      #     name: atlantis-environment
+      # - name: SHARED_ARM_TENANT_ID
+      #   secretKeyRef:
+      #     key: SHARED_ARM_TENANT_ID
+      #     name: atlantis-environment
+      # - name: SHARED_TF_VAR_atlantis_github_token
+      #   secretKeyRef:
+      #     key: SHARED_TF_VAR_atlantis_github_token
+      #     name: atlantis-environment
+      # - name: SHARED_TF_VAR_fluxcd_bootstrap_repo_owner_token
+      #   secretKeyRef:
+      #     key: SHARED_TF_VAR_fluxcd_bootstrap_repo_owner_token
+      #     name: atlantis-environment
+      # - name: SHARED_TF_VAR_monitoring_kube_prometheus_stack_azure_tenant_id
+      #   secretKeyRef:
+      #     key: SHARED_TF_VAR_monitoring_kube_prometheus_stack_azure_tenant_id
+      #     name: atlantis-environment
+      # - name: STAGING_AWS_ACCESS_KEY_ID
+      #   secretKeyRef:
+      #     key: STAGING_AWS_ACCESS_KEY_ID
+      #     name: atlantis-environment
+      # - name: STAGING_AWS_SECRET_ACCESS_KEY
+      #   secretKeyRef:
+      #     key: STAGING_AWS_SECRET_ACCESS_KEY
+      #     name: atlantis-environment
+      # - name: STAGING_GRAFANA_AGENT_API_TOKEN
+      #   secretKeyRef:
+      #     key: STAGING_GRAFANA_AGENT_API_TOKEN
+      #     name: atlantis-environment
+      # - name: STAGING_GRAFANA_AGENT_LOKI_URL
+      #   secretKeyRef:
+      #     key: STAGING_GRAFANA_AGENT_LOKI_URL
+      #     name: atlantis-environment
+      # - name: STAGING_GRAFANA_AGENT_LOKI_USERNAME
+      #   secretKeyRef:
+      #     key: STAGING_GRAFANA_AGENT_LOKI_USERNAME
+      #     name: atlantis-environment
+      # - name: STAGING_GRAFANA_AGENT_PROMETHEUS_URL
+      #   secretKeyRef:
+      #     key: STAGING_GRAFANA_AGENT_PROMETHEUS_URL
+      #     name: atlantis-environment
+      # - name: STAGING_GRAFANA_AGENT_PROMETHEUS_USERNAME
+      #   secretKeyRef:
+      #     key: STAGING_GRAFANA_AGENT_PROMETHEUS_USERNAME
+      #     name: atlantis-environment
+      # - name: STAGING_GRAFANA_AGENT_TEMPO_URL
+      #   secretKeyRef:
+      #     key: STAGING_GRAFANA_AGENT_TEMPO_URL
+      #     name: atlantis-environment
+      # - name: STAGING_GRAFANA_AGENT_TEMPO_USERNAME
+      #   secretKeyRef:
+      #     key: STAGING_GRAFANA_AGENT_TEMPO_USERNAME
+      #     name: atlantis-environment
+      # - name: STAGING_TF_VAR_monitoring_kube_prometheus_stack_slack_webhook
+      #   secretKeyRef:
+      #     key: STAGING_TF_VAR_monitoring_kube_prometheus_stack_slack_webhook
+      #     name: atlantis-environment
+      # - name: STAGING_TF_VAR_slack_webhook_url
+      #   secretKeyRef:
+      #     key: STAGING_TF_VAR_slack_webhook_url
+      #     name: atlantis-environment
+      # - name: STAGING_TF_VAR_falco_slack_alert_webhook_url
+      #   secretKeyRef:
+      #     key: STAGING_TF_VAR_falco_slack_alert_webhook_url
+      #     name: atlantis-environment
+      # - name: STAGING_TF_VAR_falco_stream_webhook_url
+      #   secretKeyRef:
+      #     key: STAGING_TF_VAR_falco_stream_webhook_url
+      #     name: atlantis-environment
+      # - name: PRODUCTION_TF_VAR_falco_slack_alert_webhook_url
+      #   secretKeyRef:
+      #     key: PRODUCTION_TF_VAR_falco_slack_alert_webhook_url
+      #     name: atlantis-environment
+      # - name: PRODUCTION_TF_VAR_falco_stream_webhook_url
+      #   secretKeyRef:
+      #     key: PRODUCTION_TF_VAR_falco_stream_webhook_url
+      #     name: atlantis-environment
     extraArgs:
       - --parallel-pool-size=15
     github: {} # Patch this from Terraform
