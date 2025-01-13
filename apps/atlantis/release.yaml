@@ -25,7 +25,7 @@ spec:
       - name: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_KEY
         secretKeyRef:
           key: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_KEY
-          name: atlantis-environment-1password-1password
+          name: atlantis-environment-1password
       - name: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_SECRET
         secretKeyRef:
           key: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_SECRET
@@ -228,24 +228,25 @@ spec:
           name: atlantis-environment-1password
       - name: STAGING_TF_VAR_slack_webhook_url
         secretKeyRef:
-          key: STAGING_TF_VAR_slack_webhook_url
+          key: slack_webhook_url
           name: atlantis-environment-1password
-      # - name: STAGING_TF_VAR_falco_slack_alert_webhook_url
-      #   secretKeyRef:
-      #     key: STAGING_TF_VAR_falco_slack_alert_webhook_url
-      #     name: atlantis-environment-1password
-      # - name: STAGING_TF_VAR_falco_stream_webhook_url
-      #   secretKeyRef:
-      #     key: STAGING_TF_VAR_falco_stream_webhook_url
-      #     name: atlantis-environment-1password
-      # - name: PRODUCTION_TF_VAR_falco_slack_alert_webhook_url
-      #   secretKeyRef:
-      #     key: PRODUCTION_TF_VAR_falco_slack_alert_webhook_url
-      #     name: atlantis-environment-1password
-      # - name: PRODUCTION_TF_VAR_falco_stream_webhook_url
-      #   secretKeyRef:
-      #     key: PRODUCTION_TF_VAR_falco_stream_webhook_url
-      #     name: atlantis-environment-1password
+
+      - name: STAGING_TF_VAR_falco_slack_alert_webhook_url
+        secretKeyRef:
+          key: alert_webhook_url_staging
+          name: atlantis-environment-1password
+      - name: STAGING_TF_VAR_falco_stream_webhook_url
+        secretKeyRef:
+          key: stream_webhook_url_staging
+          name: atlantis-environment-1password
+      - name: PRODUCTION_TF_VAR_falco_slack_alert_webhook_url
+        secretKeyRef:
+          key: slack_alert_webhook_url_production
+          name: atlantis-environment-1password
+      - name: PRODUCTION_TF_VAR_falco_stream_webhook_url
+        secretKeyRef:
+          key: stream_webhook_url_production
+          name: atlantis-environment-1password
     extraArgs:
       - --parallel-pool-size=15
     github: {} # Patch this from Terraform
