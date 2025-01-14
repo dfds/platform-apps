@@ -74,3 +74,18 @@ patches:
 ### Terraform
 
 In our setup we use the the <https://github.com/dfds/infrastructure-modules/tree/master/_sub/compute/k8s-traefik-flux> Terraform module to generate the kustomization.yaml files.
+
+## Development practices
+
+- Create a feature branch from main branch.
+- When you are ready to test your feature in QA, merge it to the qa branch without a pull request.
+- When you are ready with your feature, raise a pull request
+
+![GIt workflow](./platform-apps-git.drawio.png "Git workflow")
+
+### Merge conflicts
+
+- We have a nightly build than merges main into qa and staging branches.
+- Because different feature branches might be updating the same files, we sometimes get merge conflicts.
+- These merge conflicts are discovered when the nightly job merges from main to qa.
+- These merge conflicts needs to be fixed manually.
