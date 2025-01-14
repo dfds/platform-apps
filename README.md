@@ -80,6 +80,7 @@ In our setup we use the the <https://github.com/dfds/infrastructure-modules/tree
 - Create a feature branch from main branch.
 - When you are ready to test your feature in QA, merge it to the qa branch without a pull request.
 - When you are ready with your feature, raise a pull request
+- Delete your feature branch after merge to main
 
 ![GIt workflow](./platform-apps-git.drawio.png "Git workflow")
 
