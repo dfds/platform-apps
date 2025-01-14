@@ -216,24 +216,23 @@ spec:
           name: atlantis-environment-1password
       - name: STAGING_TF_VAR_slack_webhook_url
         secretKeyRef:
-          key: slack_webhook_url
+          key: STAGING_TF_VAR_slack_webhook_url
           name: atlantis-environment-1password
-
       - name: STAGING_TF_VAR_falco_slack_alert_webhook_url
         secretKeyRef:
-          key: alert_webhook_url_staging
+          key: STAGING_TF_VAR_falco_slack_alert_webhook_url
           name: atlantis-environment-1password
       - name: STAGING_TF_VAR_falco_stream_webhook_url
         secretKeyRef:
-          key: stream_webhook_url_staging
+          key: STAGING_TF_VAR_falco_stream_webhook_url
           name: atlantis-environment-1password
       - name: PRODUCTION_TF_VAR_falco_slack_alert_webhook_url
         secretKeyRef:
-          key: slack_alert_webhook_url_production
+          key: PRODUCTION_TF_VAR_falco_slack_alert_webhook_url
           name: atlantis-environment-1password
       - name: PRODUCTION_TF_VAR_falco_stream_webhook_url
         secretKeyRef:
-          key: stream_webhook_url_production
+          key: PRODUCTION_TF_VAR_falco_stream_webhook_url
           name: atlantis-environment-1password
     extraArgs:
       - --parallel-pool-size=15
