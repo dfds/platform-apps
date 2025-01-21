@@ -109,7 +109,7 @@ spec:
         extraRules:
           - apiGroups: ["traefik.containo.us", "traefik.io"]
             resources: ["ingressroutes", "middlewares", "tlsoptions"]
-            verbs: [ "list", "watch" ]
+            verbs: ["list", "watch"]
       customResourceState:
         enabled: true
         config:
@@ -126,8 +126,8 @@ spec:
                       type: Info
                       info:
                         labelsFromPath:
-                          name: [ metadata, name ]
-                          namespace: [ metadata, namespace ]
+                          name: [metadata, name]
+                          namespace: [metadata, namespace]
               - groupVersionKind:
                   group: traefik.io
                   version: v1alpha1
@@ -139,8 +139,8 @@ spec:
                       type: Info
                       info:
                         labelsFromPath:
-                          name: [ metadata, name ]
-                          namespace: [ metadata, namespace ]
+                          name: [metadata, name]
+                          namespace: [metadata, namespace]
               - groupVersionKind:
                   group: traefik.io
                   version: v1alpha1
@@ -152,8 +152,8 @@ spec:
                       type: Info
                       info:
                         labelsFromPath:
-                          name: [ metadata, name ]
-                          namespace: [ metadata, namespace ]
+                          name: [metadata, name]
+                          namespace: [metadata, namespace]
               - groupVersionKind:
                   group: traefik.containo.us
                   version: v1alpha1
@@ -165,8 +165,8 @@ spec:
                       type: Info
                       info:
                         labelsFromPath:
-                          name: [ metadata, name ]
-                          namespace: [ metadata, namespace ]
+                          name: [metadata, name]
+                          namespace: [metadata, namespace]
               - groupVersionKind:
                   group: traefik.containo.us
                   version: v1alpha1
@@ -178,8 +178,8 @@ spec:
                       type: Info
                       info:
                         labelsFromPath:
-                          name: [ metadata, name ]
-                          namespace: [ metadata, namespace ]
+                          name: [metadata, name]
+                          namespace: [metadata, namespace]
               - groupVersionKind:
                   group: traefik.containo.us
                   version: v1alpha1
@@ -191,8 +191,8 @@ spec:
                       type: Info
                       info:
                         labelsFromPath:
-                          name: [ metadata, name ]
-                          namespace: [ metadata, namespace ]
+                          name: [metadata, name]
+                          namespace: [metadata, namespace]
     prometheus-node-exporter:
       enabled: true
       podLabels:
@@ -209,7 +209,7 @@ spec:
 
     prometheus-operator-crds:
       # Set this to true when removing the old Prometheus stack
-      enabled: false
+      enabled: true
     extraObjects:
       - apiVersion: monitoring.coreos.com/v1
         kind: ServiceMonitor
