@@ -54,4 +54,4 @@ spec:
           statuscodes: "300-399,400-499,500-599"
     providers:
       kubernetesIngress:
-        enabled: false
+        enabled: true
