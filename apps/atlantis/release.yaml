@@ -250,6 +250,14 @@ spec:
         secretKeyRef:
           key: STAGING_ONEPASSWORD_TOKEN_FOR_ATLANTIS
           name: atlantis-environment
+      - name: SHARED_docker_hub_username
+        secretKeyRef:
+          key: SHARED_docker_hub_username
+          name: atlantis-environment
+      - name: SHARED_docker_hub_password
+        secretKeyRef:
+          key: SHARED_docker_hub_password
+          name: atlantis-environment
     extraArgs:
       - --parallel-pool-size=15
     github: {} # Patch this from Terraform
