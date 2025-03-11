@@ -25,6 +25,7 @@ spec:
     ingressRoute:
       dashboard:
         enabled: true
+        entryPoints: ["traefik", "web"]
     service:
       enabled: true
       type: NodePort
