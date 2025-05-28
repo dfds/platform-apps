@@ -250,6 +250,10 @@ spec:
         secretKeyRef:
           key: SHARED_docker_hub_password
           name: atlantis-environment
+      - name: SHARED_eks_addon_awsebscsidriver_kms_arn
+        secretKeyRef:
+          key: SHARED_eks_addon_awsebscsidriver_kms_arn
+          name: atlantis-environment          
     extraArgs:
       - --parallel-pool-size=15
     github: {} # Patch this from Terraform
