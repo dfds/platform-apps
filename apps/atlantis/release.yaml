@@ -258,6 +258,14 @@ spec:
         secretKeyRef:
           key: SHARED_eks_addon_awsebscsidriver_kms_arn
           name: atlantis-environment
+      - name: DEVELOPER_PLATFORM_DEPLOY_AWS_ACCESS_KEY_ID
+        secretKeyRef:
+          key: DEVELOPER_PLATFORM_DEPLOY_AWS_ACCESS_KEY_ID
+          name: atlantis-environment
+      - name: DEVELOPER_PLATFORM_DEPLOY_AWS_SECRET_ACCESS_KEY
+        secretKeyRef:
+          key: DEVELOPER_PLATFORM_DEPLOY_AWS_SECRET_ACCESS_KEY
+          name: atlantis-environment
     extraArgs:
       - --parallel-pool-size=15
     github: {} # Patch this from Terraform
