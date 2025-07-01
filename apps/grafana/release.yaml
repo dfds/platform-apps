@@ -62,6 +62,13 @@ spec:
           useDefaultAllowList: false
       serviceMonitors:
         enabled: true
+        selector:
+          |- # TODO: Delete this block when shutting down the old Prometheus
+          match_expression {
+            key = "release"
+            operator = "NotIn"
+            values = ["monitoring"]
+          }
       kube-state-metrics:
         metricsTuning:
           useDefaultAllowList: false
