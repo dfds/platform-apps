@@ -166,10 +166,6 @@ spec:
         secretKeyRef:
           key: SHARED_TF_VAR_fluxcd_bootstrap_repo_owner_token
           name: atlantis-environment
-      - name: SHARED_TF_VAR_monitoring_kube_prometheus_stack_azure_tenant_id
-        secretKeyRef:
-          key: SHARED_TF_VAR_monitoring_kube_prometheus_stack_azure_tenant_id
-          name: atlantis-environment
       - name: STAGING_AWS_ACCESS_KEY_ID
         secretKeyRef:
           key: STAGING_AWS_ACCESS_KEY_ID
