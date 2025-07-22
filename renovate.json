@@ -2,7 +2,9 @@
     "$schema": "https://docs.renovatebot.com/renovate-schema.json",
     "branchPrefix": "feature/renovate/",
     "flux": {
-        "fileMatch": ["\\.yaml$"]
+        "managerFilePatterns": [
+            "/\\.yaml$/"
+        ]
     },
     "packageRules": [
         {
