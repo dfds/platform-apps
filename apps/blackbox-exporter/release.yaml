@@ -37,3 +37,4 @@ spec:
             valid_status_codes: [401]
             follow_redirects: true
             preferred_ip_protocol: "ip4"
+    priorityClassName: cluster-observability
