@@ -17,10 +17,10 @@ spec:
   timeout: 15m
   values:
     controller:
-      updateStrategy:
-        type: RollingUpdate
-        rollingUpdate:
-          maxUnavailable: 25%
+      daemonset:
+        updateStrategy:
+          rollingUpdate:
+            maxUnavailable: 25%
     podPriorityClassName: node-observability
     falcosidekick:
       priorityClassName: cluster-observability
