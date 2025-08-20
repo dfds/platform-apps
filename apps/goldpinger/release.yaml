@@ -18,7 +18,7 @@ spec:
     remediation:
       retries: 3
   values:
-    priorityClassName: cluster-monitoring
+    priorityClassName: node-observability
     serviceMonitor:
       enabled: true
     resources:

@@ -298,6 +298,7 @@ spec:
     statefulSet:
       securityContext:
         runAsUser: 200
+      priorityClassName: cluster-infrastructure
     volumeClaim: # Patch this from Terraform
       dataStorage: 5Gi
       storageClassName: csi-gp3
