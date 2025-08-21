@@ -6,3 +6,7 @@ metadata:
 spec:
   interval: 5m0s
   url: https://kedacore.github.io/charts
+  values:
+    webhooks:
+      replicaCount: 3
+    priorityClassName: "system-cluster-critical"
