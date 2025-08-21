@@ -57,6 +57,10 @@ spec:
     alloy-logs:
       controller:
         priorityClassName: node-observability
+      updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 25%
     metrics:
       enabled: true
       autoDiscover:
@@ -203,6 +207,10 @@ spec:
           cpu: 20m
           memory: 50Mi
       priorityClassName: node-observability
+      updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 25%
 
     prometheus-operator-crds:
       enabled: true
