@@ -8,5 +8,5 @@ spec:
   url: https://kedacore.github.io/charts
   values:
     webhooks:
-      replicaCount: 1
+      replicaCount: 3
     priorityClassName: "system-cluster-critical"
