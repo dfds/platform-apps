@@ -23,3 +23,6 @@ spec:
       replicaCount: 3
     metricsServer:
       replicaCount: 3
+    webhooks:
+      replicaCount: 3
+    priorityClassName: "system-cluster-critical"

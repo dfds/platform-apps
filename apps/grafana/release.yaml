@@ -48,8 +48,19 @@ spec:
             loki.process.logs_service.receiver,
           ]
         }
-    alloy-events: {}
-    alloy-logs: {}
+    alloy:
+      controller:
+        priorityClassName: cluster-observability
+    alloy-events:
+      controller:
+        priorityClassName: cluster-observability
+    alloy-logs:
+      controller:
+        priorityClassName: node-observability
+      updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 25%
     metrics:
       enabled: true
       autoDiscover:
@@ -97,6 +108,7 @@ spec:
         requests:
           cpu: 20m
           memory: 100Mi
+      priorityClassName: cluster-observability
       rbac:
         create: true
         extraRules:
@@ -194,6 +206,11 @@ spec:
         requests:
           cpu: 20m
           memory: 50Mi
+      priorityClassName: node-observability
+      updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 25%
 
     prometheus-operator-crds:
       enabled: true
