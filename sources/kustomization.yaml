@@ -17,7 +17,6 @@ resources:
   - nvidia-device-plugin.yaml
   - podinfo.yaml
   - prometheus-community.yaml
-  - sstarcher.yaml
   - stable.yaml
   - traefik.yaml
   - vmware-tanzu.yaml
