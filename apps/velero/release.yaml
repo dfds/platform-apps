@@ -48,7 +48,7 @@ spec:
         volumeMounts:
           - mountPath: /target
             name: plugins
-    priorityClassName: service-critical
+    priorityClassName: cluster-infrastructure
     metrics:
       serviceMonitor:
         enabled: true
