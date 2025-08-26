@@ -39,9 +39,9 @@ spec:
       websecure:
         expose:
           default: false
-    globalArguments:
-      - "--global.checknewversion"
-      - "--entryPoints.web.forwardedHeaders.insecure"
+      web:
+        forwardedHeaders:
+          insecure: true
     additionalArguments:
       - "--metrics.prometheus"
     logs:
