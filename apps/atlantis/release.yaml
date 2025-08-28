@@ -21,6 +21,8 @@ spec:
     basicAuth: {} # Patch this from Terraform
     disableApply: true
     disableApplyAll: true
+    environment:
+      TG_LOG_FORMAT: bare
     environmentSecrets:
       - name: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_KEY
         secretKeyRef:
