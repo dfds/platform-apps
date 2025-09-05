@@ -56,3 +56,9 @@ spec:
       kubernetesIngress:
         enabled: true
     priorityClassName: cluster-infrastructure
+    resources:
+      requests:
+        cpu: 150m
+        memory: 512Mi
+      limits:
+        memory: 512Mi
