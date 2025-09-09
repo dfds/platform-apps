@@ -42,8 +42,10 @@ spec:
       web:
         forwardedHeaders:
           insecure: true
+        port: 80
     additionalArguments:
       - "--metrics.prometheus"
+
     logs:
       general:
         level: ERROR
