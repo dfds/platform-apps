@@ -38,14 +38,12 @@ spec:
           default: true
       websecure:
         expose:
-          default: true
+          default: false
       web:
         forwardedHeaders:
           insecure: true
-        port: 80
     additionalArguments:
       - "--metrics.prometheus"
-
     logs:
       general:
         level: ERROR
