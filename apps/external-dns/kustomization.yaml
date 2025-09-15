@@ -4,4 +4,3 @@ namespace: external-dns
 resources:
   - namespace.yaml
   - release.yaml
-  - service.yaml
