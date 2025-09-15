@@ -12,7 +12,7 @@ spec:
       version: 1.16.1
       sourceRef:
         kind: HelmRepository
-        name: external-dns
+        name: kubernetes-sigs.github.io
         namespace: flux-system
   interval: 1m0s
   install:
