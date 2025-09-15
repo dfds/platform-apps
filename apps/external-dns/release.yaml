@@ -1,0 +1,29 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: external-dns
+  namespace: external-dns
+spec:
+  releaseName: external-dns
+  chart:
+    spec:
+      chart: external-dns
+      version: 1.16.1
+      sourceRef:
+        kind: HelmRepository
+        name: external-dns
+        namespace: flux-system
+  interval: 1m0s
+  install:
+    remediation:
+      retries: 3
+  values:
+    provider:
+      name: aws
+
+    sources:
+      - service
+      - ingress
+      - crd
+      - traefik-proxy # for traefik ingressroute
