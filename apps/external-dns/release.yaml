@@ -21,9 +21,3 @@ spec:
   values:
     provider:
       name: aws
-
-    sources:
-      - service
-      - ingress
-      - crd
-      - traefik-proxy # for traefik ingressroute
