@@ -34,3 +34,6 @@ spec:
     extraArgs:
       - --aws-prefer-cname
       - --traefik-disable-legacy
+    managedRecordTypes:
+      - A
+      - CNAME
