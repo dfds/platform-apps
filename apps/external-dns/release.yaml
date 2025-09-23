@@ -27,8 +27,9 @@ spec:
       - traefik-proxy
     resources:
       requests:
-        cpu: 1m
-        memory: 15Mi
-      limits:
         cpu: 10m
         memory: 32Mi
+      limits:
+        cpu: 10m
+    extraArgs:
+      - --aws-prefer-cname
