@@ -19,5 +19,16 @@ spec:
     remediation:
       retries: 3
   values:
+    priorityClassName: cluster-infrastructure
     provider:
       name: aws
+    sources:
+      - crd
+      - traefik-proxy
+    resources:
+      requests:
+        cpu: 1m
+        memory: 15Mi
+      limits:
+        cpu: 10m
+        memory: 32Mi
