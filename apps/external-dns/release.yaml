@@ -33,3 +33,4 @@ spec:
         cpu: 10m
     extraArgs:
       - --aws-prefer-cname
+      - --traefik-disable-legacy
