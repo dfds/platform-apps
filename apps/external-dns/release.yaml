@@ -1,0 +1,41 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: external-dns
+  namespace: external-dns
+spec:
+  releaseName: external-dns
+  chart:
+    spec:
+      chart: external-dns
+      version: 1.16.1
+      sourceRef:
+        kind: HelmRepository
+        name: external-dns
+        namespace: flux-system
+  interval: 1m0s
+  install:
+    remediation:
+      retries: 3
+  values:
+    priorityClassName: cluster-infrastructure
+    provider:
+      name: aws
+    txtPrefix: extdns.
+    sources:
+      - crd
+      - traefik-proxy
+    resources:
+      requests:
+        cpu: 10m
+        memory: 32Mi
+      limits:
+        cpu: 10m
+    extraArgs:
+      - --aws-prefer-cname
+      - --traefik-disable-legacy
+    managedRecordTypes:
+      - A
+      - CNAME
+    policy: upsert-only
