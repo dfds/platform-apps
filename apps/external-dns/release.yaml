@@ -9,12 +9,12 @@ spec:
   chart:
     spec:
       chart: external-dns
-      version: 1.16.1
+      version: 1.19.0
       sourceRef:
         kind: HelmRepository
         name: external-dns
         namespace: flux-system
-  interval: 1m0s
+
   install:
     remediation:
       retries: 3
@@ -22,20 +22,18 @@ spec:
     priorityClassName: cluster-infrastructure
     provider:
       name: aws
-    txtPrefix: extdns.
     sources:
       - crd
-      - traefik-proxy
     resources:
       requests:
-        cpu: 10m
-        memory: 32Mi
+        cpu: 100m
+        memory: 64Mi
       limits:
-        memory: 32Mi
+        memory: 64Mi
     extraArgs:
       - --aws-prefer-cname
-      - --traefik-disable-legacy
     managedRecordTypes:
       - A
+      - AAAA
       - CNAME
     policy: upsert-only
