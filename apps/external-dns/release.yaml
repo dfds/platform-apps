@@ -38,3 +38,4 @@ spec:
     managedRecordTypes:
       - A
       - CNAME
+    policy: upsert-only
