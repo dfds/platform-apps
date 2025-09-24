@@ -22,6 +22,7 @@ spec:
     priorityClassName: cluster-infrastructure
     provider:
       name: aws
+    txtPrefix: extdns.
     sources:
       - crd
       - traefik-proxy
