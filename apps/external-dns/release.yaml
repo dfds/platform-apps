@@ -37,4 +37,4 @@ spec:
       - AAAA
       - CNAME
     policy: upsert-only
-    namespaced: true
+    # namespaced: true
