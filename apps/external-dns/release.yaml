@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: external-dns
-      version: 1.19.0
+      version: 1.16.1 #version: 1.19.0
       sourceRef:
         kind: HelmRepository
         name: external-dns
@@ -34,7 +34,7 @@ spec:
       - --aws-prefer-cname
     managedRecordTypes:
       - A
-      - AAAA
+      # - AAAA
       - CNAME
     policy: upsert-only
     # namespaced: true
