@@ -23,3 +23,4 @@ resources:
   - kafka-exporter.yaml
   - 1password-connect.yaml
   - keda.yaml
+  - external-dns.yaml
