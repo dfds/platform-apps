@@ -23,6 +23,7 @@ spec:
   chartRef:
     kind: OCIRepository
     name: karpenter
+    namepspace: flux-system
   values:
     nodeSelector:
       karpenter.sh/controller: "true"
