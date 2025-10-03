@@ -3,7 +3,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: OCIRepository
 metadata:
   name: karpenter
-  namespace: flux-system
+  namespace: karpenter
 spec:
   interval: 5m
   url: oci://public.ecr.aws/karpenter/karpenter
@@ -23,7 +23,6 @@ spec:
   chartRef:
     kind: OCIRepository
     name: karpenter
-    namepspace: flux-system
   values:
     nodeSelector:
       karpenter.sh/controller: "true"
