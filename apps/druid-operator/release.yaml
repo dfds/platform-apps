@@ -4,6 +4,7 @@ metadata:
   name: druid-operator
   namespace: druid-system
 spec:
+  serviceAccountName: helm-controller
   chart:
     spec:
       chart: druid-operator
@@ -19,8 +20,7 @@ spec:
     installCRDS: true
     resources:
       limits:
-        cpu: 500m
         memory: 128Mi
       requests:
         cpu: 10m
-        memory: 64Mi
+        memory: 128Mi
