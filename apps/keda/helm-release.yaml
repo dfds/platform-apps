@@ -27,3 +27,22 @@ spec:
     webhooks:
       replicaCount: 3
     priorityClassName: "system-cluster-critical"
+    resources:
+      operator:
+        limits:
+          memory: 256Mi
+        requests:
+          cpu: 10m
+          memory: 256Mi
+      metricServer:
+        limits:
+          memory: 128Mi
+        requests:
+          cpu: 1m
+          memory: 128Mi
+      webhooks:
+        limits:
+          memory: 64Mi
+        requests:
+          cpu: 1m
+          memory: 64Mi
