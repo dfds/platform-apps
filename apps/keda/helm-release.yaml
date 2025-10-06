@@ -2,8 +2,9 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: keda
-  namespace: flux-system
+  namespace: keda
 spec:
+  serviceAccountName: helm-controller
   targetNamespace: keda
   chart:
     spec:
