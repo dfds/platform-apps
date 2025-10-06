@@ -4,6 +4,7 @@ metadata:
   name: keda
   namespace: flux-system
 spec:
+  serviceAccountName: helm-controller
   targetNamespace: keda
   chart:
     spec:
