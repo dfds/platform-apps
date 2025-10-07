@@ -20,14 +20,8 @@ spec:
     installCRDS: true
     resources:
       limits:
+        cpu: null
         memory: 256Mi
       requests:
         cpu: 10m
         memory: 256Mi
-    rbac:
-      resources:
-        limits:
-          memory: 128Mi
-        requests:
-          cpu: 5m
-          memory: 128Mi
