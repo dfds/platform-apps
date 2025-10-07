@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: datainfra
-        namespace: flux-system
+        namespace: druid-system
   interval: 1m
   values:
     env:
