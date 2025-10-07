@@ -5,7 +5,6 @@ resources:
   - aquasecurity.yaml
   - atlantis.yaml
   - crossplane.yaml
-  - datainfra.yaml
   - dfds.yaml
   - external-secrets.yaml
   - falcosecurity.yaml
