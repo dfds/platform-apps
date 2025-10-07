@@ -4,6 +4,7 @@ kind: HelmRelease
 metadata:
   name: 1password-connect
 spec:
+  serviceAccountName: helm-controller
   releaseName: 1password-connect
   chart:
     spec:
