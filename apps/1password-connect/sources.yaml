@@ -2,7 +2,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: 1password-connect
-  namespace: flux-system
+  namespace: 1password-connect
 spec:
   interval: 5m0s
   url: https://1password.github.io/connect-helm-charts

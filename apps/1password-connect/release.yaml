@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: 1password-connect
-        namespace: flux-system
+        namespace: 1password-connect
   interval: 1m0s
   install:
     remediation:
