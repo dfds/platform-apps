@@ -4,6 +4,7 @@ metadata:
   name: nvidia-device-plugin
   namespace: flux-system
 spec:
+  serviceAccountName: helm-controller
   releaseName: nvidia-device-plugin
   chart:
     spec:

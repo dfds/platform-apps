@@ -4,6 +4,7 @@ metadata:
   name: goldpinger
   namespace: flux-system
 spec:
+  serviceAccountName: helm-controller
   releaseName: goldpinger
   chart:
     spec:

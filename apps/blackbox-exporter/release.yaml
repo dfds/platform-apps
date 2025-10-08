@@ -5,6 +5,7 @@ metadata:
   name: prometheus-blackbox-exporter
   namespace: monitoring
 spec:
+  serviceAccountName: helm-controller
   releaseName: prometheus-blackbox-exporter
   chart:
     spec:

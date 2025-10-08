@@ -4,6 +4,7 @@ metadata:
   name: trivy-operator
   namespace: trivy-system
 spec:
+  serviceAccountName: helm-controller
   releaseName: trivy-operator
   chart:
     spec:

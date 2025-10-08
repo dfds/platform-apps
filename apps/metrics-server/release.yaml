@@ -5,6 +5,7 @@ metadata:
   name: metrics-server
   namespace: metrics-server
 spec:
+  serviceAccountName: helm-controller
   releaseName: metrics-server
   chart:
     spec:

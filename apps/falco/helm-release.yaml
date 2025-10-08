@@ -4,6 +4,7 @@ metadata:
   name: falco
   namespace: flux-system
 spec:
+  serviceAccountName: helm-controller
   targetNamespace: falco
   chart:
     spec:
