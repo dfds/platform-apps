@@ -4,6 +4,7 @@ metadata:
   name: atlantis
   namespace: flux-system
 spec:
+  serviceAccountName: helm-controller
   releaseName: atlantis
   chart:
     spec:
