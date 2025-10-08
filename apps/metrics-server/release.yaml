@@ -5,6 +5,7 @@ metadata:
   name: metrics-server
   namespace: metrics-server
 spec:
+  serviceAccountName: helm-controller
   releaseName: metrics-server
   chart:
     spec:
@@ -13,7 +14,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: metrics-server
-        namespace: flux-system
+        namespace: metrics-server
   interval: 1m0s
   install:
     remediation:

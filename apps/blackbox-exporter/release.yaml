@@ -5,6 +5,7 @@ metadata:
   name: prometheus-blackbox-exporter
   namespace: monitoring
 spec:
+  serviceAccountName: helm-controller
   releaseName: prometheus-blackbox-exporter
   chart:
     spec:
@@ -13,13 +14,12 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: prometheus-community
-        namespace: flux-system
+        namespace: monitoring
   interval: 1m0s
   install:
     remediation:
       retries: 3
   values:
-    pspEnabled: false
     config:
       modules:
         http_2xx:

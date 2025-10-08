@@ -5,6 +5,7 @@ metadata:
   name: arc-runner-set
   namespace: arc-runners
 spec:
+  serviceAccountName: helm-controller
   releaseName: arc-runner-set
   chart:
     spec:

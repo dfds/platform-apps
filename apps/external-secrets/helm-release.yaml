@@ -4,6 +4,8 @@ metadata:
   name: external-secrets
   namespace: external-secrets
 spec:
+  serviceAccountName: helm-controller
+  releaseName: external-secrets
   chart:
     spec:
       chart: external-secrets

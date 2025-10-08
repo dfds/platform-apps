@@ -5,6 +5,7 @@ metadata:
   name: traefik-green-variant
   namespace: traefik-green-variant
 spec:
+  serviceAccountName: helm-controller
   releaseName: traefik-green-variant
   chart:
     spec:
