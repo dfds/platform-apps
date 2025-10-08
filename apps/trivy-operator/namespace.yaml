@@ -3,4 +3,4 @@ kind: Namespace
 metadata:
   name: trivy-system
   labels:
-    pod-security.kubernetes.io/enforce: privilegied # Needed to run job/node-collector
+    pod-security.kubernetes.io/enforce: privileged # Needed to run job/node-collector
