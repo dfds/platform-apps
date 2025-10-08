@@ -46,3 +46,6 @@ spec:
         scrape-service-metrics: "true"
     nodeCollector:
       excludeNodes: "dedicated=cargoallocation,dedicated=dataplatform,dedicated=observability"
+      tolerations:
+        - operator: Exists
+          effect: NoSchedule
