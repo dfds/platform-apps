@@ -21,11 +21,10 @@ spec:
   values:
     resources:
       limits:
-        cpu: 500m
-        memory: 3Gi
+        memory: 1Gi # Patch from Terraform if necessary
       requests:
         cpu: 100m
-        memory: 512Mi
+        memory: 1Gi # Patch from Terraform if necessary
     service:
       headless: false
     serviceMonitor:
