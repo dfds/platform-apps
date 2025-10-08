@@ -12,7 +12,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: datainfra
-        namespace: flux-system
+        namespace: druid-system
   interval: 1m
   values:
     env:
@@ -20,7 +20,8 @@ spec:
     installCRDS: true
     resources:
       limits:
-        memory: 128Mi
+        cpu: null
+        memory: 256Mi
       requests:
         cpu: 10m
-        memory: 128Mi
+        memory: 256Mi
