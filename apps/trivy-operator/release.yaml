@@ -44,3 +44,14 @@ spec:
     operator:
       labels:
         scrape-service-metrics: "true"
+    nodeCollector:
+      tolerations:
+        - key: cargoallocation.dfds
+          operator: Exists
+          effect: NoSchedule
+        - key: dataplatform.dfds
+          operator: Exists
+          effect: NoSchedule
+        - key: observability.dfds
+          operator: Exists
+          effect: NoSchedule
