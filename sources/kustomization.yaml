@@ -16,6 +16,5 @@ resources:
   - kyverno.yaml
   - nvidia-device-plugin.yaml
   - policy-reporter.yaml
-  - stable.yaml
   - traefik.yaml
   - vmware-tanzu.yaml
