@@ -5,6 +5,7 @@ metadata:
   name: crossplane-operator
   namespace: upbound-system
 spec:
+  serviceAccountName: helm-controller
   releaseName: crossplane-operator-dfds
   chart:
     spec:

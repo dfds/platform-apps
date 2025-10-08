@@ -5,6 +5,7 @@ metadata:
   name: kyverno
   namespace: kyverno
 spec:
+  serviceAccountName: helm-controller
   releaseName: kyverno
   chart:
     spec:

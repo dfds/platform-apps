@@ -5,6 +5,7 @@ metadata:
   name: arc
   namespace: arc-systems
 spec:
+  serviceAccountName: helm-controller
   releaseName: arc
   chart:
     spec:

@@ -4,6 +4,7 @@ metadata:
   name: grafana-k8s-monitoring
   namespace: flux-system
 spec:
+  serviceAccountName: helm-controller
   releaseName: grafana-k8s-monitoring
   chart:
     spec:
