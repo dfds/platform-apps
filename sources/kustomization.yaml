@@ -6,20 +6,19 @@ resources:
   - atlantis.yaml
   - crossplane.yaml
   - dfds.yaml
+  - external-dns.yaml
   - external-secrets.yaml
   - falcosecurity.yaml
   - github-arc.yaml
   - goldpinger.yaml
   - grafana.yaml
+  - kafka-exporter.yaml
+  - keda.yaml
   - kyverno.yaml
-  - policy-reporter.yaml
   - metrics-server.yaml
   - nvidia-device-plugin.yaml
   - podinfo.yaml
-  - prometheus-community.yaml
+  - policy-reporter.yaml
   - stable.yaml
   - traefik.yaml
   - vmware-tanzu.yaml
-  - kafka-exporter.yaml
-  - keda.yaml
-  - external-dns.yaml
