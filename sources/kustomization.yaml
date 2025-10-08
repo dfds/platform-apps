@@ -17,7 +17,6 @@ resources:
   - kyverno.yaml
   - metrics-server.yaml
   - nvidia-device-plugin.yaml
-  - podinfo.yaml
   - policy-reporter.yaml
   - stable.yaml
   - traefik.yaml
