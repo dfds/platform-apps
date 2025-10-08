@@ -10,7 +10,6 @@ resources:
   - external-secrets.yaml
   - falcosecurity.yaml
   - github-arc.yaml
-  - goldpinger.yaml
   - grafana.yaml
   - kafka-exporter.yaml
   - keda.yaml
