@@ -19,13 +19,12 @@ spec:
     remediation:
       retries: 3
   values:
-    resources:
+    resources: # Resource requirements for the Trivy Operator.
       limits:
-        cpu: 500m
-        memory: 3Gi
+        memory: 1Gi # Patch from Terraform if necessary
       requests:
         cpu: 100m
-        memory: 512Mi
+        memory: 1Gi # Patch from Terraform if necessary
     service:
       headless: false
     serviceMonitor:
@@ -35,6 +34,18 @@ spec:
       ignoreUnfixed: true
       labels:
         scrape-service-metrics: "true"
+      resources: # Resource requirements for the Trivy scan jobs.
+        limits:
+          cpu: null
+          memory: 512Mi # Patch from Terraform if necessary
+        requests:
+          cpu: 100m
+          memory: 512Mi # Patch from Terraform if necessary
     operator:
       labels:
         scrape-service-metrics: "true"
+    nodeCollector:
+      excludeNodes: "dedicated=cargoallocation,dedicated=dataplatform,dedicated=observability"
+      tolerations:
+        - operator: Exists
+          effect: NoSchedule
