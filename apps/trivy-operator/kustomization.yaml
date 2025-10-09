@@ -3,4 +3,5 @@ kind: Kustomization
 namespace: trivy-system
 resources:
   - namespace.yaml
+  - sources.yaml
   - release.yaml
