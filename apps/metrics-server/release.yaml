@@ -22,3 +22,10 @@ spec:
   values:
     args:
       - --kubelet-preferred-address-types=InternalIP,ExternalIP,Hostname
+    resources:
+      limits:
+        cpu: null
+        memory: 256Mi
+      requests:
+        cpu: 100m
+        memory: 256Mi
