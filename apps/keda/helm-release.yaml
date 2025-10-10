@@ -30,18 +30,21 @@ spec:
     resources:
       operator:
         limits:
+          cpu: null
           memory: 256Mi
         requests:
           cpu: 10m
           memory: 256Mi
       metricServer:
         limits:
+          cpu: null
           memory: 128Mi
         requests:
           cpu: 1m
           memory: 128Mi
       webhooks:
         limits:
+          cpu: null
           memory: 64Mi
         requests:
           cpu: 1m
