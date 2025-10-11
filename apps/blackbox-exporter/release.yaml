@@ -38,3 +38,10 @@ spec:
             follow_redirects: true
             preferred_ip_protocol: "ip4"
     priorityClassName: cluster-observability
+    resources:
+      limits:
+        cpu: null
+        memory: 64Mi
+      requests:
+        cpu: 1m
+        memory: 64Mi
