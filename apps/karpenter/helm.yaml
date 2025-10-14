@@ -27,8 +27,8 @@ spec:
     nodeSelector:
       karpenter.sh/controller: "true"
     settings:
-      clusterName: ${cluster_name}
-      interruptionQueue: Karpenter-${cluster_name}
+      clusterName: ${flux_cluster_name}
+      interruptionQueue: Karpenter-${flux_cluster_name}
       featureGates:
         spotToSpotConsolidation: true
     controller:
