@@ -20,7 +20,6 @@ spec:
     priorityClassName: cluster-infrastructure
     resources:
       limits:
-        cpu: null
         memory: 256Mi
       requests:
         cpu: 200m
@@ -29,7 +28,6 @@ spec:
       priorityClassName: cluster-infrastructure
       resources:
         limits:
-          cpu: null
           memory: 64Mi
         requests:
           cpu: 1m
@@ -38,7 +36,6 @@ spec:
       priorityClassName: cluster-infrastructure
       resources:
         limits:
-          cpu: null
           memory: 128Mi
         requests:
           cpu: 1m
