@@ -18,6 +18,7 @@ metadata:
   namespace: karpenter
 spec:
   interval: 5m
+  serviceAccountName: helm-controller
   targetNamespace: karpenter
   releaseName: karpenter
   chartRef:
