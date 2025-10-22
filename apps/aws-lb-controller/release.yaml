@@ -7,11 +7,11 @@ spec:
   releaseName: aws-lb-controller
   chart:
     spec:
-      chart: aws-lb-controller
+      chart: aws-load-balancer-controller
       version: 1.14.1
       sourceRef:
         kind: HelmRepository
-        name: aws-lb-controller
+        name: eks
         namespace: flux-system
   interval: 1m
   install:
