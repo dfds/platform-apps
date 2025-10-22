@@ -16,3 +16,4 @@ resources:
   - policy-reporter.yaml
   - traefik.yaml
   - vmware-tanzu.yaml
+  - aws-load-balancer-controller.yaml
