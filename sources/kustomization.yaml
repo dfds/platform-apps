@@ -2,24 +2,18 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - aquasecurity.yaml
   - atlantis.yaml
   - crossplane.yaml
-  - datainfra.yaml
   - dfds.yaml
+  - external-dns.yaml
   - external-secrets.yaml
   - falcosecurity.yaml
   - github-arc.yaml
-  - goldpinger.yaml
   - grafana.yaml
+  - kafka-exporter.yaml
+  - keda.yaml
   - kyverno.yaml
-  - metrics-server.yaml
-  - nvidia-device-plugin.yaml
-  - podinfo.yaml
-  - prometheus-community.yaml
-  - stable.yaml
+  - policy-reporter.yaml
   - traefik.yaml
   - vmware-tanzu.yaml
-  - kafka-exporter.yaml
-  - 1password-connect.yaml
-  - keda.yaml
+  - aws-lb-controller.yaml

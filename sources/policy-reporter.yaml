@@ -1,9 +1,8 @@
----
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: prometheus-community
+  name: policy-reporter
   namespace: flux-system
 spec:
   interval: 5m0s
-  url: https://prometheus-community.github.io/helm-charts
+  url: https://kyverno.github.io/policy-reporter

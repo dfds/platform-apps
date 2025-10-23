@@ -1,8 +1,8 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: goldpinger
+  name: external-dns
   namespace: flux-system
 spec:
   interval: 5m0s
-  url: https://bloomberg.github.io/goldpinger
+  url: https://kubernetes-sigs.github.io/external-dns

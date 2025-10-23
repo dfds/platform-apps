@@ -2,8 +2,9 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: keda
-  namespace: flux-system
+  namespace: keda
 spec:
+  serviceAccountName: helm-controller
   targetNamespace: keda
   chart:
     spec:
@@ -26,3 +27,25 @@ spec:
     webhooks:
       replicaCount: 3
     priorityClassName: "system-cluster-critical"
+    resources:
+      operator:
+        limits:
+          cpu: null
+          memory: 256Mi
+        requests:
+          cpu: 10m
+          memory: 256Mi
+      metricServer:
+        limits:
+          cpu: null
+          memory: 128Mi
+        requests:
+          cpu: 1m
+          memory: 128Mi
+      webhooks:
+        limits:
+          cpu: null
+          memory: 64Mi
+        requests:
+          cpu: 1m
+          memory: 64Mi

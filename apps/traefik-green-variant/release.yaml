@@ -5,11 +5,12 @@ metadata:
   name: traefik-green-variant
   namespace: traefik-green-variant
 spec:
+  serviceAccountName: helm-controller
   releaseName: traefik-green-variant
   chart:
     spec:
       chart: traefik
-      version: 37.0.0
+      version: 37.1.1
       sourceRef:
         kind: HelmRepository
         name: traefik

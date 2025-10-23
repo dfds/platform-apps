@@ -1,0 +1,29 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: aws-lb-controller
+  namespace: aws-lb-controller
+spec:
+  releaseName: aws-lb-controller
+  chart:
+    spec:
+      chart: aws-load-balancer-controller
+      version: 1.14.1
+      sourceRef:
+        kind: HelmRepository
+        name: eks
+        namespace: flux-system
+  interval: 1m
+  install:
+    remediation:
+      retries: 3
+  values:
+    serviceAccount:
+      name: aws-lb-controller
+    priorityClassName: cluster-infrastructure
+    resources:
+      requests:
+        cpu: 100m
+        memory: 64Mi
+      limits:
+        memory: 64Mi
