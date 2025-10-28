@@ -35,12 +35,12 @@ spec:
         enabled: true
     config:
       webhooks:
-        - namespaceSelector:
-            matchExpressions:
-              - key: kubernetes.io/metadata.name
-                operator: NotIn
-                values:
-                  - kube-system
-                  - kyverno
-                  - flux-system
-                  - monitoring
+        namespaceSelector:
+          matchExpressions:
+            - key: kubernetes.io/metadata.name
+              operator: NotIn
+              values:
+                - kube-system
+                - kyverno
+                - flux-system
+                - monitoring
