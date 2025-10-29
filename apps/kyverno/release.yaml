@@ -24,8 +24,18 @@ spec:
       limits:
         memory: "2048Mi"
     replicaCount: 3
-    webhooks:
-      - namespaceSelector:
+    admissionController:
+      container:
+        resources:
+          limits:
+            memory: "2048Mi"
+      replicas: 3
+    features:
+      forceFailurePolicyIgnore:
+        enabled: true
+    config:
+      webhooks:
+        namespaceSelector:
           matchExpressions:
             - key: kubernetes.io/metadata.name
               operator: NotIn
