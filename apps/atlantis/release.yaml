@@ -265,6 +265,30 @@ spec:
         secretKeyRef:
           key: DEVELOPER_PLATFORM_DEPLOY_AWS_SECRET_ACCESS_KEY
           name: atlantis-environment
+      - name: STAGING_velero_azure_subscription_id
+        secretKeyRef:
+          key: STAGING_velero_azure_subscription_id
+          name: atlantis-environment
+      - name: STAGING_velero_azure_resource_group_name
+        secretKeyRef:
+          key: STAGING_velero_azure_resource_group_name
+          name: atlantis-environment
+      - name: STAGING_velero_azure_storage_account_name
+        secretKeyRef:
+          key: STAGING_velero_azure_storage_account_name
+          name: atlantis-environment
+      - name: PRODUCTION_velero_azure_subscription_id
+        secretKeyRef:
+          key: PRODUCTION_velero_azure_subscription_id
+          name: atlantis-environment
+      - name: PRODUCTION_velero_azure_resource_group_name
+        secretKeyRef:
+          key: PRODUCTION_velero_azure_resource_group_name
+          name: atlantis-environment
+      - name: PRODUCTION_velero_azure_storage_account_name
+        secretKeyRef:
+          key: PRODUCTION_velero_azure_storage_account_name
+          name: atlantis-environment
     extraArgs:
       - --parallel-pool-size=15
     github: {} # Patch this from Terraform
