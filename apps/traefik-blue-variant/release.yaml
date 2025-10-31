@@ -61,7 +61,8 @@ spec:
     gateway:
       listeners:
         web:
-          namespacePolicy: All
+          namespacePolicy:
+            from: All
     priorityClassName: cluster-infrastructure
     resources:
       requests:
