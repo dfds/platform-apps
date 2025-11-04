@@ -29,10 +29,10 @@ spec:
         resources:
           limits:
             memory: "2048Mi"
-        extraArgs:
-          - --autoUpdateWebhooks=false
       replicas: 3
     features:
+      # autoUpdateWebhooks:
+      #   enabled: false
       forceFailurePolicyIgnore:
         enabled: true
     config:
