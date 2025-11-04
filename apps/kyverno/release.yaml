@@ -31,8 +31,9 @@ spec:
             memory: "2048Mi"
       replicas: 3
     features:
-      # autoUpdateWebhooks:
-      #   enabled: false
+      # REMOVE AUTO UPDATES, IT'S FOR DEMO ONLY
+      autoUpdateWebhooks:
+        enabled: false
       forceFailurePolicyIgnore:
         enabled: false
     config:
