@@ -34,7 +34,7 @@ spec:
       # autoUpdateWebhooks:
       #   enabled: false
       forceFailurePolicyIgnore:
-        enabled: true
+        enabled: false
     config:
       webhooks:
         namespaceSelector:
