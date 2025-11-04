@@ -32,8 +32,8 @@ spec:
       replicas: 3
     features:
       # REMOVE AUTO UPDATES, IT'S FOR DEMO ONLY
-      autoUpdateWebhooks:
-        enabled: false
+      # autoUpdateWebhooks:
+      #   enabled: false
       forceFailurePolicyIgnore:
         enabled: false
     config:
