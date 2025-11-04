@@ -29,6 +29,8 @@ spec:
         resources:
           limits:
             memory: "2048Mi"
+        extraArgs:
+          - --autoUpdateWebhooks=false
       replicas: 3
     features:
       forceFailurePolicyIgnore:
