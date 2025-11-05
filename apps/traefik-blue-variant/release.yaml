@@ -56,6 +56,13 @@ spec:
     providers:
       kubernetesIngress:
         enabled: true
+      kubernetesGateway:
+        enabled: true
+    gateway:
+      listeners:
+        web:
+          namespacePolicy:
+            from: All
     priorityClassName: cluster-infrastructure
     resources:
       requests:
