@@ -40,7 +40,7 @@ spec:
         enabled: true
     metricsConfig:
       metricsExposure:
-        kyverno_policy_results:
+        kyverno_policy_results_total:
           disabledLabelDimensions: []
         kyverno_admission_requests_total:
           disabledLabelDimensions: []
