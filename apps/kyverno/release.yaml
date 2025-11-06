@@ -38,6 +38,14 @@ spec:
     features:
       forceFailurePolicyIgnore:
         enabled: true
+    metricsConfig:
+      metricsExposure:
+        kyverno_policy_results_total:
+          disabledLabelDimensions: []
+        kyverno_admission_requests_total:
+          disabledLabelDimensions: []
+        kyverno_admission_review_duration_seconds:
+          disabledLabelDimensions: []
     config:
       webhooks:
         namespaceSelector:
