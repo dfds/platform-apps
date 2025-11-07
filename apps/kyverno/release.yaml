@@ -37,7 +37,7 @@ spec:
           scrape-service-metrics: "true"
     features:
       forceFailurePolicyIgnore:
-        enabled: false
+        enabled: true
     metricsConfig:
       metricsExposure:
         kyverno_policy_results_total:
