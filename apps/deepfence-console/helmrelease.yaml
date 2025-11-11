@@ -1,0 +1,86 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: deepfence-console
+  namespace: deepfence-console
+spec:
+  serviceAccountName: helm-controller
+  targetNamespace: deepfence-console
+  chart:
+    spec:
+      chart: deepfence-console
+      version: 2.5.7
+      sourceRef:
+        kind: HelmRepository
+        name: deepfence
+        namespace: flux-system
+  interval: 5m
+  timeout: 15m
+  values:
+    # Image configuration
+    image:
+      tag: "2.5.7"
+
+    # Network configuration
+    managementConsolePort: "443"
+
+    # Storage configuration - adjust based on your needs
+    volume:
+      storageClass: ""  # Use default storage class
+      esStorage: 30Gi
+      postgresStorage: 30Gi
+      kafkaStorage: 30Gi
+
+    # Service type - change to LoadBalancer if you need external access
+    service:
+      type: ClusterIP
+
+    # Database settings - auto-create secrets
+    db:
+      createDbSecret: true
+
+    # Resource requests and limits for core components
+    router:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          cpu: null
+          memory: 256Mi
+
+    api:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: null
+          memory: 512Mi
+
+    celery:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 512Mi
+        limits:
+          cpu: null
+          memory: 1Gi
+
+    backend:
+      resources:
+        requests:
+          cpu: 100m
+          memory: 256Mi
+        limits:
+          cpu: null
+          memory: 512Mi
+
+    ui:
+      resources:
+        requests:
+          cpu: 50m
+          memory: 128Mi
+        limits:
+          cpu: null
+          memory: 256Mi

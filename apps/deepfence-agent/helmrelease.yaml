@@ -1,0 +1,55 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: deepfence-agent
+  namespace: deepfence
+spec:
+  serviceAccountName: helm-controller
+  targetNamespace: deepfence
+  chart:
+    spec:
+      chart: deepfence-agent
+      version: 2.5.7
+      sourceRef:
+        kind: HelmRepository
+        name: deepfence
+        namespace: flux-system
+  interval: 5m
+  timeout: 15m
+  values:
+    # Management Console configuration
+    # IMPORTANT: These values MUST be set in the tenant-specific overlay
+    managementConsoleUrl: ""  # e.g., "https://deepfence-console.example.com" or "https://deepfence-router.deepfence-console.svc.cluster.local"
+    deepfenceKey: ""  # API key from the console (Settings → User Management)
+
+    # Image configuration
+    image:
+      tag: "2.5.7"
+
+    # Cluster name for identification
+    clusterName: "k8s-cluster"
+
+    # Mount container runtime socket for scanning
+    mountContainerRuntimeSocket:
+      dockerSock: false
+      containerdSock: true
+      crioSock: false
+
+    # Resource configuration for agent pods
+    resources:
+      requests:
+        cpu: 150m
+        memory: 512Mi
+      limits:
+        cpu: null
+        memory: 1Gi
+
+    # Tolerations to run on all nodes
+    tolerations:
+      - effect: NoSchedule
+        operator: Exists
+      - effect: NoExecute
+        operator: Exists
+
+    # Priority class for agent pods
+    priorityClassName: "system-node-critical"
