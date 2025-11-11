@@ -33,7 +33,6 @@ spec:
       serviceMonitor:
         enabled: true
         additionalLabels:
-          # Metrics scraping enabled
           scrape-service-metrics: "true"
     features:
       forceFailurePolicyIgnore:
