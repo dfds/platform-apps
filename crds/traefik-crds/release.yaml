@@ -19,5 +19,7 @@ spec:
   install:
     remediation:
       retries: 3
+  upgrade:
+    crds: CreateReplace
   values:
     gatewayAPI: true
