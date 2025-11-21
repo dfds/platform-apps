@@ -43,8 +43,6 @@ spec:
       web:
         forwardedHeaders:
           insecure: true
-    additionalArguments:
-      - "--metrics.prometheus"
     logs:
       general:
         level: ERROR
@@ -54,6 +52,8 @@ spec:
         filters:
           statuscodes: "300-399,400-499,500-599"
     providers:
+      kubernetesCRD:
+        allowCrossNamespace: true
       kubernetesIngress:
         enabled: true
       kubernetesGateway:
