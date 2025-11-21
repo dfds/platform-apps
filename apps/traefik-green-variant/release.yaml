@@ -10,13 +10,14 @@ spec:
   chart:
     spec:
       chart: traefik
-      version: 37.1.1
+      version: 37.4.0
       sourceRef:
         kind: HelmRepository
         name: traefik
         namespace: flux-system
   interval: 1m0s
   install:
+    crds: Skip
     remediation:
       retries: 3
   values:
@@ -43,8 +44,13 @@ spec:
       web:
         forwardedHeaders:
           insecure: true
-    additionalArguments:
-      - "--metrics.prometheus"
+    metrics:
+      prometheus:
+        service:
+          enabled: true
+          labels:
+            app: traefik-green-variant-metrics
+            scrape-service-metrics: "true"
     logs:
       general:
         level: ERROR
@@ -54,6 +60,8 @@ spec:
         filters:
           statuscodes: "300-399,400-499,500-599"
     providers:
+      kubernetesCRD:
+        allowCrossNamespace: true
       kubernetesIngress:
         enabled: true
       kubernetesGateway:
