@@ -5,4 +5,4 @@ namespace: traefik-green-variant
 resources:
   - namespace.yaml
   - release.yaml
-  - service.yaml
+  #- service.yaml
