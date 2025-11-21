@@ -19,3 +19,5 @@ spec:
   install:
     remediation:
       retries: 3
+  values:
+    gatewayAPI: true
