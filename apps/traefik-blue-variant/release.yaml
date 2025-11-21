@@ -43,6 +43,13 @@ spec:
       web:
         forwardedHeaders:
           insecure: true
+    metrics:
+      prometheus:
+        service:
+          enabled: true
+          labels:
+            app: traefik-blue-variant-metrics
+            scrape-service-metrics: "true"
     logs:
       general:
         level: ERROR
