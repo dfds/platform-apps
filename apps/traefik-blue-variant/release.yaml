@@ -17,6 +17,7 @@ spec:
         namespace: flux-system
   interval: 1m0s
   install:
+    crds: Skip
     remediation:
       retries: 3
   values:
