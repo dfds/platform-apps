@@ -4,3 +4,5 @@ namespace: karpenter
 resources:
   - namespace.yaml
   - helm.yaml
+  - nodes/ev2nodeclasses.yaml
+  - nodes/pools/${flux_karpenter_node_pools:=prod}
