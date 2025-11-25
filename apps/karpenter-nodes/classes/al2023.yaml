@@ -6,6 +6,12 @@ metadata:
   annotations:
     kubernetes.io/description: "EC2NodeClass for running Amazon Linux 2023 nodes with custom user data"
 spec:
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: ${flux_karpenter_node_volume_size}
+        volumeType: gp3
+        encrypted: true
   role: "karpenter-${flux_cluster_name}"
   amiFamily: AL2023
   amiSelectorTerms:
@@ -32,18 +38,19 @@ spec:
     sudo sysctl -p
 
     DOCKER_HUB_CREDS=$(aws ssm get-parameter --name /eks/${flux_cluster_name}/dockerhub --with-decrypt --query 'Parameter.Value' --output text)
-    DOCKER_HUB_USER=$(echo "${DOCKER_HUB_CREDS}" | jq .username)
-    DOCKER_HUB_PASSWD=$(echo "${DOCKER_HUB_CREDS}" | jq .password)
+    DOCKER_HUB_USER=$(echo "$DOCKER_HUB_CREDS" | jq .username)
+    DOCKER_HUB_PASSWD=$(echo "$DOCKER_HUB_CREDS" | jq .password)
     cat << EOF >> /etc/containerd/config.toml
       [plugins."io.containerd.cri.v1.images".registry.configs]
         [plugins."io.containerd.cri.v1.images".registry.configs."registry-1.docker.io".auth]
-          username = ${DOCKER_HUB_USER}
-          password = ${DOCKER_HUB_PASSWD}
+          username = $DOCKER_HUB_USER
+          password = $DOCKER_HUB_PASSWD
     EOF
     service containerd restart
 
     --BOUNDARY
     Content-Type: application/node.eks.aws
+
     ---
     apiVersion: node.eks.aws/v1alpha1
     kind: NodeConfig
@@ -58,6 +65,7 @@ spec:
           systemReserved:
             cpu: 700m
             memory: 1024Mi
+
     --BOUNDARY--
 
 ---
@@ -68,6 +76,12 @@ metadata:
   annotations:
     kubernetes.io/description: "EC2NodeClass for running Amazon Linux 2023 latest AMI nodes with custom user data"
 spec:
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: ${flux_karpenter_node_volume_size}
+        volumeType: gp3
+        encrypted: true
   role: "karpenter-${flux_cluster_name}"
   amiFamily: AL2023
   amiSelectorTerms:
@@ -94,18 +108,19 @@ spec:
     sudo sysctl -p
 
     DOCKER_HUB_CREDS=$(aws ssm get-parameter --name /eks/${flux_cluster_name}/dockerhub --with-decrypt --query 'Parameter.Value' --output text)
-    DOCKER_HUB_USER=$(echo "${DOCKER_HUB_CREDS}" | jq .username)
-    DOCKER_HUB_PASSWD=$(echo "${DOCKER_HUB_CREDS}" | jq .password)
+    DOCKER_HUB_USER=$(echo "$DOCKER_HUB_CREDS" | jq .username)
+    DOCKER_HUB_PASSWD=$(echo "$DOCKER_HUB_CREDS" | jq .password)
     cat << EOF >> /etc/containerd/config.toml
       [plugins."io.containerd.cri.v1.images".registry.configs]
         [plugins."io.containerd.cri.v1.images".registry.configs."registry-1.docker.io".auth]
-          username = ${DOCKER_HUB_USER}
-          password = ${DOCKER_HUB_PASSWD}
+          username = $DOCKER_HUB_USER
+          password = $DOCKER_HUB_PASSWD
     EOF
     service containerd restart
 
     --BOUNDARY
     Content-Type: application/node.eks.aws
+
     ---
     apiVersion: node.eks.aws/v1alpha1
     kind: NodeConfig
@@ -120,4 +135,5 @@ spec:
           systemReserved:
             cpu: 700m
             memory: 1024Mi
+
     --BOUNDARY--
