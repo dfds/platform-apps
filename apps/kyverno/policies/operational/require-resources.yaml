@@ -1,0 +1,78 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-resources
+  annotations:
+    policies.kyverno.io/title: Require Resource Limits and Requests
+    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Containers must specify CPU requests (without limits) and memory requests/limits (equal).
+      CPU limits should not be set to avoid throttling. Memory requests and limits must be equal.
+      This prevents resource exhaustion and ensures fair resource allocation.
+      Note: This is a best practice but not part of the Pod Security Standards.
+spec:
+  validationFailureAction: Audit
+  emitWarning: false
+  background: true
+  rules:
+    - name: require-cpu-resources
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kyverno
+      validate:
+        message: >-
+          CPU resources must be configured correctly. All containers must specify
+          spec.containers[*].resources.requests.cpu but must NOT set
+          spec.containers[*].resources.limits.cpu (to avoid CPU throttling).
+        foreach:
+        - list: "request.object.spec.containers"
+          deny:
+            conditions:
+              any:
+              - key: "{{ element.resources.requests.cpu || '' }}"
+                operator: Equals
+                value: ""
+              - key: "{{ element.resources.limits.cpu || '' }}"
+                operator: NotEquals
+                value: ""
+    - name: require-memory-resources
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kyverno
+      validate:
+        message: >-
+          Memory resources must be configured correctly. All containers must specify
+          both spec.containers[*].resources.requests.memory and
+          spec.containers[*].resources.limits.memory, and they must be equal.
+        foreach:
+        - list: "request.object.spec.containers"
+          deny:
+            conditions:
+              any:
+              - key: "{{ element.resources.requests.memory || '' }}"
+                operator: Equals
+                value: ""
+              - key: "{{ element.resources.limits.memory || '' }}"
+                operator: Equals
+                value: ""
+              - key: "{{ element.resources.requests.memory || '' }}"
+                operator: NotEquals
+                value: "{{ element.resources.limits.memory || '' }}"
