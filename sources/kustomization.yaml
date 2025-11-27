@@ -12,7 +12,6 @@ resources:
   - grafana.yaml
   - kafka-exporter.yaml
   - keda.yaml
-  - kyverno.yaml
   - policy-reporter.yaml
   - traefik.yaml
   - vmware-tanzu.yaml
