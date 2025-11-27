@@ -6,6 +6,27 @@ The *sources* directory contains Flux CD sources, like Helm repositories.
 
 The *apps* directory contains sub directories with Flux CD Helm releases, charts and opinionated chart values.
 
+## Development practices
+
+- Test on main branch (or feature branch) in your sandbox.
+- Merge to main if you had a feature branch.
+- Create a tag and release from main branch using semantic versioning, like v1.2.3
+- Test release in QA
+- If successful in QA, deploy to staging
+- If successful in staging, deploy to prod
+- If successful in prod, deploy to standby
+- If any step is unsuccessful, repeat the process
+
+![GIt workflow](./platform-apps-git.drawio.png "Git workflow")
+
+Look at [RELEASE.md](RELEASE.md) for the full process flow and timeline.
+
+### Automatic release promotion
+
+- All major, minor and patch versions will be automatically available in QA.
+- All minor and patch versions will be automatically available in staging.
+- All patch versions will be automatically available in prod and standby.
+
 ## Usage
 
 In order to implement the resources in this repository you need the following on your **implementation** side:
@@ -75,18 +96,4 @@ patches:
 
 In our setup we use the the <https://github.com/dfds/infrastructure-modules/tree/master/_sub/compute/k8s-traefik-flux> Terraform module to generate the kustomization.yaml files.
 
-## Development practices
 
-- Create a feature branch from main branch.
-- When you are ready to test your feature in QA, merge it to the qa branch without a pull request.
-- When you are ready with your feature, raise a pull request
-- Delete your feature branch after merge to main
-
-![GIt workflow](./platform-apps-git.drawio.png "Git workflow")
-
-### Merge conflicts
-
-- We have a nightly build than merges main into qa and staging branches.
-- Because different feature branches might be updating the same files, we sometimes get merge conflicts.
-- These merge conflicts are discovered when the nightly job merges from main to qa.
-- These merge conflicts needs to be fixed manually.

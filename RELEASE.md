@@ -1,95 +1,48 @@
 # Release process
 
-## Process Details
-
-- This repo has just one branch, which is the main branch.
-- Changes to the main branch comes from pull requests.
-- Feature branches and hotfix branches are tested in sandbox.
-- Every merge to main branch trigger a workflow that creates a pre-release tag and a GitHub pre-release.
-- Pre-release tags follow the naming standard v<semantic-version>-alpha.
-- Pre-releases are tested in QA.
-- It QA testing is successful, then create a stable release tag and a release version from the pre-release.
-- Stable releases follow the naming standard v<semantic-version>.
-- Update staging to use the latest stable release.
-- If staging is successful, then update prod to use the latest stable release.
-
 ## Process Flow
 
 ```mermaid
 flowchart TD
-    A[Feature/Hotfix Branch] --> A1[Test in sandbox]
-    A1 -->|Success| B[Create Pull Request]
-    A1 -->|Failure| A2[Fix issues]
-    A2 --> A1
-
-    B --> C[Merge to main branch]
-
-    C --> D[Trigger workflow]
-    D --> E[Create pre-release tag:<br/>v&lt;semantic-version&gt;-alpha]
-    E --> F[GitHub pre-release]
-
-    F --> G[Test in QA environment]
-    G -->|Success| H[Create stable release tag:<br/>v&lt;semantic-version&gt;]
-    G -->|Failure| I[Fix issues]
-    I --> J[Create new feature/hotfix branch]
-    J --> A
-
-    H --> K[Create stable GitHub release]
-    K --> L[Update staging environment]
-
-    L --> M{Staging<br/>successful?}
-    M -->|Success| N[Update production environment]
-    M -->|Failure| O[Rollback/Fix]
-    O --> P[Create hotfix branch]
-    P --> A
-
-    %% Branch and environment styling
-    classDef branchBox fill:#e1f5fe,stroke:#01579b,stroke-width:2px
-    classDef processBox fill:#f3e5f5,stroke:#4a148c,stroke-width:2px
-    classDef testBox fill:#fff3e0,stroke:#e65100,stroke-width:2px
-    classDef deployBox fill:#e8f5e8,stroke:#2e7d32,stroke-width:2px
-    classDef releaseBox fill:#fce4ec,stroke:#880e4f,stroke-width:2px
-
-    class A,B,C,J,P branchBox
-    class D,E,F,H,K processBox
-    class A1,G,L,M testBox
-    class N deployBox
-    class H,K releaseBox
+    A[Test on main/feature branch in sandbox] --> B{Merge to main?}
+    B -->|Yes| C[Create tag and release from main<br/>using semantic versioning v1.2.3]
+    B -->|Already on main| C
+    C --> D[Test release in QA]
+    D --> E{Successful in QA?}
+    E -->|No| F[Repeat process]
+    E -->|Yes| G[Deploy to staging]
+    G --> H{Successful in staging?}
+    H -->|No| F
+    H -->|Yes| I[Deploy to prod]
+    I --> J{Successful in prod?}
+    J -->|No| F
+    J -->|Yes| K[Deploy to standby]
+    K --> L{Successful in standby?}
+    L -->|No| F
+    L -->|Yes| M[Done ✓]
+    F --> A
 ```
 
 ## Release Timeline
 
 ```mermaid
 timeline
-    title Release Process Timeline
-
+    title Release Pipeline Timeline
     section Development
-        Feature Branch    : Create feature/hotfix branch
-                         : Develop & commit changes
-                         : Test in sandbox environment
-        Pull Request     : Create PR to main
-                         : Code review & approval
-                         : Merge to main branch
-
-    section Pre-Release
-        Automation       : Workflow triggered on merge
-                         : Create pre-release tag (v<version>-alpha)
-                         : Generate GitHub pre-release
-        QA Testing       : Deploy pre-release to QA
-                         : User acceptance testing
-                         : Validation & sign-off
-
-    section Stable Release
-        Release Creation : Create stable tag (v<version>)
-                         : Generate GitHub release
-                         : Release notes & artifacts
-
-    section Deployment
-        Staging          : Deploy stable release
-                         : Integration testing
-                         : Performance validation
-        Production       : Deploy to production
-                         : Monitoring & health checks
-                         : Rollback if needed
+        Test in sandbox : Feature branch or main branch testing
+        Merge to main : Code review and merge
+    section Release
+        Create release : Tag with semantic version (v1.2.3)
+    section QA Environment
+        Deploy to QA : Automated deployment
+        Test in QA : Validation and testing
+    section Staging Environment
+        Deploy to staging : Automated deployment
+        Test in staging : Pre-production validation
+    section Production Environment
+        Deploy to prod : Production deployment
+        Test in prod : Production validation
+    section Standby Environment
+        Deploy to standby : Final deployment
+        Verify standby : Standby verification
 ```
-
