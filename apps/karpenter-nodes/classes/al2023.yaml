@@ -1,0 +1,139 @@
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: al2023
+  annotations:
+    kubernetes.io/description: "EC2NodeClass for running Amazon Linux 2023 nodes with custom user data"
+spec:
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: ${flux_karpenter_node_volume_size}
+        volumeType: gp3
+        encrypted: true
+  role: "karpenter-${flux_cluster_name}"
+  amiFamily: AL2023
+  amiSelectorTerms:
+    - alias: "al2023@v20251103"
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "${flux_cluster_name}"
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "${flux_cluster_name}"
+  detailedMonitoring: true
+  associatePublicIPAddress: true
+  userData: |
+    MIME-Version: 1.0
+    Content-Type: multipart/mixed; boundary="BOUNDARY"
+
+    --BOUNDARY
+    Content-Type: text/x-shellscript; charset="us-ascii"
+
+    #!/bin/sh
+    set -o xtrace
+
+    echo fs.inotify.max_user_watches=131072 | sudo tee -a /etc/sysctl.conf
+    sudo sysctl -p
+
+    DOCKER_HUB_CREDS=$(aws ssm get-parameter --name /eks/${flux_cluster_name}/dockerhub --with-decrypt --query 'Parameter.Value' --output text)
+    DOCKER_HUB_USER=$(echo "$DOCKER_HUB_CREDS" | jq .username)
+    DOCKER_HUB_PASSWD=$(echo "$DOCKER_HUB_CREDS" | jq .password)
+    cat << EOF >> /etc/containerd/config.toml
+      [plugins."io.containerd.cri.v1.images".registry.configs]
+        [plugins."io.containerd.cri.v1.images".registry.configs."registry-1.docker.io".auth]
+          username = $DOCKER_HUB_USER
+          password = $DOCKER_HUB_PASSWD
+    EOF
+    service containerd restart
+
+    --BOUNDARY
+    Content-Type: application/node.eks.aws
+
+    ---
+    apiVersion: node.eks.aws/v1alpha1
+    kind: NodeConfig
+    spec:
+      kubelet:
+        config:
+          maxPods: 110
+          registryPullQPS: 0
+          kubeReserved:
+            cpu: 700m
+            memory: 1024Mi
+          systemReserved:
+            cpu: 700m
+            memory: 1024Mi
+
+    --BOUNDARY--
+
+---
+apiVersion: karpenter.k8s.aws/v1
+kind: EC2NodeClass
+metadata:
+  name: al2023-latest
+  annotations:
+    kubernetes.io/description: "EC2NodeClass for running Amazon Linux 2023 latest AMI nodes with custom user data"
+spec:
+  blockDeviceMappings:
+    - deviceName: /dev/xvda
+      ebs:
+        volumeSize: ${flux_karpenter_node_volume_size}
+        volumeType: gp3
+        encrypted: true
+  role: "karpenter-${flux_cluster_name}"
+  amiFamily: AL2023
+  amiSelectorTerms:
+    - alias: "al2023@latest"
+  subnetSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "${flux_cluster_name}"
+  securityGroupSelectorTerms:
+    - tags:
+        karpenter.sh/discovery: "${flux_cluster_name}"
+  detailedMonitoring: true
+  associatePublicIPAddress: true
+  userData: |
+    MIME-Version: 1.0
+    Content-Type: multipart/mixed; boundary="BOUNDARY"
+
+    --BOUNDARY
+    Content-Type: text/x-shellscript; charset="us-ascii"
+
+    #!/bin/sh
+    set -o xtrace
+
+    echo fs.inotify.max_user_watches=131072 | sudo tee -a /etc/sysctl.conf
+    sudo sysctl -p
+
+    DOCKER_HUB_CREDS=$(aws ssm get-parameter --name /eks/${flux_cluster_name}/dockerhub --with-decrypt --query 'Parameter.Value' --output text)
+    DOCKER_HUB_USER=$(echo "$DOCKER_HUB_CREDS" | jq .username)
+    DOCKER_HUB_PASSWD=$(echo "$DOCKER_HUB_CREDS" | jq .password)
+    cat << EOF >> /etc/containerd/config.toml
+      [plugins."io.containerd.cri.v1.images".registry.configs]
+        [plugins."io.containerd.cri.v1.images".registry.configs."registry-1.docker.io".auth]
+          username = $DOCKER_HUB_USER
+          password = $DOCKER_HUB_PASSWD
+    EOF
+    service containerd restart
+
+    --BOUNDARY
+    Content-Type: application/node.eks.aws
+
+    ---
+    apiVersion: node.eks.aws/v1alpha1
+    kind: NodeConfig
+    spec:
+      kubelet:
+        config:
+          maxPods: 110
+          registryPullQPS: 0
+          kubeReserved:
+            cpu: 700m
+            memory: 1024Mi
+          systemReserved:
+            cpu: 700m
+            memory: 1024Mi
+
+    --BOUNDARY--

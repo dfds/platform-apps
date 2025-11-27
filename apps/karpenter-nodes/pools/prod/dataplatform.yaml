@@ -1,0 +1,90 @@
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: dataplatform
+  annotations:
+    kubernetes.io/description: "Dataplatform purpose NodePool for dataplatform workloads"
+spec:
+  limits:
+    cpu: 48
+  template:
+    metadata:
+      labels:
+        dedicated: dataplatform
+    spec:
+      taints:
+        - key: "dfds.com/karpenter"
+          value: "true"
+          effect: "NoSchedule"
+        - key: "dataplatform.dfds"
+          value: "true"
+          effect: "NoSchedule"
+      terminationGracePeriod: 5m
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["on-demand"]
+        - key: "karpenter.k8s.aws/instance-family"
+          operator: In
+          values: ["r6a"]
+        - key: karpenter.k8s.aws/instance-size
+          operator: In
+          values: [2xlarge]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: al2023
+
+---
+apiVersion: karpenter.sh/v1
+kind: NodePool
+metadata:
+  name: dataplatform-spot
+  annotations:
+    kubernetes.io/description: "Dataplatform purpose spot NodePool for dataplatform workloads"
+spec:
+  limits:
+    cpu: 48
+  template:
+    metadata:
+      labels:
+        dedicated: dataplatform
+    spec:
+      taints:
+        - key: "dfds.com/karpenter"
+          value: "true"
+          effect: "NoSchedule"
+        - key: "dataplatform.dfds"
+          value: "true"
+          effect: "NoSchedule"
+        - key: "dfds.com/nodegroup-instance-spot"
+          value: "spot"
+          effect: "NoSchedule"
+      terminationGracePeriod: 5m
+      requirements:
+        - key: kubernetes.io/arch
+          operator: In
+          values: ["amd64"]
+        - key: kubernetes.io/os
+          operator: In
+          values: ["linux"]
+        - key: karpenter.sh/capacity-type
+          operator: In
+          values: ["spot"]
+        - key: "karpenter.k8s.aws/instance-family"
+          operator: In
+          values: ["r6a"]
+        - key: karpenter.k8s.aws/instance-size
+          operator: In
+          values: [2xlarge]
+      nodeClassRef:
+        group: karpenter.k8s.aws
+        kind: EC2NodeClass
+        name: al2023
