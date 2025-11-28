@@ -12,13 +12,6 @@ spec:
     metadata:
       labels:
         dedicated: observability
-    taints:
-      - key: "dfds.com/karpenter"
-        value: "true"
-        effect: "NoSchedule"
-      - key: "observability.dfds"
-        value: "true"
-        effect: "NoSchedule"
     spec:
       taints:
         - key: "dfds.com/karpenter"
