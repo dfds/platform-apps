@@ -2,38 +2,49 @@
 
 ## Process Steps
 
-- Test on main branch (or feature branch) in your sandbox.
-- Raise a Pull Request to main branch if you had a feature branch.
-- Create a tag and release from main branch using semantic versioning, like v1.2.3
-- Test release in QA.
-- If successful in QA, deploy to staging.
-- If successful in staging, deploy to prod.
-- If successful in prod, deploy to standby.
-- If any step is unsuccessful, repeat the process.
+- Test on feature branch in your sandbox.
+- Raise a Pull Request to main branch
+- Test main branch in QA.
+- If successful in QA, create a tag and release from main branch using semantic versioning, like v1.2.3
+- Minor and patch releases get automatic rollout to staging.
+- Patch releases get automatic rollout to prod and standby.
+- Major releases are rolled out manually through pull requests.
 
 ## Process Flow
 
 ```mermaid
 flowchart TD
-    A[Test on main/feature branch in sandbox] --> B{Feature branch?}
-    B -->|Yes| C[Raise PR to main branch]
-    B -->|No| D[Create tag and release using semantic versioning]
-    C --> D
-    D --> E[Test release in QA]
-    E --> F{Successful?}
-    F -->|Yes| G[Deploy to staging]
-    F -->|No| Z[Repeat process]
-    G --> H{Successful?}
-    H -->|Yes| I[Deploy to prod]
-    H -->|No| Z
-    I --> J{Successful?}
-    J -->|Yes| K[Deploy to standby]
-    J -->|No| Z
-    K --> L{Successful?}
-    L -->|Yes| M[Done]
-    L -->|No| Z
-    Z --> A
+    A[Test on feature branch in sandbox] --> B[Raise PR to main branch]
+    B --> C[Test main branch in QA]
+    C --> D{QA Successful?}
+    D -->|No| E[Fix issues]
+    E --> A
+    D -->|Yes| F[Create tag and release<br/>with semantic versioning]
+    F --> G{Release Type?}
+    G -->|Patch| H[Automatic rollout to staging]
+    G -->|Minor| H
+    G -->|Major| I[Manual rollout via PR]
+    H --> J[Staging deployed]
+    J --> K{Release Type?}
+    K -->|Patch| L[Automatic rollout to prod]
+    K -->|Minor| M[Manual decision]
+    K -->|Major| I
+    L --> N[Prod deployed]
+    N --> O[Automatic rollout to standby]
+    O --> P[Standby deployed]
+    M --> Q{Deploy to prod?}
+    Q -->|Yes| L
+    Q -->|No| R[Wait]
+    I --> S[Create PR for deployment]
+    S --> T[Review and merge]
+    T --> U[Manual deployment]
 ```
+
+## Rollback process
+
+- Delete faulty release and tag.
+- If it was a major release, then rollback also needs to revert pull requests.
+- Flux reconcile will pull in the previous tag.
 
 ## Process Timeline
 
@@ -41,20 +52,21 @@ flowchart TD
 timeline
     title Release Process Timeline
     section Development
-        Test in sandbox : Test on main/feature branch
-        Code review : Raise PR to main (if feature branch)
-    section Release
-        Tag & Release : Create tag with semantic versioning (v1.2.3)
+        Feature Branch : Test in sandbox
+        Pull Request : Raise PR to main branch
     section QA Environment
-        QA Testing : Test release in QA
-        QA Validation : Verify functionality
+        Main Branch : Test main branch in QA
+        Validation : Verify functionality
+    section Release
+        Tagging : Create tag with semantic versioning (v1.2.3)
     section Staging Environment
-        Staging Deploy : Deploy to staging
-        Staging Validation : Verify functionality
+        Auto Deploy : Minor & Patch releases automatically deployed
+        Manual Deploy : Major releases via PR
     section Production Environment
-        Prod Deploy : Deploy to prod
-        Prod Validation : Verify functionality
+        Auto Deploy : Patch releases automatically deployed
+        Manual Deploy : Minor & Major releases via PR
     section Standby Environment
-        Standby Deploy : Deploy to standby
-        Standby Validation : Final verification
+        Auto Deploy : Patch releases automatically deployed
+        Manual Deploy : Minor & Major releases via PR
 ```
+
