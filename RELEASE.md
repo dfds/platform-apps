@@ -1,48 +1,60 @@
 # Release process
 
+## Process Steps
+
+- Test on main branch (or feature branch) in your sandbox.
+- Raise a Pull Request to main branch if you had a feature branch.
+- Create a tag and release from main branch using semantic versioning, like v1.2.3
+- Test release in QA.
+- If successful in QA, deploy to staging.
+- If successful in staging, deploy to prod.
+- If successful in prod, deploy to standby.
+- If any step is unsuccessful, repeat the process.
+
 ## Process Flow
 
 ```mermaid
 flowchart TD
-    A[Test on main/feature branch in sandbox] --> B{Merge to main?}
-    B -->|Yes| C[Create tag and release from main<br/>using semantic versioning v1.2.3]
-    B -->|Already on main| C
-    C --> D[Test release in QA]
-    D --> E{Successful in QA?}
-    E -->|No| F[Repeat process]
-    E -->|Yes| G[Deploy to staging]
-    G --> H{Successful in staging?}
-    H -->|No| F
+    A[Test on main/feature branch in sandbox] --> B{Feature branch?}
+    B -->|Yes| C[Raise PR to main branch]
+    B -->|No| D[Create tag and release using semantic versioning]
+    C --> D
+    D --> E[Test release in QA]
+    E --> F{Successful?}
+    F -->|Yes| G[Deploy to staging]
+    F -->|No| Z[Repeat process]
+    G --> H{Successful?}
     H -->|Yes| I[Deploy to prod]
-    I --> J{Successful in prod?}
-    J -->|No| F
+    H -->|No| Z
+    I --> J{Successful?}
     J -->|Yes| K[Deploy to standby]
-    K --> L{Successful in standby?}
-    L -->|No| F
-    L -->|Yes| M[Done ✓]
-    F --> A
+    J -->|No| Z
+    K --> L{Successful?}
+    L -->|Yes| M[Done]
+    L -->|No| Z
+    Z --> A
 ```
 
-## Release Timeline
+## Process Timeline
 
 ```mermaid
 timeline
-    title Release Pipeline Timeline
+    title Release Process Timeline
     section Development
-        Test in sandbox : Feature branch or main branch testing
-        Merge to main : Code review and merge
+        Test in sandbox : Test on main/feature branch
+        Code review : Raise PR to main (if feature branch)
     section Release
-        Create release : Tag with semantic version (v1.2.3)
+        Tag & Release : Create tag with semantic versioning (v1.2.3)
     section QA Environment
-        Deploy to QA : Automated deployment
-        Test in QA : Validation and testing
+        QA Testing : Test release in QA
+        QA Validation : Verify functionality
     section Staging Environment
-        Deploy to staging : Automated deployment
-        Test in staging : Pre-production validation
+        Staging Deploy : Deploy to staging
+        Staging Validation : Verify functionality
     section Production Environment
-        Deploy to prod : Production deployment
-        Test in prod : Production validation
+        Prod Deploy : Deploy to prod
+        Prod Validation : Verify functionality
     section Standby Environment
-        Deploy to standby : Final deployment
-        Verify standby : Standby verification
+        Standby Deploy : Deploy to standby
+        Standby Validation : Final verification
 ```

@@ -9,23 +9,18 @@ The *apps* directory contains sub directories with Flux CD Helm releases, charts
 ## Development practices
 
 - Test on main branch (or feature branch) in your sandbox.
-- Merge to main if you had a feature branch.
+- Raise a Pull Request to main branch if you had a feature branch.
 - Create a tag and release from main branch using semantic versioning, like v1.2.3
-- Test release in QA
-- If successful in QA, deploy to staging
-- If successful in staging, deploy to prod
-- If successful in prod, deploy to standby
-- If any step is unsuccessful, repeat the process
+- Test release in QA.
+- If successful in QA, deploy to staging.
+- If successful in staging, deploy to prod.
+- If successful in prod, deploy to standby.
+- If any step is unsuccessful, repeat the process.
 
 ![GIt workflow](./platform-apps-git.drawio.png "Git workflow")
 
 Look at [RELEASE.md](RELEASE.md) for the full process flow and timeline.
 
-### Automatic release promotion
-
-- All major, minor and patch versions will be automatically available in QA.
-- All minor and patch versions will be automatically available in staging.
-- All patch versions will be automatically available in prod and standby.
 
 ## Usage
 
