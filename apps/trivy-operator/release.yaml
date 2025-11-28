@@ -28,7 +28,7 @@ spec:
     service:
       headless: false
     serviceMonitor:
-      enabled: true
+      enabled: false
       namespace: trivy-system
     trivy:
       ignoreUnfixed: true
