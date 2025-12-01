@@ -47,26 +47,23 @@ spec:
       #   additionalLabels:
       #     scrape-service-metrics: "true"
     reportsController:
-      container:
-        resources:
-          limits:
-            memory: "1Gi"
-          requests:
-            memory: "1Gi"
+      resources:
+        limits:
+          memory: "1Gi"
+        requests:
+          memory: "1Gi"
     backgroundController:
-      container:
-        resources:
-          limits:
-            memory: "128Mi"
-          requests:
-            memory: "128Mi"
+      resources:
+        limits:
+          memory: "128Mi"
+        requests:
+          memory: "128Mi"
     cleanupController:
-      container:
-        resources:
-          limits:
-            memory: "128Mi"
-          requests:
-            memory: "128Mi"
+      resources:
+        limits:
+          memory: "128Mi"
+        requests:
+          memory: "128Mi"
     features:
       forceFailurePolicyIgnore:
         enabled: true
