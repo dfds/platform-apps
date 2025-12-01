@@ -89,7 +89,7 @@ spec:
         metricsTuning:
           useDefaultAllowList: false
       apiserver:
-        enabled: true
+        enabled: false
       kubelet:
         enabled: true
         metricsTuning:
