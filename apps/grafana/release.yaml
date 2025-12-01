@@ -227,7 +227,7 @@ spec:
           endpoints:
             - path: /metrics
               port: metrics
-              scrapeTimeout: 30s
+              scrapeTimeout: 120s
             - path: /metrics
               port: admin
             - path: /metrics
