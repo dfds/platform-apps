@@ -39,10 +39,11 @@ spec:
           limits:
             memory: "2048Mi"
       replicas: 3
-      serviceMonitor:
-        enabled: true
-        additionalLabels:
-          scrape-service-metrics: "true"
+      # Disabled for now
+      # serviceMonitor:
+      #   enabled: true
+      #   additionalLabels:
+      #     scrape-service-metrics: "true"
     features:
       forceFailurePolicyIgnore:
         enabled: true
