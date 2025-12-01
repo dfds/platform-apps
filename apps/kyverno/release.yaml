@@ -44,6 +44,11 @@ spec:
       #   enabled: true
       #   additionalLabels:
       #     scrape-service-metrics: "true"
+    reportsController:
+      container:
+        resources:
+          limits:
+            memory: "1Gi"
     features:
       forceFailurePolicyIgnore:
         enabled: true
