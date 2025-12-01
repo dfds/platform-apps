@@ -1,0 +1,79 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-capabilities
+  annotations:
+    policies.kyverno.io/title: Restrict Capabilities
+    policies.kyverno.io/category: Pod Security Standards (Restricted)
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Linux capabilities provide fine-grained permissions that can be dangerous.
+      This policy requires that all capabilities are dropped and only allows adding
+      back NET_BIND_SERVICE if needed (per the Restricted Pod Security Standard).
+spec:
+  validationFailureAction: Audit
+  emitWarning: false
+  background: true
+  rules:
+    - name: require-drop-all-capabilities
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      validate:
+        message: >-
+          All capabilities must be dropped. The field 
+          spec.containers[*].securityContext.capabilities.drop must include `ALL`.
+        pattern:
+          spec:
+            =(initContainers):
+              - =(securityContext):
+                  =(capabilities):
+                    drop:
+                      - "ALL"
+            containers:
+              - =(securityContext):
+                  =(capabilities):
+                    drop:
+                      - "ALL"
+            =(ephemeralContainers):
+              - =(securityContext):
+                  =(capabilities):
+                    drop:
+                      - "ALL"
+    - name: restrict-add-capabilities
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kyverno
+      validate:
+        message: >-
+          Adding capabilities beyond NET_BIND_SERVICE is not allowed. The field
+          spec.containers[*].securityContext.capabilities.add must be undefined or
+          only include NET_BIND_SERVICE.
+        pattern:
+          spec:
+            =(initContainers):
+              - =(securityContext):
+                  =(capabilities):
+                    =(add):
+                      - "NET_BIND_SERVICE"
+            containers:
+              - =(securityContext):
+                  =(capabilities):
+                    =(add):
+                      - "NET_BIND_SERVICE"
+            =(ephemeralContainers):
+              - =(securityContext):
+                  =(capabilities):
+                    =(add):
+                      - "NET_BIND_SERVICE"
