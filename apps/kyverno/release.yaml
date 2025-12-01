@@ -38,6 +38,8 @@ spec:
         resources:
           limits:
             memory: "2048Mi"
+          requests:
+            memory: "2048Mi"
       replicas: 3
       # Disabled for now
       # serviceMonitor:
@@ -49,6 +51,22 @@ spec:
         resources:
           limits:
             memory: "1Gi"
+          requests:
+            memory: "1Gi"
+    backgroundController:
+      container:
+        resources:
+          limits:
+            memory: "128Mi"
+          requests:
+            memory: "128Mi"
+    cleanupController:
+      container:
+        resources:
+          limits:
+            memory: "128Mi"
+          requests:
+            memory: "128Mi"
     features:
       forceFailurePolicyIgnore:
         enabled: true
