@@ -64,7 +64,7 @@ spec:
           maxUnavailable: 25%
     metrics:
       enabled: true
-      #scrapeInterval: 120s
+      scrapeInterval: 120s
       autoDiscover:
         enabled: false
       cost:
