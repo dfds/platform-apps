@@ -26,6 +26,7 @@ spec:
         maxUnavailable: 25%
     serviceMonitor:
       enabled: true
+      interval: 120s
     resources:
       limits:
         memory: 64Mi
