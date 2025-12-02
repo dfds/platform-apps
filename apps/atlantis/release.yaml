@@ -322,7 +322,7 @@ spec:
       create: true
       name: atlantis
       annotations: # Post Build Substitution from Terraform
-        eks.amazonaws.com/role-arn: "arn:aws:iam::${flux_workload_account_id}:role/${flux_atlantis_iam_role_name}"
+        eks.amazonaws.com/role-arn: arn:aws:iam::${flux_workload_account_id}:role/${flux_atlantis_iam_role_name}
         eks.amazonaws.com/sts-regional-endpoints: "true"
     statefulSet:
       securityContext:
