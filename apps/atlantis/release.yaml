@@ -301,7 +301,7 @@ spec:
       path: /
       annotations:
         kubernetes.io/ingress.class: traefik
-      host: alias.example.tld # Patch this from Terraform
+      host: ${flux_atlantis_ingress_hostname} # Post Build Substitution from Terraform
     logLevel: info
     orgAllowlist: "" # Patch this from Terraform
     repoConfig: |
@@ -310,21 +310,33 @@ spec:
       - id: "/.*/"
         allowed_overrides: [workflow]
         allow_custom_workflows: true
-    resources: # Patch this from Terraform
+    resources: # Post Build Substitution from Terraform
       limits:
-        memory: 1536Mi
+        memory: ${flux_atlantis_resource_memory}
       requests:
-        cpu: 100m
-        memory: 1536Mi
+        cpu: ${flux_atlantis_resource_cpu}
+        memory: ${flux_atlantis_resource_memory}
     service:
       type: ClusterIP
     serviceAccount:
       create: true
-      annotations: {} # Patch this from Terraform when using IRSA
+      name: atlantis
+      annotations: # Post Build Substitution from Terraform
+        eks.amazonaws.com/role-arn: arn:aws:iam::${flux_workload_account_id}:role/${flux_atlantis_iam_role_name}
+        eks.amazonaws.com/sts-regional-endpoints: "true"
     statefulSet:
       securityContext:
         runAsUser: 200
       priorityClassName: cluster-infrastructure
-    volumeClaim: # Patch this from Terraform
-      dataStorage: 5Gi
+    volumeClaim:
+      dataStorage: 100Gi
       storageClassName: csi-gp3
+    extraVolumeMounts:
+      - mountPath: /kubeconfigs
+        name: kubeconfigs
+        readOnly: true
+    extraVolumes:
+      - name: kubeconfigs
+        secret:
+          defaultMode: 420
+          secretName: kubeconfigs # pragma: allowlist secret
