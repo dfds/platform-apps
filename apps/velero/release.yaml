@@ -51,6 +51,7 @@ spec:
             name: plugins
     priorityClassName: cluster-infrastructure
     metrics:
+      scrapeInterval: 120s
       serviceMonitor:
         enabled: true
     resources:
