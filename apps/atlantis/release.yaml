@@ -301,7 +301,7 @@ spec:
       path: /
       annotations:
         kubernetes.io/ingress.class: traefik
-      host: ${flux_atlantis_ingress_hostname} # Post Build Substitution from Terraform
+      host: "atlantis.${flux_eks_fqdn}" # Post Build Substitution from Terraform
     logLevel: info
     orgAllowlist: "" # Patch this from Terraform
     repoConfig: |
@@ -322,7 +322,7 @@ spec:
       create: true
       name: atlantis
       annotations: # Post Build Substitution from Terraform
-        eks.amazonaws.com/role-arn: arn:aws:iam::${flux_workload_account_id}:role/${flux_atlantis_iam_role_name}
+        eks.amazonaws.com/role-arn: arn:aws:iam::${flux_workload_account_id}:role/atlantis-irsa
         eks.amazonaws.com/sts-regional-endpoints: "true"
     statefulSet:
       securityContext:
