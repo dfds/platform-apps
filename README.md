@@ -6,6 +6,20 @@ The *sources* directory contains Flux CD sources, like Helm repositories.
 
 The *apps* directory contains sub directories with Flux CD Helm releases, charts and opinionated chart values.
 
+## Development practices
+
+- Test on feature branch in your sandbox.
+- Raise a Pull Request to main branch
+- Test main branch in QA.
+- If successful in QA, create a tag and release from main branch using semantic versioning, like v1.2.3
+- Minor and patch releases get automatic rollout to staging.
+- Patch releases get automatic rollout to prod and standby.
+- Major releases are rolled out manually through pull requests.
+
+![GIt workflow](./platform-apps-git.drawio.png "Git workflow")
+
+Look at [RELEASE.md](RELEASE.md) for the full process flow, rollback option and timeline.
+
 ## Usage
 
 In order to implement the resources in this repository you need the following on your **implementation** side:
@@ -75,18 +89,4 @@ patches:
 
 In our setup we use the the <https://github.com/dfds/infrastructure-modules/tree/master/_sub/compute/k8s-traefik-flux> Terraform module to generate the kustomization.yaml files.
 
-## Development practices
 
-- Create a feature branch from main branch.
-- When you are ready to test your feature in QA, merge it to the qa branch without a pull request.
-- When you are ready with your feature, raise a pull request
-- Delete your feature branch after merge to main
-
-![GIt workflow](./platform-apps-git.drawio.png "Git workflow")
-
-### Merge conflicts
-
-- We have a nightly build than merges main into qa and staging branches.
-- Because different feature branches might be updating the same files, we sometimes get merge conflicts.
-- These merge conflicts are discovered when the nightly job merges from main to qa.
-- These merge conflicts needs to be fixed manually.
