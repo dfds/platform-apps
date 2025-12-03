@@ -4,3 +4,4 @@ resources:
   - namespace.yaml
   - sources.yaml
   - release.yaml
+  - servicemonitor.yaml
