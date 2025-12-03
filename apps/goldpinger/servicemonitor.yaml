@@ -1,0 +1,21 @@
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: goldpinger
+  namespace: goldpinger
+spec:
+  endpoints:
+  - interval: 120s
+    port: http
+    metricRelabelings:
+    - action: keep
+      sourceLabels: [__name__]
+      regex: "goldpinger_errors_total|goldpinger_kube_master_response_time_s_bucket|goldpinger_nodes_health_total|goldpinger_peers_response_time_s_bucket|goldpinger_peers_response_time_s_sum"
+  jobLabel: name
+  namespaceSelector:
+    matchNames:
+    - goldpinger
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: goldpinger
+      app.kubernetes.io/name: goldpinger
