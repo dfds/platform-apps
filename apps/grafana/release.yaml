@@ -72,7 +72,7 @@ spec:
       node-exporter:
         enabled: true
         metricsTuning:
-          useDefaultAllowList: false
+          useDefaultAllowList: true
       serviceMonitors:
         enabled: true
         selector:
@@ -84,7 +84,7 @@ spec:
           }
       kube-state-metrics:
         metricsTuning:
-          useDefaultAllowList: false
+          useDefaultAllowList: true
         extraMetricRelabelingRules: |-
           rule {
             regex = "uid"
@@ -92,7 +92,7 @@ spec:
           }
       cadvisor:
         metricsTuning:
-          useDefaultAllowList: false
+          useDefaultAllowList: true
       apiserver:
         enabled: false
       kubelet:
