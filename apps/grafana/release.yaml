@@ -85,6 +85,15 @@ spec:
       kube-state-metrics:
         metricsTuning:
           useDefaultAllowList: true
+          excludeMetrics:
+            - kube_replicaset_status_ready_replicas
+            - kube_replicaset_created
+            - kube_replicaset_metadata_generation
+            - kube_replicaset_spec_replicas
+            - kube_replicaset_status_fully_labeled_replicas
+            - kube_replicaset_status_observed_generation
+            - kube_replicaset_status_ready_replicas
+            - kube_replicaset_status_replicas
         extraMetricRelabelingRules: |-
           rule {
             regex = "uid"
