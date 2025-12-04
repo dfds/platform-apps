@@ -85,6 +85,11 @@ spec:
       kube-state-metrics:
         metricsTuning:
           useDefaultAllowList: false
+        extraMetricRelabelingRules: |-
+          rule {
+            regex = "uid"
+            action = "drop"
+          }
       cadvisor:
         metricsTuning:
           useDefaultAllowList: false
