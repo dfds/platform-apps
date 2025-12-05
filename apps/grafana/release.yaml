@@ -94,6 +94,8 @@ spec:
             - kube_replicaset_status_observed_generation
             - kube_replicaset_status_replicas
             - kube_pod_start_time
+          includeMetrics:
+            - kube_deployment_status_replicas_unavailable
         extraMetricRelabelingRules: |-
           rule {
             regex = "uid"
