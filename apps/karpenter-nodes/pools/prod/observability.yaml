@@ -6,6 +6,7 @@ metadata:
   annotations:
     kubernetes.io/description: "Observability purpose NodePool for observability workloads"
 spec:
+  expireAfter: Never
   limits:
     cpu: 32
   template:
@@ -50,6 +51,7 @@ metadata:
   annotations:
     kubernetes.io/description: "Observability purpose spot NodePool for observability workloads"
 spec:
+  expireAfter: Never
   limits:
     cpu: 32
   template:

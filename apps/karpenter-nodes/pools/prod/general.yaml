@@ -6,6 +6,7 @@ metadata:
   annotations:
     kubernetes.io/description: "General purpose NodePool for generic workloads"
 spec:
+  expireAfter: Never
   limits:
     cpu: 528
   template:
@@ -47,6 +48,7 @@ metadata:
   annotations:
     kubernetes.io/description: "General purpose spot NodePool for generic workloads"
 spec:
+  expireAfter: Never
   limits:
     cpu: 528
   template:

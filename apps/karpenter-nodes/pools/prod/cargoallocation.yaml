@@ -6,6 +6,7 @@ metadata:
   annotations:
     kubernetes.io/description: "cargoallocation purpose NodePool for cargoallocation workloads"
 spec:
+  expireAfter: Never
   limits:
     cpu: 48
   template:
@@ -50,6 +51,7 @@ metadata:
   annotations:
     kubernetes.io/description: "cargoallocation purpose spot NodePool for cargoallocation workloads"
 spec:
+  expireAfter: Never
   limits:
     cpu: 48
   template:
