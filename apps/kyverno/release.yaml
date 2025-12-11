@@ -67,6 +67,11 @@ spec:
     features:
       forceFailurePolicyIgnore:
         enabled: true
+      omitEvents:
+        eventTypes:
+          - PolicyViolation  # Silence audit violation events
+          - PolicyApplied    # Also silence successful policy application events
+          - PolicySkipped    # Also silence skipped policy events
     # Disabled for now
     # metricsConfig:
     #   metricsExposure:
