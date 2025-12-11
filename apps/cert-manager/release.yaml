@@ -20,4 +20,6 @@ spec:
   values:
     global:
       priorityClassName: cluster-infrastructure
-    installCRDs: true
+    crds:
+      enabled: true
+      keep: false
