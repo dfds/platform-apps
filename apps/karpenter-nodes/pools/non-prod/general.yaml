@@ -6,7 +6,6 @@ metadata:
   annotations:
     kubernetes.io/description: "General purpose NodePool for generic workloads"
 spec:
-  expireAfter: Never
   limits:
     cpu: 64
   template:
@@ -14,6 +13,7 @@ spec:
       labels:
         dfds.com/nodegroup-purpose: general
     spec:
+      expireAfter: Never
       taints:
         - key: "dfds.com/karpenter"
           value: "true"
@@ -48,7 +48,6 @@ metadata:
   annotations:
     kubernetes.io/description: "General purpose spot NodePool for generic workloads"
 spec:
-  expireAfter: Never
   limits:
     cpu: 64
   template:
@@ -56,6 +55,7 @@ spec:
       labels:
         dfds.com/nodegroup-purpose: general
     spec:
+      expireAfter: Never
       taints:
         - key: "dfds.com/karpenter"
           value: "true"
