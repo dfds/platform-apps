@@ -5,6 +5,7 @@ metadata:
   namespace: external-dns
 spec:
   releaseName: external-dns
+  serviceAccountName: helm-controller
   chart:
     spec:
       chart: external-dns
