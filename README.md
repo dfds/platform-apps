@@ -96,7 +96,6 @@ Prepare crds:
 APP_VERSION is helm release version
 ```
 export APP_VERSION=vX.X.X
-cd charts/cert-manager-crds
 curl https://github.com/cert-manager/cert-manager/releases/download/$APP_VERSION/cert-manager.crds.yaml -L -o crds.yaml
 bash ../scripts/cut_crds.sh crds.yaml
 ```
