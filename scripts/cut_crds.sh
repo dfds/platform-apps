@@ -2,7 +2,6 @@
 set -e
 set -x
 
-# YQBIN="docker run --rm -v "${PWD}":/workdir mikefarah/yq"
 YQBIN="yq"
 
 if [ -z "$1" ]; then
