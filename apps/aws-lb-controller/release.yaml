@@ -5,6 +5,7 @@ metadata:
   namespace: aws-lb-controller
 spec:
   releaseName: aws-lb-controller
+  serviceAccountName: helm-controller
   chart:
     spec:
       chart: aws-load-balancer-controller
