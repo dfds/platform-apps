@@ -21,5 +21,4 @@ spec:
     global:
       priorityClassName: cluster-infrastructure
     crds:
-      enabled: true
-      keep: false
+      enabled: false
