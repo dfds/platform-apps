@@ -22,6 +22,7 @@ spec:
     crds:
       enabled: false
     global:
+      logLevel: 1
       priorityClassName: cluster-infrastructure
     serviceAccount:
       name: cert-manager
