@@ -295,7 +295,7 @@ spec:
     image:
       pullPolicy: IfNotPresent
       repository: dfdsdk/atlantis-prime-pipeline
-      tag: 2.1.1
+      tag: 2.1.2
     ingress:
       enabled: true
       path: /
