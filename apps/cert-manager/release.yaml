@@ -5,20 +5,45 @@ metadata:
   namespace: cert-manager
 spec:
   releaseName: cert-manager
+  interval: 5m
+  serviceAccountName: helm-controller
   chart:
     spec:
       chart: cert-manager
       version: 1.19.2
       sourceRef:
         kind: HelmRepository
-        name: cert-manager
-        namespace: flux-system
-  interval: 1m
+        name: jetstack
+      interval: 15m
   install:
     remediation:
       retries: 3
   values:
-    global:
-      priorityClassName: cluster-infrastructure
     crds:
       enabled: false
+    global:
+      priorityClassName: cluster-infrastructure
+    serviceAccount:
+      name: cert-manager
+    securityContext:
+      fsGroup: 1001
+    resources:
+      requests:
+        cpu: 10m
+        memory: 256Mi
+      limits:
+        memory: 256Mi
+    webhook:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 64Mi
+    cainjector:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 64Mi
