@@ -18,4 +18,10 @@ spec:
           dnsZones:
             - ${flux_cert_manager_domain_name}
         dns01:
-          route53: {}
+          region: us-east-1
+          route53:
+            role: ${flux_cert_manager_iam_role_arn}
+            auth:
+              kubernetes:
+                serviceAccountRef:
+                  name: cert-manager

@@ -26,6 +26,8 @@ spec:
       priorityClassName: cluster-infrastructure
     serviceAccount:
       name: cert-manager
+      annotations:
+        eks.amazonaws.com/role-arn: ${flux_cert_manager_iam_role_arn}
     securityContext:
       fsGroup: 1001
     resources:
