@@ -292,6 +292,7 @@ spec:
           name: atlantis-environment
     extraArgs:
       - --parallel-pool-size=15
+      - --default-tf-distribution=opentofu
     github: {} # Patch this from Terraform
     image:
       pullPolicy: IfNotPresent
