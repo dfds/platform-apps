@@ -3,6 +3,8 @@ kind: Kustomization
 namespace: atlantis
 resources:
   - namespace.yaml
-  - secretstore.yaml
-  - externalsecret.yaml
+  - secretstore-ssm.yaml
+  - secretstore-1password.yaml
+  - externalsecret-ssm.yaml
+  - externalsecret-1password.yaml
   - release.yaml
