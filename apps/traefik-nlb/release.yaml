@@ -36,14 +36,17 @@ spec:
       traefik:
         expose:
           default: true
-      websecure:
-        expose:
-          default: false
+        nodePort: 30001
+      # websecure:
+      #   expose:
+      #     default: false
       web:
+        nodePort: 30000
         forwardedHeaders:
           insecure: true
     additionalArguments:
       - "--metrics.prometheus"
+      - --entryPoints.web.http.redirections.entrypoint.scheme=https
     logs:
       general:
         level: ERROR
