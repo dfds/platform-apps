@@ -24,6 +24,7 @@ spec:
     disableApplyAll: true
     environment:
       TG_LOG_FORMAT: bare
+      ATLANTIS_DEFAULT_TF_DISTRIBUTION: opentofu
     environmentSecrets:
       - name: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_KEY
         secretKeyRef:
