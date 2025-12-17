@@ -306,7 +306,7 @@ spec:
         kubernetes.io/ingress.class: traefik
       host: "atlantis.${flux_eks_fqdn}" # Post Build Substitution from Terraform
     logLevel: info
-    orgAllowlist: "" # Patch this from Terraform
+    orgAllowlist: ${flux_atlantis_org_allowlist} # Post Build Substitution from Terraform
     repoConfig: |
       ---
       repos:
