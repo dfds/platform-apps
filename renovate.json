@@ -15,7 +15,7 @@
                 "lockFileMaintenance"
             ],
             "addLabels": [
-                "release:patch",
+                "release:patch"
             ],
             "minimumReleaseAge": "1 day",
             "automerge": true,
