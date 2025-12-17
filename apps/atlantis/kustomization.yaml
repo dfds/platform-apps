@@ -7,4 +7,6 @@ resources:
   - secretstore-1password.yaml
   - externalsecret-1password.yaml
   - externalsecret-ssm.yaml
+  - externalsecret-basic-auth.yaml
+  - externalsecret-github-auth.yaml
   - release.yaml
