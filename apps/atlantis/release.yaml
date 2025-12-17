@@ -19,7 +19,9 @@ spec:
     remediation:
       retries: 3
   values:
-    basicAuth: {} # Patch this from Terraform
+    basicAuthSecretName: atlantis-basic-auth
+    loadEnvFromSecrets:
+      - atlantis-github-auth
     disableApply: true
     disableApplyAll: true
     environment:
@@ -293,7 +295,6 @@ spec:
     extraArgs:
       - --parallel-pool-size=15
       - --default-tf-distribution=opentofu
-    github: {} # Patch this from Terraform
     image:
       pullPolicy: IfNotPresent
       repository: dfdsdk/atlantis-prime-pipeline
