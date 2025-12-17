@@ -24,7 +24,7 @@
             "matchUpdateTypes": [
                 "pin",
                 "digest",
-                "patch",
+                "patch"
             ],
             "addLabels": [
                 "release:patch"
