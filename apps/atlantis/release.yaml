@@ -19,7 +19,9 @@ spec:
     remediation:
       retries: 3
   values:
-    basicAuth: {} # Patch this from Terraform
+    basicAuthSecretName: atlantis-basic-auth
+    loadEnvFromSecrets:
+      - atlantis-github-auth
     disableApply: true
     disableApplyAll: true
     environment:
@@ -292,7 +294,7 @@ spec:
           name: atlantis-environment
     extraArgs:
       - --parallel-pool-size=15
-    github: {} # Patch this from Terraform
+      - --default-tf-distribution=opentofu
     image:
       pullPolicy: IfNotPresent
       repository: dfdsdk/atlantis-prime-pipeline
@@ -304,7 +306,7 @@ spec:
         kubernetes.io/ingress.class: traefik
       host: "atlantis.${flux_eks_fqdn}" # Post Build Substitution from Terraform
     logLevel: info
-    orgAllowlist: "" # Patch this from Terraform
+    orgAllowlist: ${flux_atlantis_org_allowlist} # Post Build Substitution from Terraform
     repoConfig: |
       ---
       repos:
