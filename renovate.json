@@ -9,10 +9,22 @@
     "packageRules": [
         {
             "matchUpdateTypes": [
+                "lockFileMaintenance"
+            ],
+            "addLabels": [
+                "lockFile"
+            ],
+            "minimumReleaseAge": "1 day",
+            "automerge": false,
+            "matchCurrentVersion": "!/^0/",
+            "ignoreTests": true,
+            "dependencyDashboardApproval": false
+        },
+        {
+            "matchUpdateTypes": [
                 "pin",
                 "digest",
                 "patch",
-                "lockFileMaintenance"
             ],
             "addLabels": [
                 "release:patch"
