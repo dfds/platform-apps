@@ -27,7 +27,7 @@ spec:
     ingressRoute:
       dashboard:
         enabled: true
-        matchRule: Host(`${flux_traefik_dashboard_host}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+        matchRule: Host(`${flux_traefik_dashboard_ingress_host}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
         entryPoints: [traefik, web, websecure]
         tls:
           secretName: traefik-dashboard-nlb-aws-lb-ctl-tls
@@ -82,9 +82,9 @@ spec:
           secretName: traefik-dashboard-nlb-aws-lb-ctl-tls
           privateKey:
             rotationPolicy: Always
-          commonName: ${flux_traefik_dashboard_host}
+          commonName: ${flux_traefik_dashboard_ingress_host}
           dnsNames:
-            - ${flux_traefik_dashboard_host}
+            - ${flux_traefik_dashboard_ingress_host}
           usages:
             - digital signature
             - key encipherment
