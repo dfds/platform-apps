@@ -37,9 +37,6 @@ spec:
         expose:
           default: true
         nodePort: 30001
-      # websecure:
-      #   expose:
-      #     default: false
       web:
         nodePort: 30000
         forwardedHeaders:
