@@ -3,7 +3,7 @@ kind: Service
 metadata:
   labels:
     app: traefik-nlb-metrics
-    scrape-service-metrics: "true"
+    scrape-service-metrics: "false"
   name: traefik-nlb-metrics
   namespace: traefik-nlb
 spec:
