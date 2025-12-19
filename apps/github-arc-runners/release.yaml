@@ -18,7 +18,7 @@ spec:
     values:
       githubConfigUrl: https://github.com/dfds
       githubConfigSecret: github-arc-dfds
-      runnerScaleSetName: dfds-runners
+      runnerScaleSetName: ${flux_github_arc_runners_scale_set_name}
       minRunners: 1
       maxRunners: 5
       template:
