@@ -4,4 +4,10 @@ kind: Kustomization
 namespace: arc-runners
 resources:
   - namespace.yaml
+  - serviceaccount-eso.yaml
+  - secretstore.yaml
+  - externalsecret.yaml
+  - serviceaccount-arc.yaml
+  - role.yaml
+  - rolebinding.yaml
   - release.yaml
