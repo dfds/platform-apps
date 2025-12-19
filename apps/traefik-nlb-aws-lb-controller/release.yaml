@@ -38,6 +38,7 @@ spec:
       labels:
         scrape-service-metrics: "false"
       annotations:
+        external-dns.alpha.kubernetes.io/hostname: ${flux_traefik_dashboard_ingress_host}
         service.beta.kubernetes.io/aws-load-balancer-type: external
         service.beta.kubernetes.io/aws-load-balancer-ssl-ports: "443"
         service.beta.kubernetes.io/aws-load-balancer-nlb-target-type: ip
