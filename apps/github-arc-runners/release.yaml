@@ -15,53 +15,53 @@ spec:
         kind: HelmRepository
         name: arc
         namespace: flux-system
-    values:
-      githubConfigUrl: https://github.com/dfds
-      githubConfigSecret: github-arc-dfds
-      runnerScaleSetName: ${flux_github_arc_runners_scale_set_name}
-      minRunners: 1
-      maxRunners: 5
-      template:
-        spec:
-          serviceAccountName: arc-runner-set-sa
-          securityContext:
-            fsGroup: 123
-          containers:
-          - name: runner
-            image: ghcr.io/actions/actions-runner:latest
-            command: ["/home/runner/run.sh"]
-            resources:
-              requests:
-                memory: ${flux_github_arc_runners_resource_memory}
-              limits:
-                memory: ${flux_github_arc_runners_resource_memory}
-            env:
-              - name: ACTIONS_RUNNER_CONTAINER_HOOKS
-                value: /home/runner/k8s/index.js
-              - name: ACTIONS_RUNNER_POD_NAME
-                valueFrom:
-                  fieldRef:
-                    fieldPath: metadata.name
-              - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
-                value: "false"
-            volumeMounts:
-              - name: work
-                mountPath: /home/runner/_work
-          volumes:
-            - name: work
-              ephemeral:
-                volumeClaimTemplate:
-                  spec:
-                    accessModes: [ "ReadWriteOnce" ]
-                    storageClassName: csi-gp3
-                    resources:
-                      requests:
-                        storage: 1Gi
-      metrics:
-        controllerManagerAddr: ":8080"
-        listenerAddr: ":8080"
-        listenerEndpoint: "/metrics"
   interval: 10m0s
   install:
     remediation:
       retries: 3
+  values:
+    githubConfigUrl: https://github.com/dfds
+    githubConfigSecret: github-arc-dfds
+    runnerScaleSetName: ${flux_github_arc_runners_scale_set_name}
+    minRunners: 1
+    maxRunners: 5
+    template:
+      spec:
+        serviceAccountName: arc-runner-set-sa
+        securityContext:
+          fsGroup: 123
+        containers:
+        - name: runner
+          image: ghcr.io/actions/actions-runner:latest
+          command: ["/home/runner/run.sh"]
+          resources:
+            requests:
+              memory: ${flux_github_arc_runners_resource_memory}
+            limits:
+              memory: ${flux_github_arc_runners_resource_memory}
+          env:
+            - name: ACTIONS_RUNNER_CONTAINER_HOOKS
+              value: /home/runner/k8s/index.js
+            - name: ACTIONS_RUNNER_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
+              value: "false"
+          volumeMounts:
+            - name: work
+              mountPath: /home/runner/_work
+        volumes:
+          - name: work
+            ephemeral:
+              volumeClaimTemplate:
+                spec:
+                  accessModes: [ "ReadWriteOnce" ]
+                  storageClassName: csi-gp3
+                  resources:
+                    requests:
+                      storage: 1Gi
+    metrics:
+      controllerManagerAddr: ":8080"
+      listenerAddr: ":8080"
+      listenerEndpoint: "/metrics"
