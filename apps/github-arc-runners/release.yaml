@@ -32,9 +32,9 @@ spec:
             command: ["/home/runner/run.sh"]
             resources:
               requests:
-                memory: ${flux_github_arc_runners_runner_memory}
+                memory: ${flux_github_arc_runners_resource_memory}
               limits:
-                memory: ${flux_github_arc_runners_runner_memory}
+                memory: ${flux_github_arc_runners_resource_memory}
             env:
               - name: ACTIONS_RUNNER_CONTAINER_HOOKS
                 value: /home/runner/k8s/index.js
