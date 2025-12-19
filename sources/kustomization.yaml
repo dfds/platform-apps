@@ -15,3 +15,4 @@ resources:
   - traefik.yaml
   - vmware-tanzu.yaml
   - aws-lb-controller.yaml
+  - cert-manager.yaml
