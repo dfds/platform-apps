@@ -23,6 +23,7 @@ spec:
       name: aws
     sources:
       - crd
+      - service
     resources:
       requests:
         cpu: 100m
@@ -32,6 +33,7 @@ spec:
     extraArgs:
       - --aws-prefer-cname
       - --namespace=external-dns
+      - --namespace=aws-lb-controller
     managedRecordTypes:
       - A
       - AAAA
