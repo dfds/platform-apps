@@ -24,6 +24,7 @@ spec:
     sources:
       - crd
       - service
+      - ingress
     resources:
       requests:
         cpu: 100m
