@@ -29,7 +29,3 @@ spec:
         memory: 64Mi
     watchNamespace: aws-lb-controller
     logLevel: info #debug
-    ingressClassParams:
-      enable: true
-      parameters:
-        apiVersion: traefik.io/v1alpha1
