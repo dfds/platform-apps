@@ -25,6 +25,7 @@ spec:
       - crd
       - service
       - ingress
+      - traefik-proxy
     resources:
       requests:
         cpu: 100m
