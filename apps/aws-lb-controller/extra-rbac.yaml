@@ -6,8 +6,6 @@ metadata:
 rules:
   - apiGroups:
       - ""
-    resourceNames:
-      - '*'
     resources:
       - secrets
     verbs:
