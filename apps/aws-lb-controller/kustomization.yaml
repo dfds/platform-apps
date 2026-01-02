@@ -4,3 +4,4 @@ namespace: aws-lb-controller
 resources:
   - namespace.yaml
   - release.yaml
+  - extra-rbac.yaml
