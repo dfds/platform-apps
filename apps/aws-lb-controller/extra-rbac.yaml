@@ -5,9 +5,9 @@ metadata:
     namespace: aws-lb-controller
 rules:
   - apiGroups:
-       - ""
+      - ""
     resourceNames:
-      - "*"
+      - '*'
     resources:
       - secrets
     verbs:
