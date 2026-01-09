@@ -21,26 +21,27 @@ spec:
   values:
     resources: # Resource requirements for the Trivy Operator.
       limits:
-        memory: 1Gi # Patch from Terraform if necessary
+        memory: ${flux_trivy_operator_memory} # Post Build Substitution from Terraform
       requests:
-        cpu: 100m
-        memory: 1Gi # Patch from Terraform if necessary
+        cpu: ${flux_trivy_operator_cpu} # Post Build Substitution from Terraform
+        memory: ${flux_trivy_operator_memory} # Post Build Substitution from Terraform
     service:
       headless: false
     serviceMonitor:
       enabled: false
       namespace: trivy-system
     trivy:
+      existingSecret: true
       ignoreUnfixed: true
       labels:
         scrape-service-metrics: "true"
       resources: # Resource requirements for the Trivy scan jobs.
         limits:
           cpu: null
-          memory: 512Mi # Patch from Terraform if necessary
+          memory: ${flux_trivy_operator_scan_jobs_memory} # Post Build Substitution from Terraform
         requests:
-          cpu: 100m
-          memory: 512Mi # Patch from Terraform if necessary
+          cpu: ${flux_trivy_operator_scan_jobs_cpu} # Post Build Substitution from Terraform
+          memory: ${flux_trivy_operator_scan_jobs_memory} # Post Build Substitution from Terraform
     operator:
       labels:
         scrape-service-metrics: "true"
