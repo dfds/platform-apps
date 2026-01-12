@@ -15,4 +15,3 @@ resources:
   - traefik.yaml
   - vmware-tanzu.yaml
   - aws-lb-controller.yaml
-  - policy-reporter.yaml
