@@ -28,14 +28,6 @@ spec:
       TG_LOG_FORMAT: bare
       ATLANTIS_DEFAULT_TF_DISTRIBUTION: opentofu
     environmentSecrets:
-      - name: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_KEY
-        secretKeyRef:
-          key: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_KEY
-          name: atlantis-environment
-      - name: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_SECRET
-        secretKeyRef:
-          key: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_SECRET
-          name: atlantis-environment
       - name: PRODUCTION_AWS_ACCESS_KEY_ID
         secretKeyRef:
           key: PRODUCTION_AWS_ACCESS_KEY_ID
