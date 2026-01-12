@@ -208,6 +208,18 @@ spec:
         secretKeyRef:
           key: STAGING_GRAFANA_AGENT_TEMPO_USERNAME
           name: atlantis-environment
+      - name: DS_SSU_VM_ENDPOINT
+        secretKeyRef:
+          key: DS_SSU_VM_ENDPOINT
+          name: atlantis-environment
+      - name: DS_SSU_VM_USERNAME
+        secretKeyRef:
+          key: DS_SSU_VM_USERNAME
+          name: atlantis-environment
+      - name: DS_SSU_VM_USERNAME
+        secretKeyRef:
+          key: DS_SSU_VM_USERNAME
+          name: atlantis-environment
       - name: STAGING_TF_VAR_slack_webhook_url
         secretKeyRef:
           key: STAGING_TF_VAR_slack_webhook_url
