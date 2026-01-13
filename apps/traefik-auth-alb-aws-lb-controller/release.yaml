@@ -103,7 +103,7 @@ spec:
                 "userInfoEndpoint":"https://graph.microsoft.com/oidc/userinfo",
                 "secretName":"${flux_traefik_k8s_secret_name}"
               }'
-          name: ${flux_traefik_lb_name}
+          name: ${flux_traefik_ingress_name}
         spec:
           ingressClassName: alb
           rules:
@@ -111,7 +111,7 @@ spec:
               paths:
               - backend:
                   service:
-                    name: ${flux_traefik_lb_name}
+                    name: ${flux_traefik_service_name}
                     port:
                       name: web
                 path: /*
