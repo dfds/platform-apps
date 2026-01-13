@@ -36,8 +36,6 @@ spec:
       enabled: true
       labels:
         scrape-service-metrics: "true"
-      spec:
-        externalTrafficPolicy: Local
     ports:
       traefik:
         port: 8090
