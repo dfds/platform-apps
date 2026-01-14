@@ -26,6 +26,7 @@ spec:
         message: >-
           All capabilities must be dropped. The field 
           spec.containers[*].securityContext.capabilities.drop must include `ALL`.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-capabilities for more information.
         pattern:
           spec:
             =(initContainers):
@@ -60,6 +61,7 @@ spec:
           Adding capabilities beyond NET_BIND_SERVICE is not allowed. The field
           spec.containers[*].securityContext.capabilities.add must be undefined or
           only include NET_BIND_SERVICE.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-capabilities for more information.
         pattern:
           spec:
             =(initContainers):
