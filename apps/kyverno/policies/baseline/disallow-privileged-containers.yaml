@@ -26,6 +26,7 @@ spec:
           Privileged mode is not allowed. The fields spec.containers[*].securityContext.privileged,
           spec.initContainers[*].securityContext.privileged, and 
           spec.ephemeralContainers[*].securityContext.privileged must be set to `false` or be undefined.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#disallow-privileged-containers for more information.
         pattern:
           spec:
             =(initContainers):

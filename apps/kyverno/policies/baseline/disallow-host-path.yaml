@@ -25,6 +25,7 @@ spec:
       validate:
         message: >-
           HostPath volumes are not allowed. The field spec.volumes[*].hostPath must not be set.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#disallow-hostpath-volumes for more information.
         pattern:
           spec:
             =(volumes):
