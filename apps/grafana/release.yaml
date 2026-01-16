@@ -96,6 +96,7 @@ spec:
             - kube_pod_start_time
           includeMetrics:
             - kube_deployment_status_replicas_unavailable
+            - kube_pod_deletion_timestamp
         extraMetricRelabelingRules: |-
           rule {
             regex = "uid"
