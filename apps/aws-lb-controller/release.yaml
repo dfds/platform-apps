@@ -27,4 +27,4 @@ spec:
         memory: 64Mi
       limits:
         memory: 64Mi
-    logLevel: info #debug
+    watchNamespace: aws-lb-controller
