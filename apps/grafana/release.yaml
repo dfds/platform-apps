@@ -131,92 +131,9 @@ spec:
       rbac:
         create: true
         extraRules:
-          - apiGroups: ["traefik.containo.us", "traefik.io"]
+          - apiGroups: ["traefik.io"]
             resources: ["ingressroutes", "middlewares", "tlsoptions"]
             verbs: ["list", "watch"]
-      customResourceState:
-        enabled: true
-        config:
-          spec:
-            resources:
-              - groupVersionKind:
-                  group: traefik.io
-                  version: v1alpha1
-                  kind: IngressRoute
-                metrics:
-                  - name: "traefik"
-                    help: 'Monitor Traefik ingressroute resources that make use of "traefik.io" API group.'
-                    each:
-                      type: Info
-                      info:
-                        labelsFromPath:
-                          name: [metadata, name]
-                          namespace: [metadata, namespace]
-              - groupVersionKind:
-                  group: traefik.io
-                  version: v1alpha1
-                  kind: Middleware
-                metrics:
-                  - name: "traefik"
-                    help: 'Monitor Traefik middleware resources that make use of "traefik.io" API group.'
-                    each:
-                      type: Info
-                      info:
-                        labelsFromPath:
-                          name: [metadata, name]
-                          namespace: [metadata, namespace]
-              - groupVersionKind:
-                  group: traefik.io
-                  version: v1alpha1
-                  kind: TLSOption
-                metrics:
-                  - name: "traefik"
-                    help: 'Monitor Traefik TLSOption resources that make use of "traefik.io" old API group.'
-                    each:
-                      type: Info
-                      info:
-                        labelsFromPath:
-                          name: [metadata, name]
-                          namespace: [metadata, namespace]
-              - groupVersionKind:
-                  group: traefik.containo.us
-                  version: v1alpha1
-                  kind: IngressRoute
-                metrics:
-                  - name: "traefik"
-                    help: 'Monitor Traefik ingressroute resources that make use of "traefik.containo.us" API group.'
-                    each:
-                      type: Info
-                      info:
-                        labelsFromPath:
-                          name: [metadata, name]
-                          namespace: [metadata, namespace]
-              - groupVersionKind:
-                  group: traefik.containo.us
-                  version: v1alpha1
-                  kind: Middleware
-                metrics:
-                  - name: "traefik"
-                    help: 'Monitor Traefik middleware resources that make use of "traefik.containo.us" old API group.'
-                    each:
-                      type: Info
-                      info:
-                        labelsFromPath:
-                          name: [metadata, name]
-                          namespace: [metadata, namespace]
-              - groupVersionKind:
-                  group: traefik.containo.us
-                  version: v1alpha1
-                  kind: TLSOption
-                metrics:
-                  - name: "traefik"
-                    help: 'Monitor Traefik TLSOption resources that make use of "traefik.containo.us" old API group.'
-                    each:
-                      type: Info
-                      info:
-                        labelsFromPath:
-                          name: [metadata, name]
-                          namespace: [metadata, namespace]
     prometheus-node-exporter:
       enabled: true
       podLabels:
