@@ -1,0 +1,52 @@
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: cert-manager
+  namespace: cert-manager
+spec:
+  releaseName: cert-manager
+  interval: 5m
+  serviceAccountName: helm-controller
+  chart:
+    spec:
+      chart: cert-manager
+      version: 1.19.2
+      sourceRef:
+        kind: HelmRepository
+        name: jetstack
+      interval: 15m
+  install:
+    remediation:
+      retries: 3
+  values:
+    crds:
+      enabled: false
+    global:
+      logLevel: 1
+      priorityClassName: cluster-infrastructure
+    serviceAccount:
+      name: cert-manager
+      annotations:
+        eks.amazonaws.com/role-arn: ${flux_cert_manager_iam_role_arn}
+    securityContext:
+      fsGroup: 1001
+    resources:
+      requests:
+        cpu: 10m
+        memory: 256Mi
+      limits:
+        memory: 256Mi
+    webhook:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 64Mi
+    cainjector:
+      resources:
+        requests:
+          cpu: 10m
+          memory: 64Mi
+        limits:
+          memory: 64Mi

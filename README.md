@@ -88,5 +88,3 @@ patches:
 ### Terraform
 
 In our setup we use the the <https://github.com/dfds/infrastructure-modules/tree/master/_sub/compute/k8s-traefik-flux> Terraform module to generate the kustomization.yaml files.
-
-
