@@ -7,6 +7,8 @@ metadata:
 spec:
   serviceAccountName: helm-controller
   releaseName: traefik-green-variant
+  dependsOn:
+    - name: traefik-crds
   chart:
     spec:
       chart: traefik
