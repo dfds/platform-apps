@@ -4,4 +4,5 @@ kind: Kustomization
 namespace: traefik-green-variant
 resources:
   - namespace.yaml
+  - source.yaml
   - release.yaml
