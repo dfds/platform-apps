@@ -21,29 +21,31 @@ spec:
     remediation:
       retries: 3
   values:
+    deployment:
+      replicas: 3
+    gateway:
+      listeners:
+        web:
+          namespacePolicy:
+            from: All
     ingressClass:
       enabled: true
       isDefaultClass: false
     ingressRoute:
       dashboard:
         enabled: true
-    service:
-      enabled: true
-      type: NodePort
-      labels:
-        scrape-service-metrics: "true"
-      spec:
-        externalTrafficPolicy: Cluster
-    ports:
-      traefik:
-        expose:
-          default: true
-      websecure:
-        expose:
-          default: false
-      web:
-        forwardedHeaders:
-          insecure: true
+        entryPoints:
+        - traefik
+        - web
+        matchRule: Host(`traefik-blue-variant.${flux_traefik_dashboard_domain}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+    logs:
+      access:
+        enabled: true
+        filters:
+          statuscodes: 300-399,400-499,500-599
+      general:
+        format: json
+        level: ERROR
     metrics:
       prometheus:
         service:
@@ -51,30 +53,36 @@ spec:
           labels:
             app: traefik-blue-variant-metrics
             scrape-service-metrics: "true"
-    logs:
-      general:
-        level: ERROR
-        format: json
-      access:
-        enabled: true
-        filters:
-          statuscodes: "300-399,400-499,500-599"
+    ports:
+      traefik:
+        expose:
+          default: true
+        nodePort: 31001
+      web:
+        forwardedHeaders:
+          insecure: true
+        nodePort: 31000
+      websecure:
+        expose:
+          default: false
+    priorityClassName: cluster-infrastructure
     providers:
       kubernetesCRD:
         allowCrossNamespace: true
-      kubernetesIngress:
-        enabled: true
       kubernetesGateway:
         enabled: true
-    gateway:
-      listeners:
-        web:
-          namespacePolicy:
-            from: All
-    priorityClassName: cluster-infrastructure
+      kubernetesIngress:
+        enabled: true
     resources:
+      limits:
+        memory: 512Mi
       requests:
         cpu: 150m
         memory: 512Mi
-      limits:
-        memory: 512Mi
+    service:
+      enabled: true
+      labels:
+        scrape-service-metrics: "true"
+      spec:
+        externalTrafficPolicy: Cluster
+      type: NodePort
