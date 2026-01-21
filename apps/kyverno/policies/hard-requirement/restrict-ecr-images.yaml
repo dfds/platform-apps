@@ -14,7 +14,7 @@ metadata:
       Capability namespace ECR images should not be used directly.
 spec:
   validationFailureAction: Audit
-  emitWarning: true
+  emitWarning: false
   background: true
   rules:
     - name: restrict-ecr-images-pods
