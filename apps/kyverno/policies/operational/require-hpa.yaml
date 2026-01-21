@@ -1,0 +1,41 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-hpa
+  annotations:
+    policies.kyverno.io/title: Require horizontal pod autoscaler (HPA)
+    policies.kyverno.io/category: Hard Requirement
+    policies.kyverno.io/severity: low
+    policies.kyverno.io/subject: Deployment,StatefulSet
+    policies.kyverno.io/description: >-
+      Deployments and StatefulSets must have a corresponding Horizontal Pod Autoscaler (HPA) defined if the replica count is > 2.
+spec:
+  validationFailureAction: Audit
+  emitWarning: true
+  background: true
+  rules:
+    - name: require-hpa
+      match:
+        any:
+          - resources:
+              kinds:
+                - Deployment
+                - StatefulSet
+              operations:
+                - CREATE
+                - UPDATE
+      preconditions:
+        all:
+          - key: "{{ request.object.spec.replicas || `1` }}"
+            operator: GreaterThan
+            value: 2
+      validate:
+        message: >-
+          For Deployments or StatefulSets with replicas > 2, a matching HorizontalPodAutoscaler resource is required.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-hpa for more information.
+        deny:
+          conditions:
+            any:
+              - key: "{{ list('HorizontalPodAutoscaler').items[?(@.metadata.namespace == request.object.metadata.namespace && @.spec.scaleTargetRef.kind == request.object.kind && @.spec.scaleTargetRef.name == request.object.metadata.name)] | length || `0` }}"
+                operator: Equals
+                value: 0
