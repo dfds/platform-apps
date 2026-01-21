@@ -24,12 +24,12 @@ spec:
             kinds:
               - Pod
       validate:
+        message: >-
+          ECR images must come from approved AWS accounts (602401143452 or 579478677147).
+          One or more container images appear to be from an unapproved ECR account.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-ecr-images for more information.
         foreach:
         - list: "request.object.spec.containers"
-          message: >-
-            ECR images must come from approved AWS accounts (602401143452 or 579478677147).
-            The image '{{ element.image }}' appears to be from an unapproved ECR account.
-            Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-ecr-images for more information.
           deny:
             conditions:
               all:
@@ -43,10 +43,6 @@ spec:
                 operator: Equals
                 value: false
         - list: "request.object.spec.initContainers || `[]`"
-          message: >-
-            ECR images must come from approved AWS accounts (602401143452 or 579478677147).
-            The image '{{ element.image }}' appears to be from an unapproved ECR account.
-            Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-ecr-images for more information.
           deny:
             conditions:
               all:
@@ -67,12 +63,12 @@ spec:
               - Deployment
               - StatefulSet
       validate:
+        message: >-
+          ECR images must come from approved AWS accounts (602401143452 or 579478677147).
+          One or more container images appear to be from an unapproved ECR account.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-ecr-images for more information.
         foreach:
         - list: "request.object.spec.template.spec.containers"
-          message: >-
-            ECR images must come from approved AWS accounts (602401143452 or 579478677147).
-            The image '{{ element.image }}' appears to be from an unapproved ECR account.
-            Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-ecr-images for more information.
           deny:
             conditions:
               all:
@@ -86,10 +82,6 @@ spec:
                 operator: Equals
                 value: false
         - list: "request.object.spec.template.spec.initContainers || `[]`"
-          message: >-
-            ECR images must come from approved AWS accounts (602401143452 or 579478677147).
-            The image '{{ element.image }}' appears to be from an unapproved ECR account.
-            Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-ecr-images for more information.
           deny:
             conditions:
               all:
