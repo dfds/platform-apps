@@ -40,7 +40,7 @@ spec:
         entryPoints:
         - traefik
         - web
-        matchRule: Host(`traefik-green-variant.${flux_traefik_dashboard_domain}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+        matchRule: Host(`traefik-green-variant.${flux_eks_fqdn}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
     logs:
       access:
         enabled: true
