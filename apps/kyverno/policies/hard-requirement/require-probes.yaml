@@ -22,6 +22,9 @@ spec:
         - resources:
             kinds:
               - Deployment
+            operations:
+              - CREATE
+              - UPDATE
       validate:
         message: >-
           Liveness and readiness probes are required. All containers must specify
