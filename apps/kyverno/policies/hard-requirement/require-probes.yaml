@@ -1,0 +1,41 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: require-probes
+  annotations:
+    policies.kyverno.io/title: Require Liveness and Readiness Probes
+    policies.kyverno.io/category: Hard Requirement
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Deployment
+    policies.kyverno.io/description: >-
+      Liveness and readiness probes are essential for proper health checking and traffic management.
+      This policy audits Deployments where containers are missing livenessProbe or readinessProbe
+      and warns users to configure them.
+spec:
+  validationFailureAction: Audit
+  emitWarning: true
+  background: true
+  rules:
+    - name: require-probes
+      match:
+        any:
+        - resources:
+            kinds:
+              - Deployment
+      validate:
+        message: >-
+          Liveness and readiness probes are required. All containers must specify
+          spec.template.spec.containers[*].livenessProbe and
+          spec.template.spec.containers[*].readinessProbe.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-probes for more information.
+        foreach:
+        - list: "request.object.spec.template.spec.containers"
+          deny:
+            conditions:
+              any:
+              - key: "{{ element.livenessProbe || '' }}"
+                operator: Equals
+                value: ""
+              - key: "{{ element.readinessProbe || '' }}"
+                operator: Equals
+                value: ""

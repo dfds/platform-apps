@@ -1,0 +1,96 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: restrict-ecr-images
+  annotations:
+    policies.kyverno.io/title: Restrict ECR Images to Approved Accounts
+    policies.kyverno.io/category: Hard Requirement
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod, Deployment, StatefulSet
+    policies.kyverno.io/description: >-
+      Container images from ECR must come from approved AWS accounts.
+      This policy audits workloads using ECR images that are not from
+      the AWS public ECR account (602401143452) or the shared-prod account (579478677147).
+      Capability namespace ECR images should not be used directly.
+spec:
+  validationFailureAction: Audit
+  emitWarning: true
+  background: true
+  rules:
+    - name: restrict-ecr-images-pods
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+      validate:
+        message: >-
+          ECR images must come from approved AWS accounts (602401143452 or 579478677147).
+          The image '{{ element.image }}' appears to be from an unapproved ECR account.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-ecr-images for more information.
+        foreach:
+        - list: "request.object.spec.containers"
+          deny:
+            conditions:
+              all:
+              - key: "{{ contains(element.image, '.dkr.ecr.') }}"
+                operator: Equals
+                value: true
+              - key: "{{ contains(element.image, '602401143452') }}"
+                operator: Equals
+                value: false
+              - key: "{{ contains(element.image, '579478677147') }}"
+                operator: Equals
+                value: false
+        - list: "request.object.spec.initContainers || `[]`"
+          deny:
+            conditions:
+              all:
+              - key: "{{ contains(element.image, '.dkr.ecr.') }}"
+                operator: Equals
+                value: true
+              - key: "{{ contains(element.image, '602401143452') }}"
+                operator: Equals
+                value: false
+              - key: "{{ contains(element.image, '579478677147') }}"
+                operator: Equals
+                value: false
+    - name: restrict-ecr-images-deployments
+      match:
+        any:
+        - resources:
+            kinds:
+              - Deployment
+              - StatefulSet
+      validate:
+        message: >-
+          ECR images must come from approved AWS accounts (602401143452 or 579478677147).
+          The image '{{ element.image }}' appears to be from an unapproved ECR account.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-ecr-images for more information.
+        foreach:
+        - list: "request.object.spec.template.spec.containers"
+          deny:
+            conditions:
+              all:
+              - key: "{{ contains(element.image, '.dkr.ecr.') }}"
+                operator: Equals
+                value: true
+              - key: "{{ contains(element.image, '602401143452') }}"
+                operator: Equals
+                value: false
+              - key: "{{ contains(element.image, '579478677147') }}"
+                operator: Equals
+                value: false
+        - list: "request.object.spec.template.spec.initContainers || `[]`"
+          deny:
+            conditions:
+              all:
+              - key: "{{ contains(element.image, '.dkr.ecr.') }}"
+                operator: Equals
+                value: true
+              - key: "{{ contains(element.image, '602401143452') }}"
+                operator: Equals
+                value: false
+              - key: "{{ contains(element.image, '579478677147') }}"
+                operator: Equals
+                value: false

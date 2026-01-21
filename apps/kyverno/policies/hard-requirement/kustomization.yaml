@@ -1,0 +1,6 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  - require-external-secret-label.yaml
+  - require-probes.yaml
+  - restrict-ecr-images.yaml
