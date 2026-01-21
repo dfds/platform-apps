@@ -27,7 +27,7 @@ spec:
           Liveness and readiness probes are required. All containers must specify
           spec.template.spec.containers[*].livenessProbe and
           spec.template.spec.containers[*].readinessProbe.
-          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-probes for more information.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-liveness-and-readiness-probes for more information.
         foreach:
         - list: "request.object.spec.template.spec.containers"
           deny:

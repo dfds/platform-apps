@@ -27,7 +27,7 @@ spec:
         message: >-
           ECR images must come from approved AWS accounts (602401143452 or 579478677147).
           One or more container images appear to be from an unapproved ECR account.
-          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-ecr-images for more information.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-ecr-images-to-approved-accounts for more information.
         foreach:
         - list: "request.object.spec.containers"
           deny:
