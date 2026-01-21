@@ -11,7 +11,7 @@ metadata:
       Deployments and StatefulSets must have a corresponding Horizontal Pod Autoscaler (HPA) defined if the replica count is > 2.
 spec:
   validationFailureAction: Audit
-  emitWarning: true
+  emitWarning: false
   background: true
   rules:
     - name: require-hpa
