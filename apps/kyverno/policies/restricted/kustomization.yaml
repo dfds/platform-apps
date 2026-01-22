@@ -1,4 +1,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - disallow-privilege-escalation.yaml
   - require-run-as-nonroot.yaml
+  - restrict-capabilities.yaml

@@ -7,7 +7,7 @@ spec:
     # The ACME server URL
     server: https://acme-v02.api.letsencrypt.org/directory
     # Email address used for ACME registration
-    email: ${flux_cert_manager_acme_email}
+    email: itbuildsourcedevex+${flux_cluster_name}@dfds.com
     # Name of a secret used to store the ACME account private key
     privateKeySecretRef:
       name: letsencrypt
@@ -18,10 +18,4 @@ spec:
           dnsZones:
             - ${flux_cert_manager_domain_name}
         dns01:
-          route53:
-            region: us-east-1
-            role: ${flux_cert_manager_iam_role_arn}
-            auth:
-              kubernetes:
-                serviceAccountRef:
-                  name: cert-manager
+          route53: {}

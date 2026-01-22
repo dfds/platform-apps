@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: atlantis
-      version: 5.21.0
+      version: 5.23.0
       sourceRef:
         kind: HelmRepository
         name: atlantis
@@ -19,20 +19,15 @@ spec:
     remediation:
       retries: 3
   values:
-    basicAuth: {} # Patch this from Terraform
+    basicAuthSecretName: atlantis-basic-auth
+    loadEnvFromSecrets:
+      - atlantis-github-auth
     disableApply: true
     disableApplyAll: true
     environment:
       TG_LOG_FORMAT: bare
+      ATLANTIS_DEFAULT_TF_DISTRIBUTION: opentofu
     environmentSecrets:
-      - name: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_KEY
-        secretKeyRef:
-          key: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_KEY
-          name: atlantis-environment
-      - name: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_SECRET
-        secretKeyRef:
-          key: CONFLUENT_KAFKA_PROD_PROMETHEUS_METRICS_EXPORTER_HELLMAN_API_SECRET
-          name: atlantis-environment
       - name: PRODUCTION_AWS_ACCESS_KEY_ID
         secretKeyRef:
           key: PRODUCTION_AWS_ACCESS_KEY_ID
@@ -205,6 +200,18 @@ spec:
         secretKeyRef:
           key: STAGING_GRAFANA_AGENT_TEMPO_USERNAME
           name: atlantis-environment
+      - name: DS_SSU_VM_ENDPOINT
+        secretKeyRef:
+          key: DS_SSU_VM_ENDPOINT
+          name: atlantis-environment
+      - name: DS_SSU_VM_USERNAME
+        secretKeyRef:
+          key: DS_SSU_VM_USERNAME
+          name: atlantis-environment
+      - name: DS_SSU_VM_USERNAME
+        secretKeyRef:
+          key: DS_SSU_VM_USERNAME
+          name: atlantis-environment
       - name: STAGING_TF_VAR_slack_webhook_url
         secretKeyRef:
           key: STAGING_TF_VAR_slack_webhook_url
@@ -291,11 +298,11 @@ spec:
           name: atlantis-environment
     extraArgs:
       - --parallel-pool-size=15
-    github: {} # Patch this from Terraform
+      - --default-tf-distribution=opentofu
     image:
       pullPolicy: IfNotPresent
       repository: dfdsdk/atlantis-prime-pipeline
-      tag: 2.1.1
+      tag: 2.1.2
     ingress:
       enabled: true
       path: /
@@ -303,7 +310,7 @@ spec:
         kubernetes.io/ingress.class: traefik
       host: "atlantis.${flux_eks_fqdn}" # Post Build Substitution from Terraform
     logLevel: info
-    orgAllowlist: "" # Patch this from Terraform
+    orgAllowlist: ${flux_atlantis_org_allowlist} # Post Build Substitution from Terraform
     repoConfig: |
       ---
       repos:

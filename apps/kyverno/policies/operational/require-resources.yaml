@@ -4,7 +4,7 @@ metadata:
   name: require-resources
   annotations:
     policies.kyverno.io/title: Require Resource Limits and Requests
-    policies.kyverno.io/category: Best Practices
+    policies.kyverno.io/category: Operational (Best Practices)
     policies.kyverno.io/severity: medium
     policies.kyverno.io/subject: Pod
     policies.kyverno.io/description: >-
@@ -34,6 +34,7 @@ spec:
           CPU resources must be configured correctly. All containers must specify
           spec.containers[*].resources.requests.cpu but must NOT set
           spec.containers[*].resources.limits.cpu (to avoid CPU throttling).
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
         foreach:
         - list: "request.object.spec.containers"
           deny:
@@ -62,6 +63,7 @@ spec:
           Memory resources must be configured correctly. All containers must specify
           both spec.containers[*].resources.requests.memory and
           spec.containers[*].resources.limits.memory, and they must be equal.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
         foreach:
         - list: "request.object.spec.containers"
           deny:

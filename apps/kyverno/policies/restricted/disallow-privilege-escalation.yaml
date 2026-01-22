@@ -25,6 +25,7 @@ spec:
         message: >-
           Privilege escalation is not allowed. The field 
           spec.containers[*].securityContext.allowPrivilegeEscalation must be set to `false`.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#disallow-privilege-escalation for more information.
         pattern:
           spec:
             =(initContainers):

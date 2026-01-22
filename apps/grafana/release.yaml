@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: k8s-monitoring
-      version: 1.6.48
+      version: 1.4.4
       sourceRef:
         kind: HelmRepository
         name: grafana
@@ -96,6 +96,7 @@ spec:
             - kube_pod_start_time
           includeMetrics:
             - kube_deployment_status_replicas_unavailable
+            - kube_pod_deletion_timestamp
         extraMetricRelabelingRules: |-
           rule {
             regex = "uid"
@@ -130,92 +131,9 @@ spec:
       rbac:
         create: true
         extraRules:
-          - apiGroups: ["traefik.containo.us", "traefik.io"]
+          - apiGroups: ["traefik.io"]
             resources: ["ingressroutes", "middlewares", "tlsoptions"]
             verbs: ["list", "watch"]
-      customResourceState:
-        enabled: true
-        config:
-          spec:
-            resources:
-              - groupVersionKind:
-                  group: traefik.io
-                  version: v1alpha1
-                  kind: IngressRoute
-                metrics:
-                  - name: "traefik"
-                    help: 'Monitor Traefik ingressroute resources that make use of "traefik.io" API group.'
-                    each:
-                      type: Info
-                      info:
-                        labelsFromPath:
-                          name: [metadata, name]
-                          namespace: [metadata, namespace]
-              - groupVersionKind:
-                  group: traefik.io
-                  version: v1alpha1
-                  kind: Middleware
-                metrics:
-                  - name: "traefik"
-                    help: 'Monitor Traefik middleware resources that make use of "traefik.io" API group.'
-                    each:
-                      type: Info
-                      info:
-                        labelsFromPath:
-                          name: [metadata, name]
-                          namespace: [metadata, namespace]
-              - groupVersionKind:
-                  group: traefik.io
-                  version: v1alpha1
-                  kind: TLSOption
-                metrics:
-                  - name: "traefik"
-                    help: 'Monitor Traefik TLSOption resources that make use of "traefik.io" old API group.'
-                    each:
-                      type: Info
-                      info:
-                        labelsFromPath:
-                          name: [metadata, name]
-                          namespace: [metadata, namespace]
-              - groupVersionKind:
-                  group: traefik.containo.us
-                  version: v1alpha1
-                  kind: IngressRoute
-                metrics:
-                  - name: "traefik"
-                    help: 'Monitor Traefik ingressroute resources that make use of "traefik.containo.us" API group.'
-                    each:
-                      type: Info
-                      info:
-                        labelsFromPath:
-                          name: [metadata, name]
-                          namespace: [metadata, namespace]
-              - groupVersionKind:
-                  group: traefik.containo.us
-                  version: v1alpha1
-                  kind: Middleware
-                metrics:
-                  - name: "traefik"
-                    help: 'Monitor Traefik middleware resources that make use of "traefik.containo.us" old API group.'
-                    each:
-                      type: Info
-                      info:
-                        labelsFromPath:
-                          name: [metadata, name]
-                          namespace: [metadata, namespace]
-              - groupVersionKind:
-                  group: traefik.containo.us
-                  version: v1alpha1
-                  kind: TLSOption
-                metrics:
-                  - name: "traefik"
-                    help: 'Monitor Traefik TLSOption resources that make use of "traefik.containo.us" old API group.'
-                    each:
-                      type: Info
-                      info:
-                        labelsFromPath:
-                          name: [metadata, name]
-                          namespace: [metadata, namespace]
     prometheus-node-exporter:
       enabled: true
       podLabels:

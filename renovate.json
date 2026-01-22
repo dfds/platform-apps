@@ -9,10 +9,25 @@
     "packageRules": [
         {
             "matchUpdateTypes": [
+                "lockFileMaintenance"
+            ],
+            "addLabels": [
+                "lockFile"
+            ],
+            "minimumReleaseAge": "1 day",
+            "automerge": false,
+            "matchCurrentVersion": "!/^0/",
+            "ignoreTests": true,
+            "dependencyDashboardApproval": false
+        },
+        {
+            "matchUpdateTypes": [
                 "pin",
                 "digest",
-                "patch",
-                "lockFileMaintenance"
+                "patch"
+            ],
+            "addLabels": [
+                "release:patch"
             ],
             "minimumReleaseAge": "1 day",
             "automerge": true,
@@ -24,6 +39,10 @@
             "matchUpdateTypes": [
                 "minor"
             ],
+            "addLabels": [
+                "release:minor",
+                "on-hold"
+            ],
             "minimumReleaseAge": "7 days",
             "automerge": false,
             "matchCurrentVersion": "!/^0/",
@@ -33,6 +52,10 @@
         {
             "matchUpdateTypes": [
                 "major"
+            ],
+            "addLabels": [
+                "release:major",
+                "on-hold"
             ],
             "minimumReleaseAge": "14 days",
             "automerge": false,

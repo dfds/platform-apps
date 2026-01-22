@@ -13,6 +13,7 @@ spec:
       labels:
         dedicated: observability
     spec:
+      expireAfter: Never
       taints:
         - key: "dfds.com/karpenter"
           value: "true"
@@ -57,6 +58,7 @@ spec:
       labels:
         dedicated: observability
     spec:
+      expireAfter: Never
       taints:
         - key: "dfds.com/karpenter"
           value: "true"
