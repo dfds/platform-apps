@@ -24,7 +24,7 @@ spec:
       name: aws-lb-controller
       annotations:
         eks.amazonaws.com/role-arn: ${flux_aws_lb_controller_role_arn}
-    region: ${flux_cluster_region}
+    region: ${flux_aws_region}
     clusterName: ${flux_cluster_name}
     priorityClassName: cluster-infrastructure
     resources:
