@@ -23,7 +23,7 @@ spec:
     serviceAccount:
       name: aws-lb-controller
       annotations:
-        eks.amazonaws.com/role-arn: ${flux_aws_alb_controller_role_arn}
+        eks.amazonaws.com/role-arn: ${flux_aws_lb_controller_role_arn}
     region: ${flux_cluster_region}
     clusterName: ${flux_cluster_name}
     priorityClassName: cluster-infrastructure
