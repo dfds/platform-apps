@@ -60,11 +60,11 @@ spec:
       traefik:
         expose:
           default: true
-        nodePort: 31001
+        nodePort: ${flux_traefik_blue_target_admin_port}
       web:
         forwardedHeaders:
           insecure: true
-        nodePort: 31000
+        nodePort: ${flux_traefik_blue_target_http_port}
       websecure:
         expose:
           default: false
