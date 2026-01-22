@@ -4,5 +4,6 @@ kind: Kustomization
 namespace: kyverno
 resources:
   - baseline
-  - restricted
+  - hard-requirement
   - operational
+  - restricted
