@@ -16,11 +16,16 @@ spec:
         namespace: flux-system
   interval: 1m
   install:
+    crds: Skip
     remediation:
       retries: 3
   values:
     serviceAccount:
       name: aws-lb-controller
+      annotations:
+        eks.amazonaws.com/role-arn: ${flux_aws_lb_controller_role_arn}
+    region: ${flux_cluster_region}
+    clusterName: ${flux_cluster_name}
     priorityClassName: cluster-infrastructure
     resources:
       requests:

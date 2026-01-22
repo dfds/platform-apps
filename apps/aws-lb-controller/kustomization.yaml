@@ -3,4 +3,6 @@ kind: Kustomization
 namespace: aws-lb-controller
 resources:
   - namespace.yaml
+  - crds.yaml
+  - repo.yaml
   - release.yaml

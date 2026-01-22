@@ -14,4 +14,3 @@ resources:
   - keda.yaml
   - traefik.yaml
   - vmware-tanzu.yaml
-  - aws-lb-controller.yaml
