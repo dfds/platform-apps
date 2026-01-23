@@ -11,6 +11,8 @@ spec:
       namespace: external-secrets
     - name: traefik-crds
       namespace: flux-system
+    - name: aws-lb-controller
+      namespace: aws-lb-controller
   chart:
     spec:
       chart: atlantis
