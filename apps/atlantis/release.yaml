@@ -6,6 +6,11 @@ metadata:
 spec:
   serviceAccountName: helm-controller
   releaseName: atlantis
+  dependsOn:
+    - name: external-secrets
+      namespace: external-secrets
+    - name: traefik-crds
+      namespace: flux-system
   chart:
     spec:
       chart: atlantis

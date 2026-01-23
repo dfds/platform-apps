@@ -6,6 +6,9 @@ metadata:
 spec:
   serviceAccountName: helm-controller
   releaseName: goldpinger
+  dependsOn:
+    - name: grafana-k8s-monitoring
+      namespace: grafana
   chart:
     spec:
       chart: goldpinger

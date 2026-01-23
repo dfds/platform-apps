@@ -7,6 +7,9 @@ metadata:
 spec:
   serviceAccountName: helm-controller
   releaseName: prometheus-blackbox-exporter
+  dependsOn:
+    - name: grafana-k8s-monitoring
+      namespace: grafana
   chart:
     spec:
       chart: prometheus-blackbox-exporter
