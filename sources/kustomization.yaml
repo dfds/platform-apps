@@ -9,4 +9,3 @@ resources:
   - grafana.yaml
   - kafka-exporter.yaml
   - keda.yaml
-  - traefik.yaml
