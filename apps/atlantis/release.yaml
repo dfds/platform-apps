@@ -20,7 +20,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: atlantis
-        namespace: flux-system
+        namespace: atlantis
   interval: 1h
   install:
     remediation:
