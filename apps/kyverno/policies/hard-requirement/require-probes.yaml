@@ -13,7 +13,7 @@ metadata:
       and warns users to configure them.
 spec:
   validationFailureAction: Audit
-  emitWarning: false
+  emitWarning: true
   background: true
   rules:
     - name: require-probes
