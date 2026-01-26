@@ -5,7 +5,6 @@ resources:
   - atlantis.yaml
   - crossplane.yaml
   - dfds.yaml
-  - external-dns.yaml
   - external-secrets.yaml
   - falcosecurity.yaml
   - github-arc.yaml
