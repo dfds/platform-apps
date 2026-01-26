@@ -32,13 +32,13 @@ spec:
           spec.template.spec.containers[*].readinessProbe.
           Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-liveness-and-readiness-probes for more information.
         foreach:
-        - list: "request.object.spec.template.spec.containers"
+        - list: "object.spec.template.spec.containers"
           deny:
             conditions:
               any:
-              - key: "{{ element.livenessProbe || '' }}"
+              - key: "{{ element.livenessProbe }}"
                 operator: Equals
-                value: ""
-              - key: "{{ element.readinessProbe || '' }}"
+                value: null
+              - key: "{{ element.readinessProbe }}"
                 operator: Equals
-                value: ""
+                value: null

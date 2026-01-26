@@ -32,7 +32,7 @@ spec:
           One or more container images appear to be from an unapproved ECR account.
           Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-ecr-images-to-approved-accounts for more information.
         foreach:
-        - list: "request.object.spec.containers"
+        - list: "object.spec.containers"
           deny:
             conditions:
               all:
@@ -45,7 +45,7 @@ spec:
               - key: "{{ contains(element.image, '579478677147') }}"
                 operator: Equals
                 value: false
-        - list: "request.object.spec.initContainers || `[]`"
+        - list: "object.spec.initContainers || `[]`"
           deny:
             conditions:
               all:
@@ -74,7 +74,7 @@ spec:
           One or more container images appear to be from an unapproved ECR account.
           Visit https://wiki.dfds.cloud/en/playbooks/kyverno#restrict-ecr-images for more information.
         foreach:
-        - list: "request.object.spec.template.spec.containers"
+        - list: "object.spec.template.spec.containers"
           deny:
             conditions:
               all:
@@ -87,7 +87,7 @@ spec:
               - key: "{{ contains(element.image, '579478677147') }}"
                 operator: Equals
                 value: false
-        - list: "request.object.spec.template.spec.initContainers || `[]`"
+        - list: "object.spec.template.spec.initContainers || `[]`"
           deny:
             conditions:
               all:
