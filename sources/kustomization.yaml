@@ -4,5 +4,4 @@ kind: Kustomization
 resources:
   - falcosecurity.yaml
   - github-arc.yaml
-  - grafana.yaml
   - kafka-exporter.yaml
