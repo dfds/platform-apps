@@ -14,7 +14,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: arc
-        namespace: flux-system
+        namespace: arc-systems
   interval: 10m0s
   install:
     remediation:
