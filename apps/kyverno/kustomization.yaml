@@ -4,3 +4,4 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - release.yaml
+  - reports-controller-secrets-rbac.yaml
