@@ -4,5 +4,5 @@ metadata:
   name: goldpinger
   namespace: goldpinger
 spec:
-  interval: 5m0s
+  interval: 1h0m0s
   url: https://bloomberg.github.io/goldpinger
