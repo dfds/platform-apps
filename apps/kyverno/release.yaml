@@ -82,6 +82,19 @@ spec:
     #     kyverno_admission_review_duration_seconds:
     #       disabledLabelDimensions: []
     config:
+      # Allow Secrets to be scanned by background controller
+      resourceFilters:
+        - '[*,kyverno,*]'
+        - '[Event,*,*]'
+        - '[Node,*,*]'
+        - '[Node/*,*,*]'
+        - '[APIService,*,*]'
+        - '[TokenReview,*,*]'
+        - '[SubjectAccessReview,*,*]'
+        - '[SelfSubjectAccessReview,*,*]'
+        - '[Binding,*,*]'
+        - '[LocalSubjectAccessReview,*,*]'
+        - '[SelfSubjectRulesReview,*,*]'
       webhooks:
         namespaceSelector:
           matchExpressions:
