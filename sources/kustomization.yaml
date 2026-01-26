@@ -10,4 +10,3 @@ resources:
   - kafka-exporter.yaml
   - keda.yaml
   - traefik.yaml
-  - vmware-tanzu.yaml
