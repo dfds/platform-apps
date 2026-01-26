@@ -2,8 +2,6 @@
 
 This repository has the **specification** of Flux CD resources for different apps.
 
-The *sources* directory contains Flux CD sources, like Helm repositories.
-
 The *apps* directory contains sub directories with Flux CD Helm releases, charts and opinionated chart values.
 
 ## Development practices
@@ -24,7 +22,6 @@ Look at [RELEASE.md](RELEASE.md) for the full process flow, rollback option and 
 
 In order to implement the resources in this repository you need the following on your **implementation** side:
 
-- platform-apps.yaml: References this repository as a Flux CD git source and also references the Helm repositores from the *sources* directory.
 - kustomization.yaml
 
 ### platform-apps.yaml example
@@ -41,19 +38,6 @@ spec:
   ref:
     branch: main
   url: https://github.com/dfds/platform-apps
----
-apiVersion: kustomize.toolkit.fluxcd.io/v1
-kind: Kustomization
-metadata:
-  name: platform-apps-sources
-  namespace: flux-system
-spec:
-  interval: 1m0s
-  sourceRef:
-    kind: GitRepository
-    name: platform-apps-git
-  path: ./sources
-  prune: true
 ```
 
 ### kustomization.yaml example
@@ -68,21 +52,7 @@ Optionally it can also contain a **patches** section that includes inline YAML, 
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - https://github.com/dfds/platform-apps/apps/traefik
-patches:
-  - patch: |-
-      apiVersion: helm.toolkit.fluxcd.io/v2beta1
-      kind: HelmRelease
-      metadata:
-        name: traefik
-        namespace: traefik
-      spec:
-        values:
-          ports:
-            web:
-              nodePort: 31000
-            traefik:
-              nodePort: 31001
+  - https://github.com/dfds/platform-apps/apps/traefik-blue-variant
 ```
 
 ### Terraform
