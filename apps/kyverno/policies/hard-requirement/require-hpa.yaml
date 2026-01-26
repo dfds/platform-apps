@@ -37,7 +37,7 @@ spec:
       validate:
         message: >-
           For Deployments or StatefulSets with replicas > 2, a matching HorizontalPodAutoscaler resource is required.
-          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-hpa for more information.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-hpa-for-deploymentsstatefulsets-with-replicas-2 for more information.
         deny:
           conditions:
             any:
