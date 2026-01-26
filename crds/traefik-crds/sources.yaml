@@ -1,8 +1,9 @@
+---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: crossplane-stable
+  name: traefik
   namespace: flux-system
 spec:
-  interval: 5m0s
-  url: https://charts.crossplane.io/stable
+  interval: 1h0m0s
+  url: https://helm.traefik.io/traefik

@@ -4,6 +4,6 @@ namespace: cert-manager
 resources:
   - namespace.yaml
   - crds.yaml
-  - repo.yaml
+  - sources.yaml
   - release.yaml
   - cluster-issuer.yaml
