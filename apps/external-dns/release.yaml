@@ -28,10 +28,10 @@ spec:
         value: ${flux_aws_region}
     serviceAccount:
       annotations:
-        eks.amazonaws.com/role-arn: ${flux_external_dns_role_arn}
-    txtOwnerId: ${flux_external_dns_txt_owner_id}
+        eks.amazonaws.com/role-arn: arn:aws:iam::${flux_workload_account_id}:role/eks-${flux_cluster_name}-external-dns
+    txtOwnerId: eks-${flux_cluster_name}-external-dns
     extraArgs:
-      - --aws-assume-role=${flux_external_dns_assume_role_arn}
+      - --aws-assume-role=arn:aws:iam::${flux_workload_account_id}:role/eks-${flux_cluster_name}-external-dns-route53-access
       - --aws-prefer-cname
       - --namespace=external-dns
       - --zone-id-filter=${flux_external_dns_core_zone_id}
