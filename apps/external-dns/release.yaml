@@ -9,19 +9,33 @@ spec:
   chart:
     spec:
       chart: external-dns
-      version: 1.19.0
+      version: 1.20.0
       sourceRef:
         kind: HelmRepository
         name: external-dns
         namespace: external-dns
   interval: 1m
   install:
+    crds: Skip
     remediation:
       retries: 3
   values:
     priorityClassName: cluster-infrastructure
     provider:
       name: aws
+    env:
+      - name: AWS_DEFAULT_REGION
+        value: ${flux_aws_region}
+    serviceAccount:
+      annotations:
+        eks.amazonaws.com/role-arn: arn:aws:iam::${flux_workload_account_id}:role/eks-${flux_cluster_name}-external-dns
+    txtOwnerId: eks-${flux_cluster_name}-external-dns
+    extraArgs:
+      - --aws-assume-role=arn:aws:iam::${flux_workload_account_id}:role/eks-${flux_cluster_name}-external-dns-route53-access
+      - --aws-prefer-cname
+      - --namespace=external-dns
+      - --zone-id-filter=${flux_external_dns_core_zone_id}
+      - --zone-id-filter=${flux_external_dns_workload_zone_id}
     sources:
       - crd
     resources:
@@ -30,9 +44,6 @@ spec:
         memory: 64Mi
       limits:
         memory: 64Mi
-    extraArgs:
-      - --aws-prefer-cname
-      - --namespace=external-dns
     managedRecordTypes:
       - A
       - AAAA
