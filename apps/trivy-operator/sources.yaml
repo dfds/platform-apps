@@ -4,5 +4,5 @@ metadata:
   name: aquasecurity
   namespace: trivy-system
 spec:
-  interval: 5m0s
+  interval: 1h0m0s
   url: https://aquasecurity.github.io/helm-charts/

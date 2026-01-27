@@ -2,15 +2,4 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  - atlantis.yaml
-  - crossplane.yaml
-  - dfds.yaml
-  - external-dns.yaml
-  - external-secrets.yaml
-  - falcosecurity.yaml
-  - github-arc.yaml
-  - grafana.yaml
   - kafka-exporter.yaml
-  - keda.yaml
-  - vmware-tanzu.yaml
-  - aws-lb-controller.yaml

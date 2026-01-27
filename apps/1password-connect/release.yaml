@@ -6,6 +6,9 @@ metadata:
 spec:
   serviceAccountName: helm-controller
   releaseName: 1password-connect
+  dependsOn:
+    - name: external-secrets
+      namespace: external-secrets
   chart:
     spec:
       chart: connect

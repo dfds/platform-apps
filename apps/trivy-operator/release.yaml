@@ -6,6 +6,9 @@ metadata:
 spec:
   serviceAccountName: helm-controller
   releaseName: trivy-operator
+  dependsOn:
+    - name: external-secrets
+      namespace: external-secrets
   chart:
     spec:
       chart: trivy-operator

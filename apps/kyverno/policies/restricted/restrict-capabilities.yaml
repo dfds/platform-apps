@@ -22,6 +22,9 @@ spec:
         - resources:
             kinds:
               - Pod
+            operations:
+              - CREATE
+              - UPDATE
       validate:
         message: >-
           All capabilities must be dropped. The field 
@@ -50,6 +53,9 @@ spec:
         - resources:
             kinds:
               - Pod
+            operations:
+              - CREATE
+              - UPDATE
       exclude:
         any:
         - resources:

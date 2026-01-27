@@ -1,8 +1,8 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: goldpinger
-  namespace: goldpinger
+  name: kyverno
+  namespace: kyverno
 spec:
   interval: 1h0m0s
-  url: https://bloomberg.github.io/goldpinger
+  url: https://kyverno.github.io/kyverno/

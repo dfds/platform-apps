@@ -7,6 +7,11 @@ metadata:
 spec:
   serviceAccountName: helm-controller
   releaseName: arc-runner-set
+  dependsOn:
+    - name: arc
+      namespace: arc-systems
+    - name: external-secrets
+      namespace: external-secrets
   chart:
     spec:
       chart: gha-runner-scale-set
@@ -14,7 +19,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: arc
-        namespace: flux-system
+        namespace: arc-runners
   interval: 10m0s
   install:
     remediation:
