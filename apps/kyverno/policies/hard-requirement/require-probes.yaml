@@ -26,19 +26,10 @@ spec:
               - CREATE
               - UPDATE
       validate:
-        message: >-
-          Liveness and readiness probes are required. All containers must specify
-          spec.template.spec.containers[*].livenessProbe and
-          spec.template.spec.containers[*].readinessProbe.
-          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-liveness-and-readiness-probes for more information.
-        foreach:
-        - list: "request.object.spec.template.spec.containers"
-          deny:
-            conditions:
-              any:
-              - key: "{{ element.livenessProbe || '' }}"
-                operator: Equals
-                value: ""
-              - key: "{{ element.readinessProbe || '' }}"
-                operator: Equals
-                value: ""
+        cel:
+          expressions:
+          - expression: "object.spec.template.spec.containers.all(c, has(c.livenessProbe) && has(c.readinessProbe))"
+            message: >-
+              Liveness and readiness probes are required. All containers must specify
+              livenessProbe and readinessProbe.
+              Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-liveness-and-readiness-probes for more information.

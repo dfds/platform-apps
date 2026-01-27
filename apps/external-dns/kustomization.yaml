@@ -4,5 +4,5 @@ namespace: external-dns
 resources:
   - crds.yaml
   - namespace.yaml
-  - repo.yaml
+  - sources.yaml
   - release.yaml

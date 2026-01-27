@@ -1,8 +1,9 @@
+---
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
-  name: goldpinger
-  namespace: goldpinger
+  name: traefik
+  namespace: traefik-blue-variant
 spec:
   interval: 1h0m0s
-  url: https://bloomberg.github.io/goldpinger
+  url: https://helm.traefik.io/traefik

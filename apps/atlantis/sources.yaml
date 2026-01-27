@@ -2,7 +2,7 @@ apiVersion: source.toolkit.fluxcd.io/v1
 kind: HelmRepository
 metadata:
   name: atlantis
-  namespace: flux-system
+  namespace: atlantis
 spec:
-  interval: 5m0s
+  interval: 1h0m0s
   url: https://runatlantis.github.io/helm-charts

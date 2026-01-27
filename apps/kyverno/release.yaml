@@ -1,13 +1,3 @@
----
-apiVersion: source.toolkit.fluxcd.io/v1
-kind: HelmRepository
-metadata:
-  name: kyverno
-  namespace: flux-system
-spec:
-  interval: 5m0s
-  url: https://kyverno.github.io/kyverno/
----
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
@@ -23,7 +13,7 @@ spec:
       sourceRef:
         kind: HelmRepository
         name: kyverno
-        namespace: flux-system
+        namespace: kyverno
   interval: 1m0s
   install:
     remediation:
@@ -82,6 +72,19 @@ spec:
     #     kyverno_admission_review_duration_seconds:
     #       disabledLabelDimensions: []
     config:
+      # Allow Secrets to be scanned by background controller
+      resourceFilters:
+        - '[*,kyverno,*]'
+        - '[Event,*,*]'
+        - '[Node,*,*]'
+        - '[Node/*,*,*]'
+        - '[APIService,*,*]'
+        - '[TokenReview,*,*]'
+        - '[SubjectAccessReview,*,*]'
+        - '[SelfSubjectAccessReview,*,*]'
+        - '[Binding,*,*]'
+        - '[LocalSubjectAccessReview,*,*]'
+        - '[SelfSubjectRulesReview,*,*]'
       webhooks:
         namespaceSelector:
           matchExpressions:
