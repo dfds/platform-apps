@@ -29,7 +29,7 @@ spec:
     serviceAccount:
       annotations:
         eks.amazonaws.com/role-arn: ${flux_external_dns_role_arn}
-    txtOwnerId: ${flux_cluster_name}-external-dns
+    txtOwnerId: ${flux_cluster_name}-external-dns # changing this causes the controller to loose ownership of records
     extraArgs:
       - --aws-assume-role=${flux_external_dns_assume_role_arn}
       - --aws-prefer-cname
