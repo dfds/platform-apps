@@ -6,3 +6,5 @@ resources:
   - sources.yaml
   - release.yaml
   - reports-controller-secrets-rbac.yaml
+  - policies
+  - policy-reporter
