@@ -19,7 +19,7 @@ spec:
     remediation:
       retries: 3
   values:
-    globale:
+    global:
       tolerations:
         - key: "dfds.com/karpenter"
           operator: "Exists"
