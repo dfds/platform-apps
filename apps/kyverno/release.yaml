@@ -31,14 +31,6 @@ spec:
           requests:
             memory: "2048Mi"
       replicas: 3
-      metricsConfig:
-        metricsExposure:
-          kyverno_policy_results_total:
-            disabledLabelDimensions: []
-          kyverno_admission_requests_total:
-            disabledLabelDimensions: []
-          kyverno_admission_review_duration_seconds:
-            disabledLabelDimensions: []
       # Disabled for now
       # serviceMonitor:
       #   enabled: true
@@ -51,10 +43,6 @@ spec:
         requests:
           memory: "1Gi"
     backgroundController:
-      metricsConfig:
-        metricsExposure:
-          kyverno_policy_results_total:
-            disabledLabelDimensions: []
       resources:
         limits:
           memory: "128Mi"
@@ -74,6 +62,14 @@ spec:
           - PolicyViolation  # Silence audit violation events
           - PolicyApplied    # Also silence successful policy application events
           - PolicySkipped    # Also silence skipped policy events
+    metricsConfig:
+      metricsExposure:
+        kyverno_policy_results_total:
+          disabledLabelDimensions: []
+        kyverno_admission_requests_total:
+          disabledLabelDimensions: []
+        kyverno_admission_review_duration_seconds:
+          disabledLabelDimensions: []
     config:
       # Allow Secrets to be scanned by background controller
       resourceFilters:
