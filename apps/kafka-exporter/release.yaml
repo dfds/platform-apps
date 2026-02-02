@@ -15,7 +15,7 @@ spec:
       reconcileStrategy: Revision # kafka-exporter is not a traditional helm chart with releases, so it is consumed from master branch
       sourceRef:
         kind: GitRepository
-        name: kafka-exporter
+        name: kafka-exporter-${flux_kafka_exporter_cluster_id}
         namespace: monitoring
   interval: 1m0s
   install:
