@@ -31,12 +31,3 @@ spec:
       enabled: true
     kyvernoPlugin:
       enabled: true
-    tolerations:
-      - key: "dfds.com/karpenter"
-        operator: "Exists"
-        effect: "NoSchedule"
-      - key: "dfds.com/nodegroup-instance-spot" # delete this if you don't want spot-instances
-        operator: "Exists"
-        effect: "NoSchedule"
-    nodeSelector:
-      dfds.com/nodegroup-purpose: general # ensures you land on a Karpenter node
