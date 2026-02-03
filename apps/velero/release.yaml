@@ -16,47 +16,117 @@ spec:
         name: vmware-tanzu
         namespace: velero
   interval: 1m
+  install:
+    crds: CreateReplace
   upgrade:
-    force: true
+    crds: CreateReplace
   values:
-    image:
-      name: velero/velero
     cleanUpCRDs: true
+    configuration:
+      backupStorageLocation:
+      - bucket: ${flux_velero_aws_bucket_name}
+        config:
+          region: ${flux_aws_region}
+        default: true
+        name: default
+        provider: aws
+      - bucket: ${flux_velero_azure_bucket_name}
+        config:
+          resourceGroup: ${flux_velero_azure_resource_group}
+          storageAccount: ${flux_velero_azure_storage_account}
+          subscriptionId: ${flux_velero_azure_subscription_id}
+        credential:
+          key: cloud
+          name: velero-credentials
+        name: azure
+        provider: azure
+      features: EnableCSI
+      logFormat: json
+      volumeSnapshotLocation:
+      - config:
+          region: ${flux_aws_region}
+        name: velero-snapshot
+        provider: aws
+      - bucket: ${azure_bucket_name}
+        config:
+          resourceGroup: ${flux_velero_azure_resource_group}
+          subscriptionId: ${flux_velero_azure_subscription_id}
+        credential:
+          key: cloud
+          name: velero-credentials
+        name: azure-snapshot
+        provider: azure
     credentials:
       useSecret: false
-    snapshotsEnabled: true
-    configuration:
-      logLevel: info
-      logFormat: json
-      backupStorageLocation:
-      - provider: aws
-        bucket: velero-storage
-        config:
-          region: eu-west-1
-      volumeSnapshotLocation:
-      - name: velero-snapshot
-        provider: aws
-        config:
-          region: eu-west-1
+    deployNodeAgent: true
     initContainers:
-      - name: velero-plugin-for-aws
-        image: velero/velero-plugin-for-aws:v1.13.2
-        volumeMounts:
-          - mountPath: /target
-            name: plugins
-    priorityClassName: cluster-infrastructure
+    - image: velero/velero-plugin-for-aws:v1.13.2
+      name: velero-plugin-for-aws
+      volumeMounts:
+      - mountPath: /target
+        name: plugins
+    - image: velero/velero-plugin-for-microsoft-azure:v1.12.1
+      name: velero-plugin-for-microsoft-azure
+      volumeMounts:
+      - mountPath: /target
+        name: plugins
     metrics:
       scrapeInterval: 120s
       serviceMonitor:
         enabled: true
         metricRelabelings:
-          - sourceLabels: ["__name__"]
-            regex: "velero_backup_validation_failure_total|velero_restore_failed_total|velero_restore_validation_failed_total|velero_volume_snapshot_failure_total"
-            action: keep
+        - action: keep
+          regex: velero_backup_validation_failure_total|velero_restore_failed_total|velero_restore_validation_failed_total|velero_volume_snapshot_failure_total
+          sourceLabels:
+          - __name__
+    priorityClassName: cluster-infrastructure
     resources:
-      requests:
-        cpu: 500m
-        memory: 2Gi
       limits:
-        cpu: 2
-        memory: 4Gi
+        memory: 2Gi
+      requests:
+        cpu: 100m
+        memory: 2Gi
+    schedules:
+      ${flux_cluster_name}-cluster-backup:
+        schedule: 0 0 * * *
+        template:
+          excludedNamespaceScopedResources:
+          - secrets
+          - configauditreports
+          - exposedsecretreports
+          - infraassessmentreports
+          - rbacassessmentreports
+          - sbomreports
+          - vulnerabilityreports
+          excludedNamespaces:
+          - velero
+          snapshotVolumes: true
+          storageLocation: default
+          ttl: 730h
+      ${flux_cluster_name}-cluster-backup-offsite:
+        disabled: false
+        schedule: 0 * * * *
+        template:
+          excludedNamespaceScopedResources:
+          - secrets
+          - configauditreports
+          - exposedsecretreports
+          - infraassessmentreports
+          - rbacassessmentreports
+          - sbomreports
+          - vulnerabilityreports
+          excludedNamespaces:
+          - velero
+          snapshotMoveData: true
+          snapshotVolumes: true
+          storageLocation: azure
+          ttl: 730h
+          volumeSnapshotLocations:
+          - azure-snapshot
+    serviceAccount:
+      server:
+        annotations:
+          eks.amazonaws.com/role-arn: ${flux_velero_iam_role_arn}
+          eks.amazonaws.com/sts-regional-endpoints: "true"
+        create: true
+    snapshotsEnabled: true
