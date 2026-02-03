@@ -30,6 +30,7 @@ spec:
         default: true
         name: default
         provider: aws
+        accessMode: ${flux_velero_access_mode}
       - bucket: ${flux_velero_azure_bucket_name}
         config:
           resourceGroup: ${flux_velero_azure_resource_group}
@@ -40,6 +41,7 @@ spec:
           name: velero-credentials
         name: azure
         provider: azure
+        accessMode: ${flux_velero_access_mode}
       features: EnableCSI
       logFormat: json
       volumeSnapshotLocation:
