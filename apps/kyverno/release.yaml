@@ -19,20 +19,21 @@ spec:
     remediation:
       retries: 3
   values:
+    global:
+      tolerations:
+        - key: "dfds.com/karpenter"
+          operator: "Exists"
+          effect: "NoSchedule"
+        - key: "dfds.com/nodegroup-instance-spot" # delete this if you don't want spot-instances
+          operator: "Exists"
+          effect: "NoSchedule"
+      nodeSelector:
+        dfds.com/nodegroup-purpose: general # ensures you land on a Karpenter node
     resources:
       limits:
         memory: "2048Mi"
     replicaCount: 3
     admissionController:
-      tolerations:
-        - key: dfds.com/karpenter
-          operator: Equal
-          value: "true"
-          effect: NoSchedule
-        - key: dfds.com/nodegroup-instance-spot
-          operator: Equal
-          value: spot
-          effect: NoSchedule
       container:
         resources:
           limits:
@@ -46,45 +47,18 @@ spec:
       #   additionalLabels:
       #     scrape-service-metrics: "true"
     reportsController:
-      tolerations:
-        - key: dfds.com/karpenter
-          operator: Equal
-          value: "true"
-          effect: NoSchedule
-        - key: dfds.com/nodegroup-instance-spot
-          operator: Equal
-          value: spot
-          effect: NoSchedule
       resources:
         limits:
           memory: "1Gi"
         requests:
           memory: "1Gi"
     backgroundController:
-      tolerations:
-        - key: dfds.com/karpenter
-          operator: Equal
-          value: "true"
-          effect: NoSchedule
-        - key: dfds.com/nodegroup-instance-spot
-          operator: Equal
-          value: spot
-          effect: NoSchedule
       resources:
         limits:
           memory: "128Mi"
         requests:
           memory: "128Mi"
     cleanupController:
-      tolerations:
-        - key: dfds.com/karpenter
-          operator: Equal
-          value: "true"
-          effect: NoSchedule
-        - key: dfds.com/nodegroup-instance-spot
-          operator: Equal
-          value: spot
-          effect: NoSchedule
       resources:
         limits:
           memory: "128Mi"
