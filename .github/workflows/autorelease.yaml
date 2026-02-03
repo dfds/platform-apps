@@ -1,0 +1,20 @@
+name: Auto release
+
+on:
+  push:
+    branches: ["master", "main"]
+    paths-ignore:
+      - .github/**
+      - "**/*.md"
+      - .gitignore
+      - renovate.json
+
+jobs:
+  shared:
+    uses: dfds/shared-workflows/.github/workflows/automation-auto-release.yml@master
+    # Note, make sure to use `secrets: inherit` if utilizing the organizational secret `GH_RELEASE`
+    secrets: inherit
+
+    # In order to add prefix to the tag:
+    with:
+      tag_prefix: "v"
