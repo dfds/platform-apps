@@ -44,11 +44,6 @@ spec:
         volumeMounts:
           - mountPath: /target
             name: plugins
-      - name: velero-plugin-for-csi
-        image: velero/velero-plugin-for-csi:v0.5.0
-        volumeMounts:
-          - mountPath: /target
-            name: plugins
     priorityClassName: cluster-infrastructure
     metrics:
       scrapeInterval: 120s
