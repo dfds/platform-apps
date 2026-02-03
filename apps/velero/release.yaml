@@ -49,7 +49,7 @@ spec:
           region: ${flux_aws_region}
         name: velero-snapshot
         provider: aws
-      - bucket: ${azure_bucket_name}
+      - bucket: ${flux_velero_azure_bucket_name}
         config:
           resourceGroup: ${flux_velero_azure_resource_group}
           subscriptionId: ${flux_velero_azure_subscription_id}
