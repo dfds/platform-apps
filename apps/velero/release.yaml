@@ -103,7 +103,7 @@ spec:
           - vulnerabilityreports
           excludedNamespaces:
           - velero
-          snapshotVolumes: true
+          snapshotVolumes: false
           storageLocation: default
           ttl: 730h
       ${flux_cluster_name}-cluster-backup-offsite:
@@ -120,8 +120,8 @@ spec:
           - vulnerabilityreports
           excludedNamespaces:
           - velero
-          snapshotMoveData: true
-          snapshotVolumes: true
+          snapshotMoveData: false
+          snapshotVolumes: false
           storageLocation: azure
           ttl: 730h
           volumeSnapshotLocations:
