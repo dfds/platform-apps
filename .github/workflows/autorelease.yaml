@@ -2,7 +2,7 @@ name: Auto release
 
 on:
   push:
-    branches: ["master", "main"]
+    branches: ["main"]
     paths-ignore:
       - .github/**
       - "**/*.md"
