@@ -90,6 +90,7 @@ spec:
         memory: 2Gi
     schedules:
       ${flux_cluster_name}-cluster-backup:
+        disabled: ${flux_velero_cluster_backup_disabled}
         schedule: 0 0 * * *
         template:
           excludedNamespaceScopedResources:
@@ -106,7 +107,7 @@ spec:
           storageLocation: default
           ttl: 730h
       ${flux_cluster_name}-cluster-backup-offsite:
-        disabled: false
+        disabled: ${flux_velero_cluster_backup_offsite_disabled}
         schedule: 0 * * * *
         template:
           excludedNamespaceScopedResources:
