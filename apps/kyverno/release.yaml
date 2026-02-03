@@ -19,16 +19,6 @@ spec:
     remediation:
       retries: 3
   values:
-    global:
-      tolerations:
-        - key: "dfds.com/karpenter"
-          operator: "Exists"
-          effect: "NoSchedule"
-        - key: "dfds.com/nodegroup-instance-spot" # delete this if you don't want spot-instances
-          operator: "Exists"
-          effect: "NoSchedule"
-      nodeSelector:
-        dfds.com/nodegroup-purpose: general # ensures you land on a Karpenter node
     resources:
       limits:
         memory: "2048Mi"
