@@ -4,7 +4,7 @@ metadata:
   name: require-hpa
   annotations:
     policies.kyverno.io/title: Require horizontal pod autoscaler (HPA)
-    policies.kyverno.io/category: Hard Requirement
+    policies.kyverno.io/category: Requirement
     policies.kyverno.io/severity: low
     policies.kyverno.io/subject: Deployment,StatefulSet
     policies.kyverno.io/description: >-
