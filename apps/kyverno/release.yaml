@@ -36,10 +36,10 @@ spec:
     reportsController:
       resources:
         limits:
-          memory: 128Mi
+          memory: 512Mi
         requests:
-          cpu: 100m
-          memory: 128Mi
+          cpu: 1000m
+          memory: 512Mi
       priorityClassName: cluster-observability
     backgroundController:
       resources:
