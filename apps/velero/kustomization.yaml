@@ -5,7 +5,7 @@ resources:
   - sources.yaml
   - release.yaml
 patches:
-  - path: patch.json
+  - path: ${flux_velero_patch_file}
     target:
       group: helm.toolkit.fluxcd.io
       kind: HelmRelease
