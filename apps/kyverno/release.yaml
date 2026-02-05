@@ -19,41 +19,44 @@ spec:
     remediation:
       retries: 3
   values:
-    resources:
-      limits:
-        memory: "2048Mi"
-    replicaCount: 3
     admissionController:
       container:
         resources:
           limits:
-            memory: "2048Mi"
+            memory: 384Mi
           requests:
-            memory: "2048Mi"
+            cpu: 100m
+            memory: 384Mi
       replicas: 3
-      # Disabled for now
-      # serviceMonitor:
+      priorityClassName: cluster-infrastructure
+      # serviceMonitor: # Disabled for now due cost
       #   enabled: true
       #   additionalLabels:
       #     scrape-service-metrics: "true"
     reportsController:
       resources:
         limits:
-          memory: "1Gi"
+          memory: 128Mi
         requests:
-          memory: "1Gi"
+          cpu: 100m
+          memory: 128Mi
+      priorityClassName: cluster-observability
     backgroundController:
       resources:
         limits:
-          memory: "128Mi"
+          memory: 128Mi
         requests:
-          memory: "128Mi"
+          cpu: 100m
+          memory: 128Mi
+      priorityClassName: cluster-infrastructure
     cleanupController:
       resources:
         limits:
-          memory: "128Mi"
+          memory: 128Mi
         requests:
-          memory: "128Mi"
+          cpu: 100m
+          memory: 128Mi
+      priorityClassName: cluster-infrastructure
     features:
       forceFailurePolicyIgnore:
         enabled: true
