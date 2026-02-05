@@ -17,5 +17,22 @@
             "provider": "azure",
             "accessMode": "${flux_velero_access_mode}"
         }
+    },
+    {
+        "op": "add",
+        "path": "/spec/values/configuration/volumeSnapshotLocation/-",
+        "value": {
+            "bucket": "${flux_velero_azure_bucket_name}",
+            "config": {
+                "resourceGroup": "${flux_velero_azure_resource_group}",
+                "subscriptionId": "${flux_velero_azure_subscription_id}"
+            },
+            "credential": {
+                "key": "cloud",
+                "name": "velero-credentials"
+            },
+            "name": "azure-snapshot",
+            "provider": "azure"
+        }
     }
 ]
