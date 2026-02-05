@@ -27,7 +27,24 @@ spec:
     remediation:
       retries: 3
   values:
+    resources:
+      limits:
+        memory: 384Mi
+      requests:
+        cpu: 200m
+        memory: 384Mi
+    priorityClassName: cluster-observability
     ui:
       enabled: true
-    kyvernoPlugin:
-      enabled: true
+      resources:
+        limits:
+          memory: 64Mi
+        requests:
+          cpu: 10m
+          memory: 64Mi
+      priorityClassName: cluster-observability
+    plugin:
+      kyverno:
+        enabled: true
+        priorityClassName: cluster-observability
+        resources: {} # todo: add once actually deployed
