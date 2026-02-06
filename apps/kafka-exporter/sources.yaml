@@ -2,7 +2,7 @@
 apiVersion: source.toolkit.fluxcd.io/v1
 kind: GitRepository
 metadata:
-  name: kafka-exporter
+  name: kafka-exporter-${flux_kafka_exporter_cluster_id}
   namespace: monitoring
 spec:
   interval: 1h0m0s
