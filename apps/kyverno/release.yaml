@@ -16,8 +16,11 @@ spec:
         namespace: kyverno
   interval: 1m0s
   install:
+    crds: CreateReplace
     remediation:
       retries: 3
+  upgrade:
+    crds: CreateReplace
   values:
     admissionController:
       container:
