@@ -42,10 +42,11 @@ spec:
         priorityClassName: cluster-observability
         redis:
           priorityClassName: cluster-observability
-    kubernetes:
-      resources:
-        requests:
-          cpu: 5m
-          memory: 512Mi
-        limits:
-          memory: 512Mi
+    collectors:
+      kubernetes:
+        resources:
+          requests:
+            cpu: 5m
+            memory: 512Mi
+          limits:
+            memory: 512Mi
