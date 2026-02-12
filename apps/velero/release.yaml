@@ -61,6 +61,13 @@ spec:
     credentials:
       useSecret: false
     deployNodeAgent: true
+    nodeAgent:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 256Mi
+        limits:
+          memory: 256Mi
     initContainers:
     - image: velero/velero-plugin-for-aws:v1.13.2
       name: velero-plugin-for-aws
