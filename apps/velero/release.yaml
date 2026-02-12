@@ -64,7 +64,7 @@ spec:
     nodeAgent:
       resources:
         requests:
-          cpu: 1m
+          cpu: 5m
           memory: 256Mi
         limits:
           memory: 256Mi
