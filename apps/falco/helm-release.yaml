@@ -17,6 +17,12 @@ spec:
   interval: 1m
   timeout: 15m
   values:
+    resources:
+      requests:
+        cpu: 25m
+        memory: 1024Mi
+      limits:
+        memory: 1024Mi
     controller:
       daemonset:
         updateStrategy:
@@ -25,7 +31,20 @@ spec:
     podPriorityClassName: node-observability
     falcosidekick:
       priorityClassName: cluster-observability
+      resources:
+        requests:
+          cpu: 1m
+          memory: 256Mi
+        limits:
+          memory: 256Mi
       webui:
         priorityClassName: cluster-observability
         redis:
           priorityClassName: cluster-observability
+    kubernetes:
+      resources:
+        requests:
+          cpu: 1m
+          memory: 512Mi
+        limits:
+          memory: 512Mi
