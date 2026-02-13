@@ -25,6 +25,12 @@ spec:
             operations:
               - CREATE
               - UPDATE
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kyverno
       validate:
         message: >-
           All capabilities must be dropped. The field 

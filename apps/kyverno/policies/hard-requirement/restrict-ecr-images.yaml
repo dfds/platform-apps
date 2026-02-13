@@ -26,6 +26,12 @@ spec:
             operations:
               - CREATE
               - UPDATE
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kyverno
       validate:
         cel:
           expressions:
@@ -55,6 +61,12 @@ spec:
             operations:
               - CREATE
               - UPDATE
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kyverno
       validate:
         cel:
           expressions:

@@ -25,6 +25,12 @@ spec:
             operations:
               - CREATE
               - UPDATE
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kyverno
       validate:
         message: >-
           HostPath volumes are not allowed. The field spec.volumes[*].hostPath must not be set.
