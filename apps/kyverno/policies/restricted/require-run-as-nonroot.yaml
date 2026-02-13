@@ -24,6 +24,12 @@ spec:
             operations:
               - CREATE
               - UPDATE
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kyverno
       validate:
         message: >-
           Running as root is not allowed. Either the field spec.securityContext.runAsNonRoot

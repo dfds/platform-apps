@@ -24,6 +24,12 @@ spec:
               operations:
                 - CREATE
                 - UPDATE
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kyverno
       context:
         - name: hpas
           apiCall:
