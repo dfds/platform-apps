@@ -1,0 +1,23 @@
+---
+# Source: kyverno/templates/reports-controller/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: kyverno-reports-controller-metrics
+  namespace: kyverno
+  labels:
+    app.kubernetes.io/component: reports-controller
+    app.kubernetes.io/instance: kyverno
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kyverno
+spec:
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: metrics-port
+  selector:
+    app.kubernetes.io/component: reports-controller
+    app.kubernetes.io/instance: kyverno
+    app.kubernetes.io/part-of: kyverno
+  type: ClusterIP

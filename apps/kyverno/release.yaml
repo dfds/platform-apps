@@ -19,6 +19,8 @@ spec:
     remediation:
       retries: 3
   values:
+    crds:
+      install: false
     admissionController:
       container:
         resources:
@@ -38,7 +40,7 @@ spec:
         limits:
           memory: 1Gi
         requests:
-          cpu: 1000m
+          cpu: 500m
           memory: 1Gi
       priorityClassName: cluster-observability
     backgroundController:
