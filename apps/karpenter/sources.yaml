@@ -1,0 +1,10 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: OCIRepository
+metadata:
+  name: karpenter
+  namespace: karpenter
+spec:
+  interval: 5m
+  url: oci://public.ecr.aws/karpenter/karpenter
+  ref:
+    tag: "1.6.3"
