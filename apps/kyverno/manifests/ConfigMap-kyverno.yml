@@ -1,0 +1,24 @@
+---
+# Source: kyverno/templates/config/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: kyverno
+  namespace: kyverno
+  labels:
+    app.kubernetes.io/component: config
+    app.kubernetes.io/instance: kyverno
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kyverno
+  annotations:
+    helm.sh/resource-policy: "keep"
+data:
+  enableDefaultRegistryMutation: "true"
+  defaultRegistry: "docker.io"
+  generateSuccessEvents: "false"
+  excludeGroups: "system:nodes"
+  resourceFilters: >-
+    [*/*,kyverno,*] [*,kyverno,*] [Event,*,*] [Node,*,*] [Node/*,*,*] [APIService,*,*] [TokenReview,*,*] [SubjectAccessReview,*,*] [SelfSubjectAccessReview,*,*] [Binding,*,*] [LocalSubjectAccessReview,*,*] [SelfSubjectRulesReview,*,*]
+  updateRequestThreshold: "1000"
+  webhooks: "{\"namespaceSelector\":{\"matchExpressions\":[{\"key\":\"kubernetes.io/metadata.name\",\"operator\":\"NotIn\",\"values\":[\"kube-system\",\"kyverno\",\"flux-system\",\"monitoring\"]},{\"key\":\"kubernetes.io/metadata.name\",\"operator\":\"NotIn\",\"values\":[\"kyverno\"]}],\"matchLabels\":null}}"
+  webhookAnnotations: "{\"admissions.enforcer/disabled\":\"true\"}"

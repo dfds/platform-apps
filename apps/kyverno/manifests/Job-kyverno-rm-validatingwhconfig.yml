@@ -1,0 +1,52 @@
+---
+# Source: kyverno/templates/hooks/pre-delete-remove-validatingwebhookconfiguration.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kyverno-rm-validatingwhconfig
+  namespace: kyverno
+  labels:
+    app.kubernetes.io/component: hooks
+    app.kubernetes.io/instance: kyverno
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kyverno
+  annotations:
+    helm.sh/hook: pre-delete
+    helm.sh/hook-delete-policy: before-hook-creation,hook-succeeded,hook-failed
+    helm.sh/hook-weight: "100"
+spec:
+  backoffLimit: 2
+  template:
+    spec:
+      serviceAccountName: kyverno-admission-controller
+      automountServiceAccountToken: true
+      restartPolicy: Never
+      containers:
+        - name: kubectl
+          image: "registry.k8s.io/kubectl:v1.34.3"
+          imagePullPolicy:
+          command:
+            - kubectl
+            - delete
+            - validatingwebhookconfiguration
+            - -l
+            - webhook.kyverno.io/managed-by=kyverno
+          resources:
+            limits:
+              cpu: 100m
+              memory: 256Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            privileged: false
+            readOnlyRootFilesystem: true
+            runAsGroup: 65534
+            runAsNonRoot: true
+            runAsUser: 65534
+            seccompProfile:
+              type: RuntimeDefault
