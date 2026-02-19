@@ -47,7 +47,7 @@ spec:
             capabilities:
               drop:
                 - ALL
-          image: public.ecr.aws/karpenter/controller:1.6.3@sha256:b76551596698381c4940c15093afc733357b9ffffd5c97612d324b7a794aa0ed
+          image: public.ecr.aws/karpenter/controller:1.9.0@sha256:30a506c64fbb1d8026cbfd9a1d662be3ab6e33a7999290a104085d78b49a69d7
           imagePullPolicy: IfNotPresent
           env:
             - name: KUBERNETES_MIN_VERSION
@@ -68,6 +68,12 @@ spec:
               valueFrom:
                 fieldRef:
                   fieldPath: metadata.namespace
+            - name: CPU_REQUESTS
+              valueFrom:
+                resourceFieldRef:
+                  containerName: controller
+                  divisor: 1m
+                  resource: requests.cpu
             - name: MEMORY_LIMIT
               valueFrom:
                 resourceFieldRef:
@@ -75,7 +81,7 @@ spec:
                   divisor: "0"
                   resource: limits.memory
             - name: FEATURE_GATES
-              value: "ReservedCapacity=true,SpotToSpotConsolidation=true,NodeRepair=false"
+              value: "ReservedCapacity=true,SpotToSpotConsolidation=true,NodeRepair=false,NodeOverlay=false,StaticCapacity=false"
             - name: BATCH_MAX_DURATION
               value: "10s"
             - name: BATCH_IDLE_DURATION
@@ -92,6 +98,8 @@ spec:
               value: "Karpenter-${flux_cluster_name}"
             - name: RESERVED_ENIS
               value: "0"
+            - name: IGNORE_DRA_REQUESTS
+              value: "true"
           ports:
             - name: http-metrics
               containerPort: 8080
