@@ -12,15 +12,18 @@ spec:
   chart:
     spec:
       chart: connect
-      version: 2.0.3
+      version: 2.3.0
       sourceRef:
         kind: HelmRepository
         name: 1password-connect
         namespace: 1password-connect
   interval: 1m0s
   install:
+    crds: CreateReplace
     remediation:
       retries: 3
+  upgrade:
+    crds: CreateReplace
   values:
     connect:
       priorityClassName: "cluster-infrastructure"
