@@ -4,4 +4,4 @@ namespace: falco
 resources:
   - namespace.yaml
   - sources.yaml
-  - helm-release.yaml
+  - release.yaml

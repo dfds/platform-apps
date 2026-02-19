@@ -4,4 +4,4 @@ namespace: external-secrets
 resources:
   - namespace.yaml
   - sources.yaml
-  - helm-release.yaml
+  - release.yaml

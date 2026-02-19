@@ -3,6 +3,7 @@ apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
   name: 1password-connect
+  namespace: 1password-connect
 spec:
   serviceAccountName: helm-controller
   releaseName: 1password-connect
