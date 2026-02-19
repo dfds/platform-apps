@@ -1,0 +1,21 @@
+---
+# Source: atlantis/templates/pvc.yaml
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: atlantis-data
+  namespace: atlantis
+  labels:
+    app: atlantis
+    chart: atlantis-5.28.0
+    release: atlantis
+    heritage: Helm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      # The biggest thing Atlantis stores is the Git repo when it checks it out.
+      # It deletes the repo after the pull request is merged.
+      storage: 100Gi
+  storageClassName: csi-gp3

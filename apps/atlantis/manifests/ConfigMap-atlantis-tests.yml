@@ -1,0 +1,17 @@
+---
+# Source: atlantis/templates/tests/test-atlantis-configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atlantis-tests
+  namespace: atlantis
+data:
+  tests.bats: |-
+    setup() {
+      apk add curl -q
+    }
+    @test "Atlantis UI is available" {
+      ATLANTIS_URL=http://atlantis.atlantis.svc.cluster.local:80
+      echo "Trying Atlantis at: $ATLANTIS_URL"
+      curl -v $ATLANTIS_URL
+    }
