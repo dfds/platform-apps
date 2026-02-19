@@ -4,4 +4,4 @@ namespace: keda
 resources:
   - namespace.yaml
   - sources.yaml
-  - helm-release.yaml
+  - release.yaml
