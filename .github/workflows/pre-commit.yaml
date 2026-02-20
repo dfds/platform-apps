@@ -11,6 +11,5 @@ jobs:
     - uses: actions/setup-python@v6
     - uses: alexellis/arkade-get@master
       with:
-        kustomize: latest
         kubeconform: latest
     - uses: pre-commit/action@v3.0.1
