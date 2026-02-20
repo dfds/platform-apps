@@ -20,8 +20,11 @@ spec:
         namespace: 1password-connect
   interval: 1m0s
   install:
+    crds: CreateReplace
     remediation:
       retries: 3
+  upgrade:
+    crds: CreateReplace
   values:
     connect:
       priorityClassName: "cluster-infrastructure"

@@ -1,0 +1,470 @@
+---
+# Source: atlantis/templates/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: atlantis
+  namespace: atlantis
+  labels:
+    app: atlantis
+    chart: atlantis-5.28.0
+    release: atlantis
+    heritage: Helm
+spec:
+  serviceName: atlantis
+  replicas: 1
+  selector:
+    matchLabels:
+      app: atlantis
+      release: atlantis
+  template:
+    metadata:
+      labels:
+        app: atlantis
+        release: atlantis
+      annotations:
+        checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
+        checksum/repo-config: 97876ab09bec423c0be383ec2cedc22981ba7ba5512b2a279e6355bfc039b708
+    spec:
+      hostNetwork: false
+      serviceAccountName: atlantis
+      shareProcessNamespace: false
+      automountServiceAccountToken: true
+      securityContext:
+        fsGroup: 1000
+        fsGroupChangePolicy: OnRootMismatch
+        runAsUser: 200
+      priorityClassName: cluster-infrastructure
+      volumes:
+        - name: atlantis-data
+          persistentVolumeClaim:
+            claimName: atlantis-data
+        - name: repo-config
+          configMap:
+            name: atlantis-repo-config
+        - name: kubeconfigs
+          secret:
+            defaultMode: 420
+            secretName: kubeconfigs
+      containers:
+        - name: atlantis
+          image: "dfdsdk/atlantis-prime-pipeline:2.1.2"
+          imagePullPolicy: IfNotPresent
+          args:
+            - server
+            - --parallel-pool-size=15
+            - --default-tf-distribution=opentofu
+          ports:
+            - name: atlantis
+              containerPort: 4141
+          envFrom:
+            - secretRef:
+                name: atlantis-github-auth
+          env:
+            - name: PATH
+              value: /plugins:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+            - name: ATLANTIS_DEFAULT_TF_DISTRIBUTION
+              value: "opentofu"
+            - name: TG_LOG_FORMAT
+              value: "bare"
+            - name: PRODUCTION_AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_AWS_ACCESS_KEY_ID
+            - name: PRODUCTION_AWS_ACCOUNT_MANIFESTS_HARDENED_MONITORING_SLACK_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_HARDENED_MONITORING_SLACK_TOKEN
+            - name: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_BROKER
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_BROKER
+            - name: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_PASSWORD
+            - name: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_AWS_ACCOUNT_MANIFESTS_KAFKA_USERNAME
+            - name: PRODUCTION_AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_AWS_SECRET_ACCESS_KEY
+            - name: PRODUCTION_DATALAKE_AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_DATALAKE_AWS_ACCESS_KEY_ID
+            - name: PRODUCTION_DATALAKE_AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_DATALAKE_AWS_SECRET_ACCESS_KEY
+            - name: PRODUCTION_GRAFANA_1PASSWORD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_1PASSWORD_API_KEY
+            - name: PRODUCTION_GRAFANA_AGENT_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_AGENT_API_TOKEN
+            - name: PRODUCTION_GRAFANA_AGENT_LOKI_URL
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_AGENT_LOKI_URL
+            - name: PRODUCTION_GRAFANA_AGENT_LOKI_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_AGENT_LOKI_USERNAME
+            - name: PRODUCTION_GRAFANA_AGENT_PROMETHEUS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_AGENT_PROMETHEUS_URL
+            - name: PRODUCTION_GRAFANA_AGENT_PROMETHEUS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_AGENT_PROMETHEUS_USERNAME
+            - name: PRODUCTION_GRAFANA_AGENT_TEMPO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_AGENT_TEMPO_URL
+            - name: PRODUCTION_GRAFANA_AGENT_TEMPO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_AGENT_TEMPO_USERNAME
+            - name: PRODUCTION_GRAFANA_CLOUD_API_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_CLOUD_API_KEY
+            - name: PRODUCTION_GRAFANA_CLOUD_ARM_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_CLOUD_ARM_CLIENT_ID
+            - name: PRODUCTION_GRAFANA_CLOUD_ARM_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_CLOUD_ARM_CLIENT_SECRET
+            - name: PRODUCTION_GRAFANA_CLOUD_ARM_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_CLOUD_ARM_TENANT_ID
+            - name: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_ID
+            - name: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_GRAFANA_CLOUD_AZURE_SP_ADMIN_CONSENT_CLIENT_SECRET
+            - name: PRODUCTION_PREPRIME_AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_PREPRIME_AWS_ACCESS_KEY_ID
+            - name: PRODUCTION_PREPRIME_AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_PREPRIME_AWS_SECRET_ACCESS_KEY
+            - name: PRODUCTION_PREPRIME_BACKUP_REPORTS_SLACK_WEBHOOK_URL
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_PREPRIME_BACKUP_REPORTS_SLACK_WEBHOOK_URL
+            - name: PRODUCTION_PRIME_AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_PRIME_AWS_ACCESS_KEY_ID
+            - name: PRODUCTION_PRIME_AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_PRIME_AWS_SECRET_ACCESS_KEY
+            - name: PRODUCTION_TF_VAR_slack_webhook_url
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_TF_VAR_slack_webhook_url
+            - name: SHARED_ARM_CLIENT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: SHARED_ARM_CLIENT_ID
+            - name: SHARED_ARM_CLIENT_SECRET
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: SHARED_ARM_CLIENT_SECRET
+            - name: SHARED_ARM_SUBSCRIPTION_ID
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: SHARED_ARM_SUBSCRIPTION_ID
+            - name: SHARED_ARM_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: SHARED_ARM_TENANT_ID
+            - name: SHARED_TF_VAR_atlantis_github_token
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: SHARED_TF_VAR_atlantis_github_token
+            - name: SHARED_TF_VAR_fluxcd_bootstrap_repo_owner_token
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: SHARED_TF_VAR_fluxcd_bootstrap_repo_owner_token
+            - name: STAGING_AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_AWS_ACCESS_KEY_ID
+            - name: STAGING_AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_AWS_SECRET_ACCESS_KEY
+            - name: STAGING_GRAFANA_AGENT_API_TOKEN
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_GRAFANA_AGENT_API_TOKEN
+            - name: STAGING_GRAFANA_AGENT_LOKI_URL
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_GRAFANA_AGENT_LOKI_URL
+            - name: STAGING_GRAFANA_AGENT_LOKI_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_GRAFANA_AGENT_LOKI_USERNAME
+            - name: STAGING_GRAFANA_AGENT_PROMETHEUS_URL
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_GRAFANA_AGENT_PROMETHEUS_URL
+            - name: STAGING_GRAFANA_AGENT_PROMETHEUS_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_GRAFANA_AGENT_PROMETHEUS_USERNAME
+            - name: STAGING_GRAFANA_AGENT_TEMPO_URL
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_GRAFANA_AGENT_TEMPO_URL
+            - name: STAGING_GRAFANA_AGENT_TEMPO_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_GRAFANA_AGENT_TEMPO_USERNAME
+            - name: DS_SSU_VM_ENDPOINT
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: DS_SSU_VM_ENDPOINT
+            - name: DS_SSU_VM_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: DS_SSU_VM_USERNAME
+            - name: DS_SSU_VM_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: DS_SSU_VM_USERNAME
+            - name: STAGING_TF_VAR_slack_webhook_url
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_TF_VAR_slack_webhook_url
+            - name: STAGING_TF_VAR_falco_slack_alert_webhook_url
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_TF_VAR_falco_slack_alert_webhook_url
+            - name: STAGING_TF_VAR_falco_stream_webhook_url
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_TF_VAR_falco_stream_webhook_url
+            - name: PRODUCTION_TF_VAR_falco_slack_alert_webhook_url
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_TF_VAR_falco_slack_alert_webhook_url
+            - name: PRODUCTION_TF_VAR_falco_stream_webhook_url
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_TF_VAR_falco_stream_webhook_url
+            - name: PRODUCTION_ONEPASSWORD_CREDENTIALS_JSON
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_ONEPASSWORD_CREDENTIALS_JSON
+            - name: PRODUCTION_ONEPASSWORD_TOKEN_FOR_ATLANTIS
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_ONEPASSWORD_TOKEN_FOR_ATLANTIS
+            - name: STAGING_ONEPASSWORD_CREDENTIALS_JSON
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_ONEPASSWORD_CREDENTIALS_JSON
+            - name: STAGING_ONEPASSWORD_TOKEN_FOR_ATLANTIS
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_ONEPASSWORD_TOKEN_FOR_ATLANTIS
+            - name: SHARED_docker_hub_username
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: SHARED_docker_hub_username
+            - name: SHARED_docker_hub_password
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: SHARED_docker_hub_password
+            - name: SHARED_docker_hub_token
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: SHARED_docker_hub_token
+            - name: SHARED_eks_addon_awsebscsidriver_kms_arn
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: SHARED_eks_addon_awsebscsidriver_kms_arn
+            - name: DEVELOPER_PLATFORM_DEPLOY_AWS_ACCESS_KEY_ID
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: DEVELOPER_PLATFORM_DEPLOY_AWS_ACCESS_KEY_ID
+            - name: DEVELOPER_PLATFORM_DEPLOY_AWS_SECRET_ACCESS_KEY
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: DEVELOPER_PLATFORM_DEPLOY_AWS_SECRET_ACCESS_KEY
+            - name: STAGING_velero_azure_subscription_id
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_velero_azure_subscription_id
+            - name: STAGING_velero_azure_resource_group_name
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_velero_azure_resource_group_name
+            - name: STAGING_velero_azure_storage_account_name
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_velero_azure_storage_account_name
+            - name: PRODUCTION_velero_azure_subscription_id
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_velero_azure_subscription_id
+            - name: PRODUCTION_velero_azure_resource_group_name
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_velero_azure_resource_group_name
+            - name: PRODUCTION_velero_azure_storage_account_name
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_velero_azure_storage_account_name
+            - name: ATLANTIS_DISABLE_APPLY
+              value: "true"
+            - name: ATLANTIS_DISABLE_APPLY_ALL
+              value: "true"
+            - name: ATLANTIS_DEFAULT_TF_DISTRIBUTION
+              value: terraform
+            - name: ATLANTIS_LOG_LEVEL
+              value: "info"
+            - name: ATLANTIS_DATA_DIR
+              value: /atlantis-data
+            - name: ATLANTIS_REPO_ALLOWLIST
+              value: "${flux_atlantis_org_allowlist}"
+            - name: ATLANTIS_PORT
+              value: "4141"
+            - name: ATLANTIS_REPO_CONFIG
+              value: /etc/atlantis/repos.yaml
+            - name: ATLANTIS_ATLANTIS_URL
+              value: http://atlantis.${flux_eks_fqdn}
+            - name: ATLANTIS_WEB_BASIC_AUTH
+              value: "true"
+            - name: ATLANTIS_WEB_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-basic-auth
+                  key: username
+            - name: ATLANTIS_WEB_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-basic-auth
+                  key: password
+          livenessProbe:
+            httpGet:
+              path: /healthz
+              port: 4141
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 60
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /healthz
+              port: 4141
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 60
+            timeoutSeconds: 5
+            successThreshold: 1
+            failureThreshold: 5
+          volumeMounts:
+            - name: atlantis-data
+              mountPath: /atlantis-data
+            - name: repo-config
+              mountPath: /etc/atlantis/repos.yaml
+              subPath: repos.yaml
+              readOnly: true
+            - mountPath: /kubeconfigs
+              name: kubeconfigs
+              readOnly: true
+          resources:
+            limits:
+              memory: ${flux_atlantis_resource_memory}
+            requests:
+              cpu: ${flux_atlantis_resource_cpu}
+              memory: ${flux_atlantis_resource_memory}

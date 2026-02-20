@@ -1,0 +1,26 @@
+---
+# Source: atlantis/templates/ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: atlantis
+  namespace: atlantis
+  labels:
+    app: atlantis
+    chart: atlantis-5.28.0
+    release: atlantis
+    heritage: Helm
+  annotations:
+    kubernetes.io/ingress.class: traefik
+spec:
+  rules:
+    - host: "atlantis.${flux_eks_fqdn}"
+      http:
+        paths:
+          - path: /
+            backend:
+              service:
+                name: atlantis
+                port:
+                  number: 80
+            pathType: ImplementationSpecific
