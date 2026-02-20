@@ -1,9 +1,195 @@
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.19.0
+  name: albtargetcontrolconfigs.elbv2.k8s.aws
+spec:
+  group: elbv2.k8s.aws
+  names:
+    kind: ALBTargetControlConfig
+    listKind: ALBTargetControlConfigList
+    plural: albtargetcontrolconfigs
+    singular: albtargetcontrolconfig
+  scope: Namespaced
+  versions:
+  - additionalPrinterColumns:
+    - description: The ALB target control agent sidecar image
+      jsonPath: .spec.image
+      name: IMAGE
+      type: string
+    - description: Application destination address
+      jsonPath: .spec.destinationAddress
+      name: DESTINATION
+      type: string
+    - jsonPath: .metadata.creationTimestamp
+      name: AGE
+      type: date
+    name: v1beta1
+    schema:
+      openAPIV3Schema:
+        description: ALBTargetControlConfig is the Schema for the albtargetcontrolconfigs
+          API
+        properties:
+          apiVersion:
+            description: |-
+              APIVersion defines the versioned schema of this representation of an object.
+              Servers should convert recognized schemas to the latest internal value, and
+              may reject unrecognized values.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+            type: string
+          kind:
+            description: |-
+              Kind is a string value representing the REST resource this object represents.
+              Servers may infer this from the endpoint the client submits requests to.
+              Cannot be updated.
+              In CamelCase.
+              More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ALBTargetControlConfigSpec defines the desired state of ALBTargetControlConfig
+            properties:
+              controlAddress:
+                description: |-
+                  ControlAddress specifies the socket (IP:port) where the load balancer exchanges management traffic with agents.
+                  The port in the socket is the target control port you configure for the target group.
+                pattern: ^.+:[0-9]+$
+                type: string
+              dataAddress:
+                description: |-
+                  DataAddress specifies the socket (IP:port) where the agent receives application traffic from the load balancer.
+                  The port in this socket is the application traffic port you configure for your target group.
+                pattern: ^.+:[0-9]+$
+                type: string
+              destinationAddress:
+                description: |-
+                  DestinationAddress specifies the socket (IP:port) where the agent proxies application traffic.
+                  Your application should be listening on this port.
+                pattern: ^.+:[0-9]+$
+                type: string
+              image:
+                description: |-
+                  Image specifies the container image for the ALB target control agent sidecar.
+                  The agent is available as a Docker image at: public.ecr.aws/aws-elb/target-optimizer/target-control-agent:latest
+                type: string
+              maxConcurrency:
+                default: 1
+                description: MaxConcurrency specifies the maximum number of concurrent
+                  requests that the target receives from the load balancer.
+                format: int32
+                maximum: 1000
+                minimum: 0
+                type: integer
+              protocolVersion:
+                description: |-
+                  ProtocolVersion specifies the protocol through which the load balancer communicates with the agent.
+                  Possible values are HTTP1, HTTP2, GRPC.
+                enum:
+                - HTTP1
+                - HTTP2
+                - GRPC
+                type: string
+              resources:
+                description: Resources specifies the resource requirements for the
+                  ALB target control agent sidecar
+                properties:
+                  claims:
+                    description: |-
+                      Claims lists the names of resources, defined in spec.resourceClaims,
+                      that are used by this container.
+
+                      This is an alpha field and requires enabling the
+                      DynamicResourceAllocation feature gate.
+
+                      This field is immutable. It can only be set for containers.
+                    items:
+                      description: ResourceClaim references one entry in PodSpec.ResourceClaims.
+                      properties:
+                        name:
+                          description: |-
+                            Name must match the name of one entry in pod.spec.resourceClaims of
+                            the Pod where this field is used. It makes that resource available
+                            inside a container.
+                          type: string
+                        request:
+                          description: |-
+                            Request is the name chosen for a request in the referenced claim.
+                            If empty, everything from the claim is made available, otherwise
+                            only the result of this request.
+                          type: string
+                      required:
+                      - name
+                      type: object
+                    type: array
+                    x-kubernetes-list-map-keys:
+                    - name
+                    x-kubernetes-list-type: map
+                  limits:
+                    additionalProperties:
+                      anyOf:
+                      - type: integer
+                      - type: string
+                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                      x-kubernetes-int-or-string: true
+                    description: |-
+                      Limits describes the maximum amount of compute resources allowed.
+                      More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                    type: object
+                  requests:
+                    additionalProperties:
+                      anyOf:
+                      - type: integer
+                      - type: string
+                      pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                      x-kubernetes-int-or-string: true
+                    description: |-
+                      Requests describes the minimum amount of compute resources required.
+                      If Requests is omitted for a container, it defaults to Limits if that is explicitly specified,
+                      otherwise to an implementation-defined value. Requests cannot exceed Limits.
+                      More info: https://kubernetes.io/docs/concepts/configuration/manage-resources-containers/
+                    type: object
+                type: object
+              rustLog:
+                description: |-
+                  RustLog specifies the log level of the agent process. The agent software is written in Rust.
+                  Possible values are debug, info, and error.
+                enum:
+                - debug
+                - info
+                - error
+                type: string
+              tlsCertPath:
+                description: |-
+                  TLSCertPath specifies the location of the TLS certificate that the agent provides to the load balancer during TLS handshake.
+                  By default, the agent generates a self-signed certificate in-memory.
+                type: string
+              tlsKeyPath:
+                description: |-
+                  TLSKeyPath specifies the location of the private key corresponding to the TLS certificate that the agent provides to the load balancer during TLS handshake.
+                  By default, the agent generates a private key in memory.
+                type: string
+              tlsSecurityPolicy:
+                description: TLSSecurityPolicy specifies the ELB security policy that
+                  you configure for the target group.
+                type: string
+            required:
+            - controlAddress
+            - dataAddress
+            - destinationAddress
+            - image
+            type: object
+        type: object
+    served: true
+    storage: true
+    subresources: {}
 ---
 apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.19.0
   name: globalaccelerators.aga.k8s.aws
 spec:
   group: aga.k8s.aws
@@ -17,7 +203,7 @@ spec:
   - additionalPrinterColumns:
     - description: The Global Accelerator name
       jsonPath: .spec.name
-      name: NAME
+      name: ACCELERATOR-NAME
       type: string
     - description: The Global Accelerator DNS name
       jsonPath: .status.dnsName
@@ -196,7 +382,6 @@ spec:
                                 For example, you can create a port override in which the listener receives user traffic on ports 80 and 443,
                                 but your accelerator routes that traffic to ports 1080 and 1443, respectively, on the endpoints.
 
-
                                 For more information, see Port overrides in the AWS Global Accelerator Developer Guide:
                                 https://docs.aws.amazon.com/global-accelerator/latest/dg/about-endpoint-groups-port-override.html
                               properties:
@@ -265,6 +450,9 @@ spec:
                         - fromPort
                         - toPort
                         type: object
+                        x-kubernetes-validations:
+                        - message: FromPort must be less than or equal to ToPort
+                          rule: self.fromPort <= self.toPort
                       maxItems: 10
                       minItems: 1
                       type: array
@@ -303,16 +491,8 @@ spec:
               conditions:
                 description: Conditions represent the current conditions of the GlobalAccelerator.
                 items:
-                  description: "Condition contains details for one aspect of the current
-                    state of this API Resource.\n---\nThis struct is intended for
-                    direct use as an array at the field path .status.conditions.  For
-                    example,\n\n\n\ttype FooStatus struct{\n\t    // Represents the
-                    observations of a foo's current state.\n\t    // Known .status.conditions.type
-                    are: \"Available\", \"Progressing\", and \"Degraded\"\n\t    //
-                    +patchMergeKey=type\n\t    // +patchStrategy=merge\n\t    // +listType=map\n\t
-                    \   // +listMapKey=type\n\t    Conditions []metav1.Condition `json:\"conditions,omitempty\"
-                    patchStrategy:\"merge\" patchMergeKey:\"type\" protobuf:\"bytes,1,rep,name=conditions\"`\n\n\n\t
-                    \   // other fields\n\t}"
+                  description: Condition contains details for one aspect of the current
+                    state of this API Resource.
                   properties:
                     lastTransitionTime:
                       description: |-
@@ -353,12 +533,7 @@ spec:
                       - Unknown
                       type: string
                     type:
-                      description: |-
-                        type of condition in CamelCase or in foo.example.com/CamelCase.
-                        ---
-                        Many .condition.type values are consistent across resources like Available, but because arbitrary conditions can be
-                        useful (see .node.status.conditions), the ability to deconflict is important.
-                        The regex it matches is (dns1123SubdomainFmt/)?(qualifiedNameFmt)
+                      description: type of condition in CamelCase or in foo.example.com/CamelCase.
                       maxLength: 316
                       pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
                       type: string
@@ -417,7 +592,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.19.0
   name: ingressclassparams.elbv2.k8s.aws
 spec:
   group: elbv2.k8s.aws
@@ -716,7 +891,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.19.0
   name: targetgroupbindings.elbv2.k8s.aws
 spec:
   group: elbv2.k8s.aws
@@ -1144,6 +1319,8 @@ spec:
                 - TLS
                 - UDP
                 - TCP_UDP
+                - QUIC
+                - TCP_QUIC
                 type: string
               targetType:
                 description: targetType is the TargetType of TargetGroup. If unspecified,
@@ -1178,7 +1355,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.19.0
   name: listenerruleconfigurations.gateway.k8s.aws
 spec:
   group: gateway.k8s.aws
@@ -1225,10 +1402,8 @@ spec:
                   Actions defines the set of actions to be performed when conditions match.
                   This CRD implementation currently supports only  authenticate-oidc, authenticate-cognito, and fixed-response action types fully and forward and redirect actions partially
 
-
                   For other fields in forward and redirect actions, please use the standard Gateway API HTTPRoute or other route resources, which provide
                   native support for those conditions through the Gateway API specification.
-
 
                   At most one authentication action can be specified (either authenticate-oidc or authenticate-cognito).
                 items:
@@ -1258,7 +1433,6 @@ spec:
                           default: openid
                           description: |-
                             The set of user claims to be requested from the IdP. The default is openid .
-
 
                             To verify which scope values your IdP supports and how to separate multiple
                             values, see the documentation for your IdP.
@@ -1329,7 +1503,6 @@ spec:
                           default: openid
                           description: |-
                             The set of user claims to be requested from the IdP. The default is openid .
-
 
                             To verify which scope values your IdP supports and how to separate multiple
                             values, see the documentation for your IdP.
@@ -1436,6 +1609,60 @@ spec:
                               type: boolean
                           type: object
                       type: object
+                    jwtValidationConfig:
+                      description: Information for a jwt-validation action
+                      properties:
+                        additionalClaims:
+                          description: Any additional claims in the JWT that should
+                            be validated
+                          items:
+                            description: JwtValidationActionAdditionalClaim Information
+                              about an additional claim to validate.
+                            properties:
+                              format:
+                                description: The format of the claim value(s)
+                                enum:
+                                - single-string
+                                - string-array
+                                - space-separated-values
+                                type: string
+                              name:
+                                description: The name of the claim. You can't specify
+                                  exp, iss, nbf, or iat because we validate them by
+                                  default.
+                                minLength: 1
+                                type: string
+                              values:
+                                description: |-
+                                  The claim values. The maximum size of the list is 10. Each value can be up to 256 characters in length.
+                                  If the format is space-separated-values, the values can't include spaces.
+                                items:
+                                  maxLength: 256
+                                  type: string
+                                maxItems: 10
+                                minItems: 1
+                                type: array
+                            required:
+                            - format
+                            - name
+                            - values
+                            type: object
+                          type: array
+                        issuer:
+                          description: The issuer of the JWT. The maximum length is
+                            256 characters.
+                          maxLength: 256
+                          type: string
+                        jwksEndpoint:
+                          description: |-
+                            The JSON Web Key Set (JWKS) endpoint. This endpoint contains JSON Web Keys (JWK) that are used to validate signatures from the provider.
+                            This must be a full URL, including the HTTPS protocol, the domain, and the path. The maximum length is 256 characters.
+                          maxLength: 256
+                          type: string
+                      required:
+                      - issuer
+                      - jwksEndpoint
+                      type: object
                     redirectConfig:
                       description: Information for a redirect action
                       properties:
@@ -1457,6 +1684,7 @@ spec:
                       - redirect
                       - authenticate-cognito
                       - authenticate-oidc
+                      - jwt-validation
                       type: string
                   required:
                   - type
@@ -1480,6 +1708,10 @@ spec:
                       is 'authenticate-oidc'
                     rule: 'has(self.type) && self.type == ''authenticate-oidc'' ?
                       has(self.authenticateOIDCConfig) : !has(self.authenticateOIDCConfig)'
+                  - message: jwtValidationConfig must be specified only when type
+                      is 'jwt-validation'
+                    rule: 'has(self.type) && self.type == ''jwt-validation'' ? has(self.jwtValidationConfig)
+                      : !has(self.jwtValidationConfig)'
                 maxItems: 2
                 minItems: 1
                 type: array
@@ -1487,7 +1719,6 @@ spec:
                 description: |-
                   Conditions defines the circumstances under which the rule actions will be performed.
                   This CRD implementation currently supports only the source-ip condition type
-
 
                   For other condition types (such as path-pattern, host-header, http-header, etc.),
                   please use the standard Gateway API HTTPRoute or other route resources, which provide
@@ -1539,14 +1770,16 @@ spec:
             - message: At least one action must be specified if actions field is present
               rule: '!has(self.actions) || size(self.actions) > 0'
             - message: Only forward, redirect, authenticate-oidc, authenticate-cognito,
-                and fixed-response action types are supported
+                jwt-validation, and fixed-response action types are supported
               rule: '!has(self.actions) || self.actions.all(a, a.type == ''authenticate-oidc''
-                || a.type == ''authenticate-cognito'' || a.type == ''fixed-response''
-                || a.type == ''forward'' || a.type == ''redirect'')'
-            - message: At most one authentication action (either authenticate-oidc
-                or authenticate-cognito) can be specified
+                || a.type == ''authenticate-cognito'' || a.type == ''jwt-validation''
+                || a.type == ''fixed-response'' || a.type == ''forward'' || a.type
+                == ''redirect'')'
+            - message: At most one pre-routing action (authenticate-oidc, authenticate-cognito,
+                or jwt-validation) can be specified
               rule: '!has(self.actions) || size(self.actions.filter(a, a.type == ''authenticate-oidc''
-                || a.type == ''authenticate-cognito'')) <= 1'
+                || a.type == ''authenticate-cognito'' || a.type == ''jwt-validation''))
+                <= 1'
             - message: At most one routing action (fixed-response or forward or redirect)
                 can be specified
               rule: '!has(self.actions) || size(self.actions.filter(a, a.type == ''fixed-response''
@@ -1577,7 +1810,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.19.0
   name: loadbalancerconfigurations.gateway.k8s.aws
 spec:
   group: gateway.k8s.aws
@@ -1624,6 +1857,12 @@ spec:
                   customerOwnedIpv4Pool [Application LoadBalancer]
                   is the ID of the customer-owned address for Application Load Balancers on Outposts pool.
                 type: string
+              disableSecurityGroup:
+                description: |-
+                  disableSecurityGroup provisions a load balancer with no security groups.
+                  Allows an NLB to be provisioned with no security groups.
+                  [Network Load Balancer]
+                type: boolean
               enableICMP:
                 description: |-
                   EnableICMP [Network LoadBalancer]
@@ -1735,13 +1974,23 @@ spec:
                     protocolPort:
                       description: protocolPort is identifier for the listener on
                         load balancer. It should be of the form PROTOCOL:PORT
-                      pattern: ^(HTTP|HTTPS|TLS|TCP|UDP)?:(6553[0-5]|655[0-2]\d|65[0-4]\d{2}|6[0-4]\d{3}|[1-5]\d{4}|[1-9]\d{0,3})?$
+                      pattern: ^(HTTP|HTTPS|TLS|TCP|UDP|TCP_UDP)?:(6553[0-5]|655[0-2]\d|65[0-4]\d{2}|6[0-4]\d{3}|[1-5]\d{4}|[1-9]\d{0,3})?$
                       type: string
+                    quicEnabled:
+                      description: quicEnabled enables QUIC protocol support for UDP
+                        listeners. When enabled, UDP listeners will be upgraded to
+                        QUIC protocol.
+                      type: boolean
                     sslPolicy:
                       description: sslPolicy is the security policy that defines which
                         protocols and ciphers are supported for secure listeners [HTTPS
                         or TLS listener].
                       type: string
+                    targetGroupStickiness:
+                      description: targetGroupStickiness [Network LoadBalancer] enables
+                        sticky routing for requests when using a listener configured
+                        with weighted target groups.
+                      type: boolean
                   required:
                   - protocolPort
                   type: object
@@ -1911,7 +2160,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.14.0
+    controller-gen.kubebuilder.io/version: v0.19.0
   name: targetgroupconfigurations.gateway.k8s.aws
 spec:
   group: gateway.k8s.aws
@@ -1990,9 +2239,9 @@ spec:
                           with the target. The GENEVE, TLS, UDP, and TCP_UDP protocols
                           are not supported for health checks.
                         enum:
-                        - http
-                        - https
-                        - tcp
+                        - HTTP
+                        - HTTPS
+                        - TCP
                         type: string
                       healthCheckTimeout:
                         description: healthCheckTimeout The amount of time, in seconds,
@@ -2103,6 +2352,12 @@ spec:
                       type: string
                     description: Tags the Tags to add on the target group.
                     type: object
+                  targetControlPort:
+                    description: targetControlPort [Application Load Balancer] The
+                      port on which the target communicates its capacity. This value
+                      can't be modified after target group creation.
+                    format: int32
+                    type: integer
                   targetGroupAttributes:
                     description: targetGroupAttributes defines the attribute of target
                       group
@@ -2183,9 +2438,9 @@ spec:
                                 and TCP_UDP protocols are not supported for health
                                 checks.
                               enum:
-                              - http
-                              - https
-                              - tcp
+                              - HTTP
+                              - HTTPS
+                              - TCP
                               type: string
                             healthCheckTimeout:
                               description: healthCheckTimeout The amount of time,
@@ -2298,6 +2553,12 @@ spec:
                             type: string
                           description: Tags the Tags to add on the target group.
                           type: object
+                        targetControlPort:
+                          description: targetControlPort [Application Load Balancer]
+                            The port on which the target communicates its capacity.
+                            This value can't be modified after target group creation.
+                          format: int32
+                          type: integer
                         targetGroupAttributes:
                           description: targetGroupAttributes defines the attribute
                             of target group
@@ -2348,7 +2609,6 @@ spec:
                     description: |-
                       Kind is the Kubernetes resource kind of the referent. For example
                       "Service".
-
 
                       Defaults to "Service" when not specified.
                     type: string
