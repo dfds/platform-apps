@@ -3,7 +3,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.18.0
+    controller-gen.kubebuilder.io/version: v0.20.0
   name: ec2nodeclasses.karpenter.k8s.aws
 spec:
   group: karpenter.k8s.aws
@@ -72,6 +72,7 @@ spec:
                     - Custom
                     - Windows2019
                     - Windows2022
+                    - Windows2025
                   type: string
                 amiSelectorTerms:
                   description: AMISelectorTerms is a list of or ami selector terms. The terms are ORed.
@@ -84,7 +85,7 @@ spec:
                         description: |-
                           Alias specifies which EKS optimized AMI to select.
                           Each alias consists of a family and an AMI version, specified as "family@version".
-                          Valid families include: al2, al2023, bottlerocket, windows2019, and windows2022.
+                          Valid families include: al2, al2023, bottlerocket, windows2019, windows2022, windows2025.
                           The version can either be pinned to a specific AMI release, with that AMIs version format (ex: "al2023@v20240625" or "bottlerocket@v1.10.0").
                           The version can also be set to "latest" for any family. Setting the version to latest will result in drift when a new AMI is released. This is **not** recommended for production environments.
                           Note: The Windows families do **not** support version pinning, and only latest may be used.
@@ -93,10 +94,10 @@ spec:
                         x-kubernetes-validations:
                           - message: '''alias'' is improperly formatted, must match the format ''family@version'''
                             rule: self.matches('^[a-zA-Z0-9]+@.+$')
-                          - message: 'family is not supported, must be one of the following: ''al2'', ''al2023'', ''bottlerocket'', ''windows2019'', ''windows2022'''
-                            rule: self.split('@')[0] in ['al2','al2023','bottlerocket','windows2019','windows2022']
+                          - message: 'family is not supported, must be one of the following: ''al2'', ''al2023'', ''bottlerocket'', ''windows2019'', ''windows2022'', ''windows2025'''
+                            rule: self.split('@')[0] in ['al2','al2023','bottlerocket','windows2019','windows2022','windows2025']
                           - message: windows families may only specify version 'latest'
-                            rule: 'self.split(''@'')[0] in [''windows2019'',''windows2022''] ? self.split(''@'')[1] == ''latest'' : true'
+                            rule: 'self.split(''@'')[0] in [''windows2019'',''windows2022'',''windows2025''] ? self.split(''@'')[1] == ''latest'' : true'
                       id:
                         description: ID is the ami id in EC2
                         pattern: ami-[0-9a-z]+
@@ -262,6 +263,12 @@ spec:
                         description: ID is the capacity reservation id in EC2
                         pattern: ^cr-[0-9a-z]+$
                         type: string
+                      instanceMatchCriteria:
+                        description: InstanceMatchCriteria specifies how instances are matched to capacity reservations.
+                        enum:
+                          - open
+                          - targeted
+                        type: string
                       ownerID:
                         description: Owner is the owner id for the ami.
                         pattern: ^[0-9]{12}$
@@ -281,10 +288,10 @@ spec:
                   maxItems: 30
                   type: array
                   x-kubernetes-validations:
-                    - message: expected at least one, got none, ['tags', 'id']
-                      rule: self.all(x, has(x.tags) || has(x.id))
-                    - message: '''id'' is mutually exclusive, cannot be set along with tags in a capacity reservation selector term'
-                      rule: '!self.all(x, has(x.id) && (has(x.tags) || has(x.ownerID)))'
+                    - message: expected at least one, got none, ['tags', 'id', 'instanceMatchCriteria']
+                      rule: self.all(x, has(x.tags) || has(x.id) || has(x.instanceMatchCriteria))
+                    - message: '''id'' is mutually exclusive, cannot be set along with other fields in a capacity reservation selector term'
+                      rule: '!self.all(x, has(x.id) && (has(x.tags) || has(x.ownerID) || has(x.instanceMatchCriteria)))'
                 context:
                   description: |-
                     Context is a Reserved field in EC2 APIs
@@ -308,6 +315,11 @@ spec:
                   enum:
                     - RAID0
                   type: string
+                ipPrefixCount:
+                  description: IPPrefixCount sets the number of IPv4 prefixes to be automatically assigned to the network interface.
+                  format: int32
+                  minimum: 0
+                  type: integer
                 kubelet:
                   description: |-
                     Kubelet defines args to be used when configuring kubelet on provisioned nodes.
@@ -503,17 +515,12 @@ spec:
                   type: object
                 role:
                   description: |-
-                    Role is the AWS identity that nodes use. This field is immutable.
+                    Role is the AWS identity that nodes use.
                     This field is mutually exclusive from instanceProfile.
-                    Marking this field as immutable avoids concerns around terminating managed instance profiles from running instances.
-                    This field may be made mutable in the future, assuming the correct garbage collection and drift handling is implemented
-                    for the old instance profiles on an update.
                   type: string
                   x-kubernetes-validations:
                     - message: role cannot be empty
                       rule: self != ''
-                    - message: immutable field changed
-                      rule: self == oldSelf
                 securityGroupSelectorTerms:
                   description: SecurityGroupSelectorTerms is a list of security group selector terms. The terms are ORed.
                   items:
@@ -617,8 +624,6 @@ spec:
               x-kubernetes-validations:
                 - message: must specify exactly one of ['role', 'instanceProfile']
                   rule: (has(self.role) && !has(self.instanceProfile)) || (!has(self.role) && has(self.instanceProfile))
-                - message: changing from 'instanceProfile' to 'role' is not supported. You must delete and recreate this node class if you want to change this.
-                  rule: (has(oldSelf.role) && has(self.role)) || (has(oldSelf.instanceProfile) && has(self.instanceProfile))
                 - message: if set, amiFamily must be 'AL2' or 'Custom' when using an AL2 alias
                   rule: '!has(self.amiFamily) || (self.amiSelectorTerms.exists(x, has(x.alias) && x.alias.find(''^[^@]+'') == ''al2'') ? (self.amiFamily == ''Custom'' || self.amiFamily == ''AL2'') : true)'
                 - message: if set, amiFamily must be 'AL2023' or 'Custom' when using an AL2023 alias
@@ -629,6 +634,8 @@ spec:
                   rule: '!has(self.amiFamily) || (self.amiSelectorTerms.exists(x, has(x.alias) && x.alias.find(''^[^@]+'') == ''windows2019'') ? (self.amiFamily == ''Custom'' || self.amiFamily == ''Windows2019'') : true)'
                 - message: if set, amiFamily must be 'Windows2022' or 'Custom' when using a Windows2022 alias
                   rule: '!has(self.amiFamily) || (self.amiSelectorTerms.exists(x, has(x.alias) && x.alias.find(''^[^@]+'') == ''windows2022'') ? (self.amiFamily == ''Custom'' || self.amiFamily == ''Windows2022'') : true)'
+                - message: if set, amiFamily must be 'Windows2025' or 'Custom' when using a Windows2025 alias
+                  rule: '!has(self.amiFamily) || (self.amiSelectorTerms.exists(x, has(x.alias) && x.alias.find(''^[^@]+'') == ''windows2025'') ? (self.amiFamily == ''Custom'' || self.amiFamily == ''Windows2025'') : true)'
                 - message: must specify amiFamily if amiSelectorTerms does not contain an alias
                   rule: 'self.amiSelectorTerms.exists(x, has(x.alias)) ? true : has(self.amiFamily)'
             status:
@@ -851,7 +858,7 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.18.0
+    controller-gen.kubebuilder.io/version: v0.19.0
   name: nodeclaims.karpenter.sh
 spec:
   group: karpenter.sh
@@ -968,7 +975,7 @@ spec:
                   description: Requirements are layered with GetLabels and applied to every node.
                   items:
                     description: |-
-                      A node selector requirement with min values is a selector that contains values, a key, an operator that relates the key and values
+                      A node selector requirement is a selector that contains values, a key, an operator that relates the key and values
                       and minValues that represent the requirement to have at least that many values.
                     properties:
                       key:
@@ -977,16 +984,12 @@ spec:
                         maxLength: 316
                         pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$
                         x-kubernetes-validations:
-                          - message: label domain "kubernetes.io" is restricted
-                            rule: self in ["beta.kubernetes.io/instance-type", "failure-domain.beta.kubernetes.io/region", "beta.kubernetes.io/os", "beta.kubernetes.io/arch", "failure-domain.beta.kubernetes.io/zone", "topology.kubernetes.io/zone", "topology.kubernetes.io/region", "node.kubernetes.io/instance-type", "kubernetes.io/arch", "kubernetes.io/os", "node.kubernetes.io/windows-build"] || self.find("^([^/]+)").endsWith("node.kubernetes.io") || self.find("^([^/]+)").endsWith("node-restriction.kubernetes.io") || !self.find("^([^/]+)").endsWith("kubernetes.io")
-                          - message: label domain "k8s.io" is restricted
-                            rule: self.find("^([^/]+)").endsWith("kops.k8s.io") || !self.find("^([^/]+)").endsWith("k8s.io")
                           - message: label domain "karpenter.sh" is restricted
                             rule: self in ["karpenter.sh/capacity-type", "karpenter.sh/nodepool"] || !self.find("^([^/]+)").endsWith("karpenter.sh")
                           - message: label "kubernetes.io/hostname" is restricted
                             rule: self != "kubernetes.io/hostname"
                           - message: label domain "karpenter.k8s.aws" is restricted
-                            rule: self in ["karpenter.k8s.aws/capacity-reservation-type", "karpenter.k8s.aws/capacity-reservation-id", "karpenter.k8s.aws/ec2nodeclass", "karpenter.k8s.aws/instance-encryption-in-transit-supported", "karpenter.k8s.aws/instance-category", "karpenter.k8s.aws/instance-hypervisor", "karpenter.k8s.aws/instance-family", "karpenter.k8s.aws/instance-generation", "karpenter.k8s.aws/instance-local-nvme", "karpenter.k8s.aws/instance-size", "karpenter.k8s.aws/instance-cpu", "karpenter.k8s.aws/instance-cpu-manufacturer", "karpenter.k8s.aws/instance-cpu-sustained-clock-speed-mhz", "karpenter.k8s.aws/instance-memory", "karpenter.k8s.aws/instance-ebs-bandwidth", "karpenter.k8s.aws/instance-network-bandwidth", "karpenter.k8s.aws/instance-gpu-name", "karpenter.k8s.aws/instance-gpu-manufacturer", "karpenter.k8s.aws/instance-gpu-count", "karpenter.k8s.aws/instance-gpu-memory", "karpenter.k8s.aws/instance-accelerator-name", "karpenter.k8s.aws/instance-accelerator-manufacturer", "karpenter.k8s.aws/instance-accelerator-count"] || !self.find("^([^/]+)").endsWith("karpenter.k8s.aws")
+                            rule: self in ["karpenter.k8s.aws/instance-tenancy", "karpenter.k8s.aws/capacity-reservation-type", "karpenter.k8s.aws/capacity-reservation-id", "karpenter.k8s.aws/ec2nodeclass", "karpenter.k8s.aws/instance-encryption-in-transit-supported", "karpenter.k8s.aws/instance-category", "karpenter.k8s.aws/instance-hypervisor", "karpenter.k8s.aws/instance-family", "karpenter.k8s.aws/instance-generation", "karpenter.k8s.aws/instance-local-nvme", "karpenter.k8s.aws/instance-size", "karpenter.k8s.aws/instance-cpu", "karpenter.k8s.aws/instance-cpu-manufacturer", "karpenter.k8s.aws/instance-cpu-sustained-clock-speed-mhz", "karpenter.k8s.aws/instance-memory", "karpenter.k8s.aws/instance-ebs-bandwidth", "karpenter.k8s.aws/instance-network-bandwidth", "karpenter.k8s.aws/instance-gpu-name", "karpenter.k8s.aws/instance-gpu-manufacturer", "karpenter.k8s.aws/instance-gpu-count", "karpenter.k8s.aws/instance-gpu-memory", "karpenter.k8s.aws/instance-accelerator-name", "karpenter.k8s.aws/instance-accelerator-manufacturer", "karpenter.k8s.aws/instance-accelerator-count", "karpenter.k8s.aws/instance-capability-flex"] || !self.find("^([^/]+)").endsWith("karpenter.k8s.aws")
                       minValues:
                         description: |-
                           This field is ALPHA and can be dropped or replaced at any time
@@ -997,20 +1000,22 @@ spec:
                       operator:
                         description: |-
                           Represents a key's relationship to a set of values.
-                          Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
-                        type: string
+                          Valid operators are In, NotIn, Exists, DoesNotExist. Gt, Lt, Gte, and Lte.
                         enum:
+                          - Gte
+                          - Lte
                           - In
                           - NotIn
                           - Exists
                           - DoesNotExist
                           - Gt
                           - Lt
+                        type: string
                       values:
                         description: |-
                           An array of string values. If the operator is In or NotIn,
                           the values array must be non-empty. If the operator is Exists or DoesNotExist,
-                          the values array must be empty. If the operator is Gt or Lt, the values
+                          the values array must be empty. If the operator is Gt, Lt, Gte, or Lte, the values
                           array must have a single element, which will be interpreted as an integer.
                           This array is replaced during a strategic merge patch.
                         items:
@@ -1028,8 +1033,8 @@ spec:
                   x-kubernetes-validations:
                     - message: requirements with operator 'In' must have a value defined
                       rule: 'self.all(x, x.operator == ''In'' ? x.values.size() != 0 : true)'
-                    - message: requirements operator 'Gt' or 'Lt' must have a single positive integer value
-                      rule: 'self.all(x, (x.operator == ''Gt'' || x.operator == ''Lt'') ? (x.values.size() == 1 && int(x.values[0]) >= 0) : true)'
+                    - message: requirements operator 'Gt', 'Lt', 'Gte', or 'Lte' must have a single positive integer value
+                      rule: 'self.all(x, (x.operator == ''Gt'' || x.operator == ''Lt'' || x.operator == ''Gte'' || x.operator == ''Lte'') ? (x.values.size() == 1 && int(x.values[0]) >= 0) : true)'
                     - message: requirements with 'minValues' must have at least that many values specified in the 'values' field
                       rule: 'self.all(x, (x.operator == ''In'' && has(x.minValues)) ? x.values.size() >= x.minValues : true)'
                 resources:
@@ -1072,9 +1077,7 @@ spec:
                         minLength: 1
                         pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$
                       timeAdded:
-                        description: |-
-                          TimeAdded represents the time at which the taint was added.
-                          It is only written for NoExecute taints.
+                        description: TimeAdded represents the time at which the taint was added.
                         format: date-time
                         type: string
                       value:
@@ -1109,9 +1112,7 @@ spec:
                         minLength: 1
                         pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$
                       timeAdded:
-                        description: |-
-                          TimeAdded represents the time at which the taint was added.
-                          It is only written for NoExecute taints.
+                        description: TimeAdded represents the time at which the taint was added.
                         format: date-time
                         type: string
                       value:
@@ -1251,7 +1252,233 @@ apiVersion: apiextensions.k8s.io/v1
 kind: CustomResourceDefinition
 metadata:
   annotations:
-    controller-gen.kubebuilder.io/version: v0.18.0
+    controller-gen.kubebuilder.io/version: v0.19.0
+  name: nodeoverlays.karpenter.sh
+spec:
+  group: karpenter.sh
+  names:
+    categories:
+      - karpenter
+    kind: NodeOverlay
+    listKind: NodeOverlayList
+    plural: nodeoverlays
+    shortNames:
+      - overlays
+    singular: nodeoverlay
+  scope: Cluster
+  versions:
+    - additionalPrinterColumns:
+        - jsonPath: .status.conditions[?(@.type=="Ready")].status
+          name: Ready
+          type: string
+        - jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+        - jsonPath: .spec.weight
+          name: Weight
+          priority: 1
+          type: integer
+      name: v1alpha1
+      schema:
+        openAPIV3Schema:
+          properties:
+            apiVersion:
+              description: |-
+                APIVersion defines the versioned schema of this representation of an object.
+                Servers should convert recognized schemas to the latest internal value, and
+                may reject unrecognized values.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: |-
+                Kind is a string value representing the REST resource this object represents.
+                Servers may infer this from the endpoint the client submits requests to.
+                Cannot be updated.
+                In CamelCase.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              properties:
+                capacity:
+                  additionalProperties:
+                    anyOf:
+                      - type: integer
+                      - type: string
+                    pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
+                    x-kubernetes-int-or-string: true
+                  description: |-
+                    Capacity adds extended resources only, and does not replace any existing resources.
+                    These extended resources are appended to the node's existing resource list.
+                    Note: This field does not modify or override standard resources like cpu, memory, ephemeral-storage, or pods.
+                  type: object
+                  x-kubernetes-validations:
+                    - message: invalid resource restricted
+                      rule: self.all(x, !(x in ['cpu', 'memory', 'ephemeral-storage', 'pods']))
+                price:
+                  description: Price specifies amount for an instance types that match the specified labels. Users can override prices using a signed float representing the price override
+                  pattern: ^\d+(\.\d+)?$
+                  type: string
+                priceAdjustment:
+                  description: |-
+                    PriceAdjustment specifies the price change for matching instance types. Accepts either:
+                    - A fixed price modifier (e.g., -0.5, 1.2)
+                    - A percentage modifier (e.g., +10% for increase, -15% for decrease)
+                  pattern: ^(([+-]{1}(\d*\.?\d+))|(\+{1}\d*\.?\d+%)|(^(-\d{1,2}(\.\d+)?%)$)|(-100%))$
+                  type: string
+                requirements:
+                  description: |-
+                    Requirements constrain when this NodeOverlay is applied during scheduling simulations.
+                    These requirements can match:
+                    - Well-known labels (e.g., node.kubernetes.io/instance-type, karpenter.sh/nodepool)
+                    - Custom labels from NodePool's spec.template.labels
+                  items:
+                    description: |-
+                      A node selector requirement is a selector that contains values, a key, an operator that relates the key and values
+                      to have at least that many values.
+                    properties:
+                      key:
+                        description: The label key that the selector applies to.
+                        type: string
+                        maxLength: 316
+                        pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$
+                        x-kubernetes-validations:
+                          - message: label domain "karpenter.sh" is restricted
+                            rule: self in ["karpenter.sh/capacity-type", "karpenter.sh/nodepool"] || !self.find("^([^/]+)").endsWith("karpenter.sh")
+                          - message: label "kubernetes.io/hostname" is restricted
+                            rule: self != "kubernetes.io/hostname"
+                          - message: label domain "karpenter.k8s.aws" is restricted
+                            rule: self in ["karpenter.k8s.aws/ec2nodeclass", "karpenter.k8s.aws/instance-encryption-in-transit-supported", "karpenter.k8s.aws/instance-category", "karpenter.k8s.aws/instance-hypervisor", "karpenter.k8s.aws/instance-family", "karpenter.k8s.aws/instance-generation", "karpenter.k8s.aws/instance-local-nvme", "karpenter.k8s.aws/instance-size", "karpenter.k8s.aws/instance-cpu", "karpenter.k8s.aws/instance-cpu-manufacturer", "karpenter.k8s.aws/instance-cpu-sustained-clock-speed-mhz", "karpenter.k8s.aws/instance-memory", "karpenter.k8s.aws/instance-ebs-bandwidth", "karpenter.k8s.aws/instance-network-bandwidth", "karpenter.k8s.aws/instance-gpu-name", "karpenter.k8s.aws/instance-gpu-manufacturer", "karpenter.k8s.aws/instance-gpu-count", "karpenter.k8s.aws/instance-gpu-memory", "karpenter.k8s.aws/instance-accelerator-name", "karpenter.k8s.aws/instance-accelerator-manufacturer", "karpenter.k8s.aws/instance-accelerator-count", "karpenter.k8s.aws/instance-capability-flex"] || !self.find("^([^/]+)").endsWith("karpenter.k8s.aws")
+                      operator:
+                        description: |-
+                          Represents a key's relationship to a set of values.
+                          Valid operators are In, NotIn, Exists, DoesNotExist. Gt, Lt, Gte, and Lte.
+                        enum:
+                          - Gte
+                          - Lte
+                          - In
+                          - NotIn
+                          - Exists
+                          - DoesNotExist
+                          - Gt
+                          - Lt
+                        type: string
+                      values:
+                        description: |-
+                          An array of string values. If the operator is In or NotIn,
+                          the values array must be non-empty. If the operator is Exists or DoesNotExist,
+                          the values array must be empty. If the operator is Gt, Lt, Gte, or Lte, the values
+                          array must have a single element, which will be interpreted as an integer.
+                        items:
+                          type: string
+                        type: array
+                        x-kubernetes-list-type: atomic
+                        maxLength: 63
+                        pattern: ^(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])?$
+                    required:
+                      - key
+                      - operator
+                    type: object
+                  maxItems: 100
+                  type: array
+                  x-kubernetes-validations:
+                    - message: requirements with operator 'NotIn' must have a value defined
+                      rule: 'self.all(x, x.operator == ''NotIn'' ? x.values.size() != 0 : true)'
+                    - message: requirements with operator 'In' must have a value defined
+                      rule: 'self.all(x, x.operator == ''In'' ? x.values.size() != 0 : true)'
+                    - message: requirements operator 'Gt', 'Lt', 'Gte' or 'Lte' must have a single positive integer value
+                      rule: 'self.all(x, (x.operator == ''Gt'' || x.operator == ''Lt'' || x.operator == ''Gte'' || x.operator == ''Lte'') ? (x.values.size() == 1 && int(x.values[0]) >= 0) : true)'
+                weight:
+                  description: |-
+                    Weight defines the priority of this NodeOverlay when overriding node attributes.
+                    NodeOverlays with higher numerical weights take precedence over those with lower weights.
+                    If no weight is specified, the NodeOverlay is treated as having a weight of 0.
+                    When multiple NodeOverlays have identical weights, they are merged in alphabetical order.
+                  format: int32
+                  maximum: 10000
+                  minimum: 1
+                  type: integer
+              required:
+                - requirements
+              type: object
+              x-kubernetes-validations:
+                - message: cannot set both 'price' and 'priceAdjustment'
+                  rule: '!has(self.price) || !has(self.priceAdjustment)'
+            status:
+              description: NodeOverlayStatus defines the observed state of NodeOverlay
+              properties:
+                conditions:
+                  description: Conditions contains signals for health and readiness
+                  items:
+                    description: Condition aliases the upstream type and adds additional helper methods
+                    properties:
+                      lastTransitionTime:
+                        description: |-
+                          lastTransitionTime is the last time the condition transitioned from one status to another.
+                          This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+                        format: date-time
+                        type: string
+                      message:
+                        description: |-
+                          message is a human readable message indicating details about the transition.
+                          This may be an empty string.
+                        maxLength: 32768
+                        type: string
+                      observedGeneration:
+                        description: |-
+                          observedGeneration represents the .metadata.generation that the condition was set based upon.
+                          For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                          with respect to the current state of the instance.
+                        format: int64
+                        minimum: 0
+                        type: integer
+                      reason:
+                        description: |-
+                          reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                          Producers of specific condition types may define expected values and meanings for this field,
+                          and whether the values are considered a guaranteed API.
+                          The value should be a CamelCase string.
+                          This field may not be empty.
+                        maxLength: 1024
+                        minLength: 1
+                        pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                        type: string
+                      status:
+                        description: status of the condition, one of True, False, Unknown.
+                        enum:
+                          - "True"
+                          - "False"
+                          - Unknown
+                        type: string
+                      type:
+                        description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                        maxLength: 316
+                        pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                        type: string
+                    required:
+                      - lastTransitionTime
+                      - message
+                      - reason
+                      - status
+                      - type
+                    type: object
+                  type: array
+              type: object
+          required:
+            - spec
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
+
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.19.0
   name: nodepools.karpenter.sh
 spec:
   group: karpenter.sh
@@ -1268,7 +1495,7 @@ spec:
         - jsonPath: .spec.template.spec.nodeClassRef.name
           name: NodeClass
           type: string
-        - jsonPath: .status.resources.nodes
+        - jsonPath: .status.nodes
           name: Nodes
           type: string
         - jsonPath: .status.conditions[?(@.type=="Ready")].status
@@ -1370,6 +1597,7 @@ spec:
                                 - Empty
                                 - Drifted
                               type: string
+                            maxItems: 50
                             type: array
                           schedule:
                             description: |-
@@ -1392,6 +1620,7 @@ spec:
                         ConsolidateAfter is the duration the controller will wait
                         before attempting to terminate nodes that are underutilized.
                         Refer to ConsolidationPolicy for how underutilization is considered.
+                        When replicas is set, ConsolidateAfter is simply ignored
                       pattern: ^(([0-9]+(s|m|h))+|Never)$
                       type: string
                     consolidationPolicy:
@@ -1399,6 +1628,7 @@ spec:
                       description: |-
                         ConsolidationPolicy describes which nodes Karpenter can disrupt through its consolidation
                         algorithm. This policy defaults to "WhenEmptyOrUnderutilized" if not specified
+                        When replicas is set, ConsolidationPolicy is simply ignored
                       enum:
                         - WhenEmpty
                         - WhenEmptyOrUnderutilized
@@ -1413,8 +1643,24 @@ spec:
                       - type: string
                     pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                     x-kubernetes-int-or-string: true
-                  description: Limits define a set of bounds for provisioning capacity.
+                  description: |-
+                    Limits define a set of bounds for provisioning capacity.
+                    Limits other than limits.nodes is not supported when replicas is set.
                   type: object
+                replicas:
+                  description: |-
+                    Replicas is the desired number of nodes for the NodePool. When specified, the NodePool will
+                    maintain this fixed number of replicas rather than scaling based on pod demand.
+                    When replicas is set:
+                      - The following fields are ignored:
+                          * disruption.consolidationPolicy
+                          * disruption.consolidateAfter
+                      - Only limits.nodes is supported; other resource limits (e.g., CPU, memory) must not be specified.
+                      - Weight is not supported.
+                    Note: This field is alpha.
+                  format: int64
+                  minimum: 0
+                  type: integer
                 template:
                   description: |-
                     Template contains the template of possibilities for the provisioning logic to launch a NodeClaim with.
@@ -1444,10 +1690,6 @@ spec:
                           type: object
                           maxProperties: 100
                           x-kubernetes-validations:
-                            - message: label domain "kubernetes.io" is restricted
-                              rule: self.all(x, x in ["beta.kubernetes.io/instance-type", "failure-domain.beta.kubernetes.io/region",  "beta.kubernetes.io/os", "beta.kubernetes.io/arch", "failure-domain.beta.kubernetes.io/zone", "topology.kubernetes.io/zone", "topology.kubernetes.io/region", "kubernetes.io/arch", "kubernetes.io/os", "node.kubernetes.io/windows-build"] || x.find("^([^/]+)").endsWith("node.kubernetes.io") || x.find("^([^/]+)").endsWith("node-restriction.kubernetes.io") || !x.find("^([^/]+)").endsWith("kubernetes.io"))
-                            - message: label domain "k8s.io" is restricted
-                              rule: self.all(x, x.find("^([^/]+)").endsWith("kops.k8s.io") || !x.find("^([^/]+)").endsWith("k8s.io"))
                             - message: label domain "karpenter.sh" is restricted
                               rule: self.all(x, x in ["karpenter.sh/capacity-type", "karpenter.sh/nodepool"] || !x.find("^([^/]+)").endsWith("karpenter.sh"))
                             - message: label "karpenter.sh/nodepool" is restricted
@@ -1455,7 +1697,7 @@ spec:
                             - message: label "kubernetes.io/hostname" is restricted
                               rule: self.all(x, x != "kubernetes.io/hostname")
                             - message: label domain "karpenter.k8s.aws" is restricted
-                              rule: self.all(x, x in ["karpenter.k8s.aws/capacity-reservation-type", "karpenter.k8s.aws/capacity-reservation-id", "karpenter.k8s.aws/ec2nodeclass", "karpenter.k8s.aws/instance-encryption-in-transit-supported", "karpenter.k8s.aws/instance-category", "karpenter.k8s.aws/instance-hypervisor", "karpenter.k8s.aws/instance-family", "karpenter.k8s.aws/instance-generation", "karpenter.k8s.aws/instance-local-nvme", "karpenter.k8s.aws/instance-size", "karpenter.k8s.aws/instance-cpu", "karpenter.k8s.aws/instance-cpu-manufacturer", "karpenter.k8s.aws/instance-cpu-sustained-clock-speed-mhz", "karpenter.k8s.aws/instance-memory", "karpenter.k8s.aws/instance-ebs-bandwidth", "karpenter.k8s.aws/instance-network-bandwidth", "karpenter.k8s.aws/instance-gpu-name", "karpenter.k8s.aws/instance-gpu-manufacturer", "karpenter.k8s.aws/instance-gpu-count", "karpenter.k8s.aws/instance-gpu-memory", "karpenter.k8s.aws/instance-accelerator-name", "karpenter.k8s.aws/instance-accelerator-manufacturer", "karpenter.k8s.aws/instance-accelerator-count"] || !x.find("^([^/]+)").endsWith("karpenter.k8s.aws"))
+                              rule: self.all(x, x in ["karpenter.k8s.aws/instance-tenancy", "karpenter.k8s.aws/capacity-reservation-type", "karpenter.k8s.aws/capacity-reservation-id", "karpenter.k8s.aws/ec2nodeclass", "karpenter.k8s.aws/instance-encryption-in-transit-supported", "karpenter.k8s.aws/instance-category", "karpenter.k8s.aws/instance-hypervisor", "karpenter.k8s.aws/instance-family", "karpenter.k8s.aws/instance-generation", "karpenter.k8s.aws/instance-local-nvme", "karpenter.k8s.aws/instance-size", "karpenter.k8s.aws/instance-cpu", "karpenter.k8s.aws/instance-cpu-manufacturer", "karpenter.k8s.aws/instance-cpu-sustained-clock-speed-mhz", "karpenter.k8s.aws/instance-memory", "karpenter.k8s.aws/instance-ebs-bandwidth", "karpenter.k8s.aws/instance-network-bandwidth", "karpenter.k8s.aws/instance-gpu-name", "karpenter.k8s.aws/instance-gpu-manufacturer", "karpenter.k8s.aws/instance-gpu-count", "karpenter.k8s.aws/instance-gpu-memory", "karpenter.k8s.aws/instance-accelerator-name", "karpenter.k8s.aws/instance-accelerator-manufacturer", "karpenter.k8s.aws/instance-accelerator-count", "karpenter.k8s.aws/instance-capability-flex"] || !x.find("^([^/]+)").endsWith("karpenter.k8s.aws"))
                       type: object
                     spec:
                       description: |-
@@ -1508,7 +1750,7 @@ spec:
                           description: Requirements are layered with GetLabels and applied to every node.
                           items:
                             description: |-
-                              A node selector requirement with min values is a selector that contains values, a key, an operator that relates the key and values
+                              A node selector requirement is a selector that contains values, a key, an operator that relates the key and values
                               and minValues that represent the requirement to have at least that many values.
                             properties:
                               key:
@@ -1517,10 +1759,6 @@ spec:
                                 maxLength: 316
                                 pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$
                                 x-kubernetes-validations:
-                                  - message: label domain "kubernetes.io" is restricted
-                                    rule: self in ["beta.kubernetes.io/instance-type", "failure-domain.beta.kubernetes.io/region", "beta.kubernetes.io/os", "beta.kubernetes.io/arch", "failure-domain.beta.kubernetes.io/zone", "topology.kubernetes.io/zone", "topology.kubernetes.io/region", "node.kubernetes.io/instance-type", "kubernetes.io/arch", "kubernetes.io/os", "node.kubernetes.io/windows-build"] || self.find("^([^/]+)").endsWith("node.kubernetes.io") || self.find("^([^/]+)").endsWith("node-restriction.kubernetes.io") || !self.find("^([^/]+)").endsWith("kubernetes.io")
-                                  - message: label domain "k8s.io" is restricted
-                                    rule: self.find("^([^/]+)").endsWith("kops.k8s.io") || !self.find("^([^/]+)").endsWith("k8s.io")
                                   - message: label domain "karpenter.sh" is restricted
                                     rule: self in ["karpenter.sh/capacity-type", "karpenter.sh/nodepool"] || !self.find("^([^/]+)").endsWith("karpenter.sh")
                                   - message: label "karpenter.sh/nodepool" is restricted
@@ -1528,7 +1766,7 @@ spec:
                                   - message: label "kubernetes.io/hostname" is restricted
                                     rule: self != "kubernetes.io/hostname"
                                   - message: label domain "karpenter.k8s.aws" is restricted
-                                    rule: self in ["karpenter.k8s.aws/capacity-reservation-type", "karpenter.k8s.aws/capacity-reservation-id", "karpenter.k8s.aws/ec2nodeclass", "karpenter.k8s.aws/instance-encryption-in-transit-supported", "karpenter.k8s.aws/instance-category", "karpenter.k8s.aws/instance-hypervisor", "karpenter.k8s.aws/instance-family", "karpenter.k8s.aws/instance-generation", "karpenter.k8s.aws/instance-local-nvme", "karpenter.k8s.aws/instance-size", "karpenter.k8s.aws/instance-cpu", "karpenter.k8s.aws/instance-cpu-manufacturer", "karpenter.k8s.aws/instance-cpu-sustained-clock-speed-mhz", "karpenter.k8s.aws/instance-memory", "karpenter.k8s.aws/instance-ebs-bandwidth", "karpenter.k8s.aws/instance-network-bandwidth", "karpenter.k8s.aws/instance-gpu-name", "karpenter.k8s.aws/instance-gpu-manufacturer", "karpenter.k8s.aws/instance-gpu-count", "karpenter.k8s.aws/instance-gpu-memory", "karpenter.k8s.aws/instance-accelerator-name", "karpenter.k8s.aws/instance-accelerator-manufacturer", "karpenter.k8s.aws/instance-accelerator-count"] || !self.find("^([^/]+)").endsWith("karpenter.k8s.aws")
+                                    rule: self in ["karpenter.k8s.aws/instance-tenancy", "karpenter.k8s.aws/capacity-reservation-type", "karpenter.k8s.aws/capacity-reservation-id", "karpenter.k8s.aws/ec2nodeclass", "karpenter.k8s.aws/instance-encryption-in-transit-supported", "karpenter.k8s.aws/instance-category", "karpenter.k8s.aws/instance-hypervisor", "karpenter.k8s.aws/instance-family", "karpenter.k8s.aws/instance-generation", "karpenter.k8s.aws/instance-local-nvme", "karpenter.k8s.aws/instance-size", "karpenter.k8s.aws/instance-cpu", "karpenter.k8s.aws/instance-cpu-manufacturer", "karpenter.k8s.aws/instance-cpu-sustained-clock-speed-mhz", "karpenter.k8s.aws/instance-memory", "karpenter.k8s.aws/instance-ebs-bandwidth", "karpenter.k8s.aws/instance-network-bandwidth", "karpenter.k8s.aws/instance-gpu-name", "karpenter.k8s.aws/instance-gpu-manufacturer", "karpenter.k8s.aws/instance-gpu-count", "karpenter.k8s.aws/instance-gpu-memory", "karpenter.k8s.aws/instance-accelerator-name", "karpenter.k8s.aws/instance-accelerator-manufacturer", "karpenter.k8s.aws/instance-accelerator-count", "karpenter.k8s.aws/instance-capability-flex"] || !self.find("^([^/]+)").endsWith("karpenter.k8s.aws")
                               minValues:
                                 description: |-
                                   This field is ALPHA and can be dropped or replaced at any time
@@ -1539,20 +1777,22 @@ spec:
                               operator:
                                 description: |-
                                   Represents a key's relationship to a set of values.
-                                  Valid operators are In, NotIn, Exists, DoesNotExist. Gt, and Lt.
-                                type: string
+                                  Valid operators are In, NotIn, Exists, DoesNotExist. Gt, Lt, Gte, and Lte.
                                 enum:
+                                  - Gte
+                                  - Lte
                                   - In
                                   - NotIn
                                   - Exists
                                   - DoesNotExist
                                   - Gt
                                   - Lt
+                                type: string
                               values:
                                 description: |-
                                   An array of string values. If the operator is In or NotIn,
                                   the values array must be non-empty. If the operator is Exists or DoesNotExist,
-                                  the values array must be empty. If the operator is Gt or Lt, the values
+                                  the values array must be empty. If the operator is Gt, Lt, Gte, or Lte, the values
                                   array must have a single element, which will be interpreted as an integer.
                                   This array is replaced during a strategic merge patch.
                                 items:
@@ -1570,8 +1810,8 @@ spec:
                           x-kubernetes-validations:
                             - message: requirements with operator 'In' must have a value defined
                               rule: 'self.all(x, x.operator == ''In'' ? x.values.size() != 0 : true)'
-                            - message: requirements operator 'Gt' or 'Lt' must have a single positive integer value
-                              rule: 'self.all(x, (x.operator == ''Gt'' || x.operator == ''Lt'') ? (x.values.size() == 1 && int(x.values[0]) >= 0) : true)'
+                            - message: requirements operator 'Gt', 'Lt', 'Gte', or 'Lte' must have a single positive integer value
+                              rule: 'self.all(x, (x.operator == ''Gt'' || x.operator == ''Lt'' || x.operator == ''Gte'' || x.operator == ''Lte'') ? (x.values.size() == 1 && int(x.values[0]) >= 0) : true)'
                             - message: requirements with 'minValues' must have at least that many values specified in the 'values' field
                               rule: 'self.all(x, (x.operator == ''In'' && has(x.minValues)) ? x.values.size() >= x.minValues : true)'
                         startupTaints:
@@ -1601,9 +1841,7 @@ spec:
                                 minLength: 1
                                 pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$
                               timeAdded:
-                                description: |-
-                                  TimeAdded represents the time at which the taint was added.
-                                  It is only written for NoExecute taints.
+                                description: TimeAdded represents the time at which the taint was added.
                                 format: date-time
                                 type: string
                               value:
@@ -1638,9 +1876,7 @@ spec:
                                 minLength: 1
                                 pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*(\/))?([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9]$
                               timeAdded:
-                                description: |-
-                                  TimeAdded represents the time at which the taint was added.
-                                  It is only written for NoExecute taints.
+                                description: TimeAdded represents the time at which the taint was added.
                                 format: date-time
                                 type: string
                               value:
@@ -1682,6 +1918,7 @@ spec:
                     numerical weight indicates that this nodepool will be ordered
                     ahead of other nodepools with lower weights. A nodepool with no weight
                     will be treated as if it is a nodepool with a weight of 0.
+                    Weight is not supported when replicas is set.
                   format: int32
                   maximum: 100
                   minimum: 1
@@ -1689,6 +1926,13 @@ spec:
               required:
                 - template
               type: object
+              x-kubernetes-validations:
+                - message: Cannot transition NodePool between static (replicas set) and dynamic (replicas unset) provisioning modes
+                  rule: has(self.replicas) == has(oldSelf.replicas)
+                - message: only 'limits.nodes' is supported on static NodePools
+                  rule: '!has(self.replicas) || (!has(self.limits) || size(self.limits) == 0 || (size(self.limits) == 1 && ''nodes'' in self.limits))'
+                - message: '''weight'' is not supported on static NodePools'
+                  rule: '!has(self.replicas) || !has(self.weight)'
             status:
               description: NodePoolStatus defines the observed state of NodePool
               properties:
@@ -1754,6 +1998,11 @@ spec:
                     the actual NodeClass Generation, NodeRegistrationHealthy status condition on the NodePool will be reset
                   format: int64
                   type: integer
+                nodes:
+                  default: 0
+                  description: Nodes is the count of nodes associated with this NodePool
+                  format: int64
+                  type: integer
                 resources:
                   additionalProperties:
                     anyOf:
@@ -1770,5 +2019,8 @@ spec:
       served: true
       storage: true
       subresources:
+        scale:
+          specReplicasPath: .spec.replicas
+          statusReplicasPath: .status.nodes
         status: {}
 
