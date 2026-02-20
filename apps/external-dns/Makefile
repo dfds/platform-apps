@@ -14,6 +14,7 @@ url := $(shell yq '.spec.url' $(source))
 
 # Run all tasks
 all: crds.yaml manifests
+
 # Generate CRDs with helm
 crds.yaml: $(release) $(source)
 	helm show crds $(chart) --repo $(url) --version $(version) > $@

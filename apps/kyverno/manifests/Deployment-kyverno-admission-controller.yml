@@ -51,7 +51,7 @@ spec:
       automountServiceAccountToken: true
       initContainers:
         - name: kyverno-pre
-          image: "reg.kyverno.io/kyverno/kyvernopre:v1.17.0"
+          image: "reg.kyverno.io/kyverno/kyvernopre:v1.17.1"
           imagePullPolicy: IfNotPresent
           args:
             - --loggingFormat=text
@@ -97,7 +97,7 @@ spec:
               value: kyverno-svc
       containers:
         - name: kyverno
-          image: "reg.kyverno.io/kyverno/kyverno:v1.17.0"
+          image: "reg.kyverno.io/kyverno/kyverno:v1.17.1"
           imagePullPolicy: IfNotPresent
           args:
             - --caSecretName=kyverno-svc.kyverno.svc.kyverno-tls-ca
