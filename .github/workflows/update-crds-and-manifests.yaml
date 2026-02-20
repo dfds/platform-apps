@@ -1,0 +1,40 @@
+name: Update CRDs and render helm templates
+on:
+  pull_request:
+    paths:
+      - "**/sources.yaml"
+      - "**/release.yaml"
+jobs:
+  update-crds-and-manifests:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+
+    - name: Get changed helm files
+      id: changed-files
+      uses: tj-actions/changed-files@v47
+      with:
+        files: |
+          **/sources.yaml
+          **/release.yaml
+
+    - name: Touch all changed all flux helm related files
+      env:
+        ALL_CHANGED_FILES: ${{ steps.changed-files.outputs.all_changed_files }}
+      run: |
+        for file in ${ALL_CHANGED_FILES}; do
+          echo "touching file: ${file}"
+          touch ${file}
+        done
+
+    - name: Update CRDs and render helm templates
+      run: make
+
+    - uses: EndBug/add-and-commit@v9
+      with:
+        add: |
+          - **/crds.yaml
+          - **/manifests/*
+        message: "Update CRDs and render helm templates"
