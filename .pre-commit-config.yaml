@@ -1,0 +1,28 @@
+repos:
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v6.0.0
+    hooks:
+      - id: check-yaml
+        args: [--allow-multiple-documents]
+  - repo: local
+    hooks:
+      - id: kustomize
+        name: Validate Kustomizations
+        language: system
+        entry: bash -c 'dirname $@ | xargs -I {} kustomize build {} > /dev/null' --
+        files: kustomization.yaml
+  - repo: local
+    hooks:
+      - id: kubeconform
+        name: Validate Kubernetes manifests schemas
+        language: system
+        entry: kubeconform
+        args:
+          - -strict
+          - -skip
+          - CustomResourceDefinition,Kustomization,EC2NodeClass # EC2NodeClass fails due to postBuildSubstitutions ${flux_karpenter_node_volume_size}
+          - -schema-location
+          - default
+          - -schema-location
+          - "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json"
+        files: ^apps/.*
