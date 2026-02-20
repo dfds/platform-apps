@@ -59,6 +59,12 @@ rules:
     resourceNames:
       - kyverno-cleanup-controller
   - apiGroups:
+      - discovery.k8s.io
+    resources:
+      - endpointslices
+    verbs:
+      - list
+  - apiGroups:
       - apps
     resources:
       - deployments
