@@ -4,6 +4,7 @@ kind: Kustomization
 namespace: arc-runners
 resources:
   - namespace.yaml
+  - sources.yaml
   - serviceaccount-eso.yaml
   - secretstore.yaml
   - externalsecret.yaml

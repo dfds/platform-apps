@@ -17,7 +17,7 @@ spec:
   emitWarning: false
   background: true
   rules:
-    - name: require-cpu-resources
+    - name: require-cpu-requests
       match:
         any:
         - resources:
@@ -34,19 +34,39 @@ spec:
               - kyverno
       validate:
         message: >-
-          CPU resources must be configured correctly. All containers must specify
-          spec.containers[*].resources.requests.cpu but must NOT set
-          spec.containers[*].resources.limits.cpu (to avoid CPU throttling).
+          All containers must specify spec.containers[*].resources.requests.cpu.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
+        pattern:
+          spec:
+            containers:
+            - resources:
+                requests:
+                  cpu: "?*"
+    - name: deny-cpu-limits
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+            operations:
+              - CREATE
+              - UPDATE
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kyverno
+      validate:
+        message: >-
+          Containers must NOT set spec.containers[*].resources.limits.cpu (to avoid CPU throttling).
           Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
         foreach:
         - list: "request.object.spec.containers"
           deny:
             conditions:
               any:
-              - key: "{{ element.resources.requests.cpu || '' }}"
-                operator: Equals
-                value: ""
-              - key: "{{ element.resources.limits.cpu || '' }}"
+              - key: "{{ to_string(element.resources.limits.cpu || '') }}"
                 operator: NotEquals
                 value: ""
     - name: require-memory-resources
@@ -66,21 +86,51 @@ spec:
               - kyverno
       validate:
         message: >-
-          Memory resources must be configured correctly. All containers must specify
-          both spec.containers[*].resources.requests.memory and
-          spec.containers[*].resources.limits.memory, and they must be equal.
+          All containers must specify both spec.containers[*].resources.requests.memory
+          and spec.containers[*].resources.limits.memory.
+          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
+        pattern:
+          spec:
+            containers:
+            - resources:
+                requests:
+                  memory: "?*"
+                limits:
+                  memory: "?*"
+    - name: require-equal-memory-resources
+      match:
+        any:
+        - resources:
+            kinds:
+              - Pod
+            operations:
+              - CREATE
+              - UPDATE
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kyverno
+      validate:
+        message: >-
+          Memory requests and limits must be equal:
+          spec.containers[*].resources.requests.memory must equal
+          spec.containers[*].resources.limits.memory.
           Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
         foreach:
         - list: "request.object.spec.containers"
+          preconditions:
+            all:
+            - key: "{{ to_string(element.resources.requests.memory || '') }}"
+              operator: NotEquals
+              value: ""
+            - key: "{{ to_string(element.resources.limits.memory || '') }}"
+              operator: NotEquals
+              value: ""
           deny:
             conditions:
               any:
-              - key: "{{ element.resources.requests.memory || '' }}"
-                operator: Equals
-                value: ""
-              - key: "{{ element.resources.limits.memory || '' }}"
-                operator: Equals
-                value: ""
-              - key: "{{ element.resources.requests.memory || '' }}"
+              - key: "{{ to_string(element.resources.requests.memory) }}"
                 operator: NotEquals
-                value: "{{ element.resources.limits.memory || '' }}"
+                value: "{{ to_string(element.resources.limits.memory) }}"

@@ -1,0 +1,23 @@
+---
+# Source: atlantis/templates/tests/test-atlantis-pod.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "atlantis-ui-test"
+  namespace: atlantis
+  annotations:
+    helm.sh/hook: test
+spec:
+  containers:
+    - name: atlantis-ui-test
+      image: bats/bats:1.9.0
+      command: ["/usr/local/bin/bats", "/tests/"]
+      volumeMounts:
+        - mountPath: /tests
+          name: tests
+          readOnly: true
+  volumes:
+    - name: tests
+      configMap:
+        name: atlantis-tests
+  restartPolicy: Never

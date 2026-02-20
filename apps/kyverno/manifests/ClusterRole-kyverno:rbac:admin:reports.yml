@@ -1,0 +1,26 @@
+---
+# Source: kyverno/templates/rbac/reports.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: kyverno:rbac:admin:reports
+  labels:
+    app.kubernetes.io/component: rbac
+    app.kubernetes.io/instance: kyverno
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: kyverno
+    rbac.authorization.k8s.io/aggregate-to-admin: "true"
+rules:
+  - apiGroups:
+      - reports.kyverno.io
+    resources:
+      - ephemeralreports
+      - clusterephemeralreports
+    verbs:
+      - create
+      - delete
+      - get
+      - list
+      - patch
+      - update
+      - watch

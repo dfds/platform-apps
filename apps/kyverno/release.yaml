@@ -9,16 +9,19 @@ spec:
   chart:
     spec:
       chart: kyverno
-      version: 3.5.2
+      version: 3.7.1
       sourceRef:
         kind: HelmRepository
         name: kyverno
         namespace: kyverno
   interval: 1m0s
   install:
+    crds: Skip
     remediation:
       retries: 3
   values:
+    crds:
+      install: false
     admissionController:
       container:
         resources:
@@ -38,7 +41,7 @@ spec:
         limits:
           memory: 1Gi
         requests:
-          cpu: 1000m
+          cpu: 500m
           memory: 1Gi
       priorityClassName: cluster-observability
     backgroundController:

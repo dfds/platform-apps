@@ -1,0 +1,19 @@
+---
+# Source: atlantis/templates/configmap-repo-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: atlantis-repo-config
+  namespace: atlantis
+  labels:
+    app: atlantis
+    chart: atlantis-5.28.0
+    release: atlantis
+    heritage: Helm
+data:
+  repos.yaml: |
+    ---
+    repos:
+    - id: "/.*/"
+      allowed_overrides: [workflow]
+      allow_custom_workflows: true

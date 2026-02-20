@@ -1,0 +1,21 @@
+---
+# Source: karpenter/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: karpenter
+  namespace: karpenter
+  labels:
+    app.kubernetes.io/name: karpenter
+    app.kubernetes.io/instance: karpenter
+    app.kubernetes.io/managed-by: Helm
+spec:
+  type: ClusterIP
+  ports:
+    - name: http-metrics
+      port: 8080
+      targetPort: http-metrics
+      protocol: TCP
+  selector:
+    app.kubernetes.io/name: karpenter
+    app.kubernetes.io/instance: karpenter

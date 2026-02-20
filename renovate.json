@@ -30,7 +30,7 @@
                 "release:patch"
             ],
             "minimumReleaseAge": "1 day",
-            "automerge": true,
+            "automerge": false,
             "matchCurrentVersion": "!/^0/",
             "ignoreTests": true,
             "dependencyDashboardApproval": false
