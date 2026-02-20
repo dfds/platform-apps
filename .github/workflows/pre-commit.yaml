@@ -1,0 +1,16 @@
+name: Pre-commit
+
+on:
+  - pull_request
+
+jobs:
+  pre-commit:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v6
+    - uses: actions/setup-python@v6
+    - uses: alexellis/arkade-get@master
+      with:
+        kustomize: latest
+        kubeconform: latest
+    - uses: pre-commit/action@v3.0.1
