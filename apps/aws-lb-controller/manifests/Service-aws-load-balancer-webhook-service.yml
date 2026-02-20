@@ -1,0 +1,21 @@
+---
+# Source: aws-load-balancer-controller/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: aws-load-balancer-webhook-service
+  namespace: aws-lb-controller
+  labels:
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: aws-load-balancer-controller
+    app.kubernetes.io/instance: aws-lb-controller
+    app.kubernetes.io/component: webhook
+    prometheus.io/service-monitor: "false"
+spec:
+  ports:
+    - port: 443
+      name: webhook-server
+      targetPort: webhook-server
+  selector:
+    app.kubernetes.io/name: aws-load-balancer-controller
+    app.kubernetes.io/instance: aws-lb-controller

@@ -21,8 +21,12 @@ rules:
     resources:
       - mutatingwebhookconfigurations
       - validatingwebhookconfigurations
+      # Always grant permissions for admission policies to support per-policy generation overrides 
+      # even when global generateValidatingAdmissionPolicy/generateMutatingAdmissionPolicy flags are disabled.
       - validatingadmissionpolicies
       - validatingadmissionpolicybindings
+      - mutatingadmissionpolicies
+      - mutatingadmissionpolicybindings
     verbs:
       - create
       - delete

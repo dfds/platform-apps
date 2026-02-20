@@ -23,7 +23,7 @@ spec:
       restartPolicy: Never
       containers:
         - name: kubectl
-          image: "reg.kyverno.io/kyverno/kyverno-cli:v1.17.0"
+          image: "reg.kyverno.io/kyverno/kyverno-cli:v1.17.1"
           imagePullPolicy: IfNotPresent
           args:
             - migrate
