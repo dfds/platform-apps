@@ -5,4 +5,4 @@ metadata:
   namespace: druid-system
 spec:
   interval: 1h0m0s
-  url: https://charts.datainfra.io
+  url: https://charts.deep.bi
