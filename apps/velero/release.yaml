@@ -65,9 +65,9 @@ spec:
       resources:
         requests:
           cpu: 5m
-          memory: 256Mi
+          memory: 384Mi
         limits:
-          memory: 256Mi
+          memory: 384Mi
     initContainers:
     - image: velero/velero-plugin-for-aws:v1.13.2
       name: velero-plugin-for-aws
