@@ -25,4 +25,11 @@ manifests: $(release) $(source)
 	rm -rf manifests/*
 	helm template $(name) $(chart) --repo $(url) --version $(version) --namespace $(namespace) --skip-crds -f <(echo "$$($(values))") | grep -vE "helm.sh/chart|app.kubernetes.io/version" | yq -s '"manifests/" + .kind + "-" + .metadata.name'
 
+# This chart is noisy so we replace the certificate data with a placeholder
+	yq -ie '.data."ca.crt" = "REPLACED"' manifests/Secret-aws-load-balancer-tls.yml
+	yq -ie '.data."tls.crt" = "REPLACED"' manifests/Secret-aws-load-balancer-tls.yml
+	yq -ie '.data."tls.key" = "REPLACED"' manifests/Secret-aws-load-balancer-tls.yml
+	yq -ie '.webhooks[].clientConfig.caBundle = "REPLACED"' manifests/ValidatingWebhookConfiguration-aws-load-balancer-webhook.yml
+	yq -ie '.webhooks[].clientConfig.caBundle = "REPLACED"' manifests/MutatingWebhookConfiguration-aws-load-balancer-webhook.yml
+
 .PHONY: all manifests
