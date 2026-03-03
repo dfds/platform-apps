@@ -17,7 +17,7 @@ all: crds.yaml manifests
 
 # Generate CRDs with helm
 crds.yaml: $(release) $(source)
-	helm show crds $(chart) --repo $(url) --version $(version) > $@
+# 	helm show crds $(chart) --repo $(url) --version $(version) > $@ # enable CRD update in Makefile once >= 1.17.1
 
 # Render template with helm (filtering away noisy annotations when diffing)
 manifests: $(release) $(source)
