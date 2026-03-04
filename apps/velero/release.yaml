@@ -138,6 +138,7 @@ spec:
           - policyreports.wgpolicyk8s.io
           excludedNamespaces:
           - velero
+          - atlantis
           snapshotVolumes: true
           storageLocation: default
           ttl: 730h
@@ -183,6 +184,7 @@ spec:
           - policyreports.wgpolicyk8s.io
           excludedNamespaces:
           - velero
+          - atlantis
           snapshotMoveData: true
           snapshotVolumes: true
           storageLocation: azure
