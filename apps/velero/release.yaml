@@ -139,6 +139,7 @@ spec:
           excludedNamespaces:
           - velero
           - atlantis
+          - kyverno
           snapshotVolumes: true
           storageLocation: default
           ttl: 730h
@@ -185,6 +186,7 @@ spec:
           excludedNamespaces:
           - velero
           - atlantis
+          - kyverno
           snapshotMoveData: true
           snapshotVolumes: true
           storageLocation: azure
