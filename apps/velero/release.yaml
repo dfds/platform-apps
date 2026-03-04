@@ -162,6 +162,7 @@ spec:
           - clustervulnerabilityreports.aquasecurity.github.io
           - clusterpolicyreports.wgpolicyk8s.io
           excludedNamespaceScopedResources:
+          - secrets
           - cleanuppolicies.kyverno.io
           - policies.kyverno.io
           - policyexceptions.kyverno.io
