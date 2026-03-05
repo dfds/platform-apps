@@ -30,7 +30,7 @@ spec:
           values: ["t3"]
         - key: karpenter.k8s.aws/instance-size
           operator: In
-          values: [medium, large, xlarge, 2xlarge]
+          values: [small, medium, large, xlarge, 2xlarge]
       nodeClassRef:
         group: karpenter.k8s.aws
         kind: EC2NodeClass
@@ -69,7 +69,7 @@ spec:
           values: ["t3"]
         - key: karpenter.k8s.aws/instance-size
           operator: In
-          values: [medium, large, xlarge, 2xlarge]
+          values: [small, medium, large, xlarge, 2xlarge]
       nodeClassRef:
         group: karpenter.k8s.aws
         kind: EC2NodeClass
