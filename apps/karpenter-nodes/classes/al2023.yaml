@@ -59,12 +59,6 @@ spec:
         config:
           maxPods: 110
           registryPullQPS: 0
-          kubeReserved:
-            cpu: 700m
-            memory: 1024Mi
-          systemReserved:
-            cpu: 700m
-            memory: 1024Mi
 
     --BOUNDARY--
 
@@ -117,5 +111,17 @@ spec:
           password = $DOCKER_HUB_PASSWD
     EOF
     service containerd restart
+
+    --BOUNDARY
+    Content-Type: application/node.eks.aws
+
+    ---
+    apiVersion: node.eks.aws/v1alpha1
+    kind: NodeConfig
+    spec:
+      kubelet:
+        config:
+          maxPods: 110
+          registryPullQPS: 0
 
     --BOUNDARY--
