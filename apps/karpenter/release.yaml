@@ -16,6 +16,9 @@ spec:
   values:
     nodeSelector:
       karpenter.sh/controller: "true"
+    tolerations:
+      - operator: Exists
+        effect: NoSchedule
     settings:
       clusterName: ${flux_cluster_name}
       interruptionQueue: Karpenter-${flux_cluster_name}
