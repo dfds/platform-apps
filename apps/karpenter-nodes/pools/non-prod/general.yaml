@@ -44,7 +44,6 @@ metadata:
   annotations:
     kubernetes.io/description: "General purpose spot NodePool for generic workloads"
 spec:
-  weight: 10
   limits:
     cpu: 64
   template:
