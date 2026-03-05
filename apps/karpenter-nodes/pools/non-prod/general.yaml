@@ -53,10 +53,6 @@ spec:
         dfds.com/nodegroup-purpose: general
     spec:
       expireAfter: Never
-      taints:
-        - key: "dfds.com/nodegroup-instance-spot"
-          value: "spot"
-          effect: "NoSchedule"
       terminationGracePeriod: 5m
       requirements:
         - key: kubernetes.io/arch
