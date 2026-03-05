@@ -1,0 +1,31 @@
+---
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: alb-anon
+  namespace: traefik-green-variant
+spec:
+  serviceRef:
+    name: traefik-green-variant
+    port: web
+  nodeSelector:
+    matchExpressions:
+      - key: dfds.com/nodegroup-purpose
+        operator: Exists
+  targetGroupARN: arn:aws:elasticloadbalancing:eu-west-1:732716521483:targetgroup/g-sand20260203205232726000000006/3fd4aecee6a43168
+
+---
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: alb-auth
+  namespace: traefik-green-variant
+spec:
+  serviceRef:
+    name: traefik-green-variant
+    port: web
+  nodeSelector:
+    matchExpressions:
+      - key: dfds.com/nodegroup-purpose
+        operator: Exists
+  targetGroupARN: arn:aws:elasticloadbalancing:eu-west-1:732716521483:targetgroup/g-sand20260203205232357100000005/70b4e799c1ec8e4c

@@ -33,5 +33,4 @@ spec:
         memory: 64Mi
       limits:
         memory: 64Mi
-    watchNamespace:
     vpcId: ${flux_vpc_id}
