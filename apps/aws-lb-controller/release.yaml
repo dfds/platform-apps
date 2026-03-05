@@ -33,5 +33,5 @@ spec:
         memory: 64Mi
       limits:
         memory: 64Mi
-    watchNamespace: aws-lb-controller
+    watchNamespace:
     vpcId: ${flux_vpc_id}
