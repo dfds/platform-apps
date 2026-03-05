@@ -65,9 +65,9 @@ spec:
       resources:
         requests:
           cpu: 5m
-          memory: 384Mi
+          memory: ${flux_velero_node_agent_pod_memory}
         limits:
-          memory: 384Mi
+          memory: ${flux_velero_node_agent_pod_memory}
     initContainers:
     - image: velero/velero-plugin-for-aws:v1.13.2
       name: velero-plugin-for-aws
@@ -91,10 +91,10 @@ spec:
     priorityClassName: cluster-infrastructure
     resources:
       limits:
-        memory: 20Gi
+        memory: ${flux_velero_server_pod_memory}
       requests:
         cpu: 100m
-        memory: 20Gi
+        memory: ${flux_velero_server_pod_memory}
     schedules:
       ${flux_cluster_name}-cluster-backup:
         schedule: 0 0 * * *
