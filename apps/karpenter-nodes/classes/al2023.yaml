@@ -15,7 +15,7 @@ spec:
   role: "karpenter-${flux_cluster_name}"
   amiFamily: AL2023
   amiSelectorTerms:
-    - alias: "al2023@v20251103"
+    - alias: "al2023@v20260209"
   subnetSelectorTerms:
     - tags:
         karpenter.sh/discovery: "${flux_cluster_name}"
