@@ -65,16 +65,16 @@ spec:
       resources:
         requests:
           cpu: 5m
-          memory: 384Mi
+          memory: ${flux_velero_node_agent_pod_memory}
         limits:
-          memory: 384Mi
+          memory: ${flux_velero_node_agent_pod_memory}
     initContainers:
     - image: velero/velero-plugin-for-aws:v1.13.2
       name: velero-plugin-for-aws
       volumeMounts:
       - mountPath: /target
         name: plugins
-    - image: velero/velero-plugin-for-microsoft-azure:v1.12.1
+    - image: velero/velero-plugin-for-microsoft-azure:v1.13.2
       name: velero-plugin-for-microsoft-azure
       volumeMounts:
       - mountPath: /target
@@ -91,40 +91,102 @@ spec:
     priorityClassName: cluster-infrastructure
     resources:
       limits:
-        memory: 2Gi
+        memory: ${flux_velero_server_pod_memory}
       requests:
         cpu: 100m
-        memory: 2Gi
+        memory: ${flux_velero_server_pod_memory}
     schedules:
       ${flux_cluster_name}-cluster-backup:
         schedule: 0 0 * * *
         template:
+          excludedClusterScopedResources:
+          - clustercleanuppolicies.kyverno.io
+          - clusterpolicies.kyverno.io
+          - globalcontextentries.kyverno.io
+          - deletingpolicies.policies.kyverno.io
+          - generatingpolicies.policies.kyverno.io
+          - imagevalidatingpolicies.policies.kyverno.io
+          - mutatingpolicies.policies.kyverno.io
+          - validatingpolicies.policies.kyverno.io
+          - clusterephemeralreports.reports.kyverno.io
+          - clustercompliancereports.aquasecurity.github.io
+          - clusterconfigauditreports.aquasecurity.github.io
+          - clusterinfraassessmentreports.aquasecurity.github.io
+          - clusterrbacassessmentreports.aquasecurity.github.io
+          - clustersbomreports.aquasecurity.github.io
+          - clustervulnerabilityreports.aquasecurity.github.io
+          - clusterpolicyreports.wgpolicyk8s.io
           excludedNamespaceScopedResources:
           - secrets
-          - configauditreports
-          - exposedsecretreports
-          - infraassessmentreports
-          - rbacassessmentreports
-          - sbomreports
-          - vulnerabilityreports
+          - cleanuppolicies.kyverno.io
+          - policies.kyverno.io
+          - policyexceptions.kyverno.io
+          - updaterequests.kyverno.io
+          - namespaceddeletingpolicies.policies.kyverno.io
+          - namespacedgeneratingpolicies.policies.kyverno.io
+          - namespacedimagevalidatingpolicies.policies.kyverno.io
+          - namespacedmutatingpolicies.policies.kyverno.io
+          - namespacedvalidatingpolicies.policies.kyverno.io
+          - policyexceptions.policies.kyverno.io
+          - ephemeralreports.reports.kyverno.io
+          - configauditreports.aquasecurity.github.io
+          - exposedsecretreports.aquasecurity.github.io
+          - infraassessmentreports.aquasecurity.github.io
+          - rbacassessmentreports.aquasecurity.github.io
+          - sbomreports.aquasecurity.github.io
+          - vulnerabilityreports.aquasecurity.github.io
+          - policyreports.wgpolicyk8s.io
           excludedNamespaces:
           - velero
+          - atlantis
+          - kyverno
           snapshotVolumes: true
           storageLocation: default
           ttl: 730h
       ${flux_cluster_name}-cluster-backup-offsite:
         schedule: 0 * * * *
         template:
+          excludedClusterScopedResources:
+          - clustercleanuppolicies.kyverno.io
+          - clusterpolicies.kyverno.io
+          - globalcontextentries.kyverno.io
+          - deletingpolicies.policies.kyverno.io
+          - generatingpolicies.policies.kyverno.io
+          - imagevalidatingpolicies.policies.kyverno.io
+          - mutatingpolicies.policies.kyverno.io
+          - validatingpolicies.policies.kyverno.io
+          - clusterephemeralreports.reports.kyverno.io
+          - clustercompliancereports.aquasecurity.github.io
+          - clusterconfigauditreports.aquasecurity.github.io
+          - clusterinfraassessmentreports.aquasecurity.github.io
+          - clusterrbacassessmentreports.aquasecurity.github.io
+          - clustersbomreports.aquasecurity.github.io
+          - clustervulnerabilityreports.aquasecurity.github.io
+          - clusterpolicyreports.wgpolicyk8s.io
           excludedNamespaceScopedResources:
           - secrets
-          - configauditreports
-          - exposedsecretreports
-          - infraassessmentreports
-          - rbacassessmentreports
-          - sbomreports
-          - vulnerabilityreports
+          - cleanuppolicies.kyverno.io
+          - policies.kyverno.io
+          - policyexceptions.kyverno.io
+          - updaterequests.kyverno.io
+          - namespaceddeletingpolicies.policies.kyverno.io
+          - namespacedgeneratingpolicies.policies.kyverno.io
+          - namespacedimagevalidatingpolicies.policies.kyverno.io
+          - namespacedmutatingpolicies.policies.kyverno.io
+          - namespacedvalidatingpolicies.policies.kyverno.io
+          - policyexceptions.policies.kyverno.io
+          - ephemeralreports.reports.kyverno.io
+          - configauditreports.aquasecurity.github.io
+          - exposedsecretreports.aquasecurity.github.io
+          - infraassessmentreports.aquasecurity.github.io
+          - rbacassessmentreports.aquasecurity.github.io
+          - sbomreports.aquasecurity.github.io
+          - vulnerabilityreports.aquasecurity.github.io
+          - policyreports.wgpolicyk8s.io
           excludedNamespaces:
           - velero
+          - atlantis
+          - kyverno
           snapshotMoveData: true
           snapshotVolumes: true
           storageLocation: azure
