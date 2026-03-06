@@ -47,4 +47,9 @@ spec:
       kyverno:
         enabled: true
         priorityClassName: cluster-observability
-        resources: {} # todo: add once actually deployed
+        resources:
+          limits:
+            memory: 64Mi
+          requests:
+            cpu: 10m
+            memory: 64Mi
