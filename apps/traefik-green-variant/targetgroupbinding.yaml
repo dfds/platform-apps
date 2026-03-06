@@ -8,7 +8,7 @@ spec:
   serviceRef:
     name: traefik-green-variant
     port: web
-  targetGroupARN: arn:aws:elasticloadbalancing:eu-west-1:732716521483:targetgroup/g-sand20260203205232726000000006/3fd4aecee6a43168
+  targetGroupARN: ${flux_traefik_green_anon_target_group_arn}
 
 ---
 apiVersion: elbv2.k8s.aws/v1beta1
@@ -20,4 +20,4 @@ spec:
   serviceRef:
     name: traefik-green-variant
     port: web
-  targetGroupARN: arn:aws:elasticloadbalancing:eu-west-1:732716521483:targetgroup/g-sand20260203205232357100000005/70b4e799c1ec8e4c
+  targetGroupARN: ${flux_traefik_green_auth_target_group_arn}
