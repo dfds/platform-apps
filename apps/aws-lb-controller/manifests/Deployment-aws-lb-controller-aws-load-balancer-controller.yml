@@ -39,6 +39,7 @@ spec:
             - --cluster-name=${flux_cluster_name}
             - --ingress-class=alb
             - --aws-region=${flux_aws_region}
+            - --aws-vpc-id=${flux_vpc_id}
             - --watch-namespace=aws-lb-controller
           securityContext:
             allowPrivilegeEscalation: false
