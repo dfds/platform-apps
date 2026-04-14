@@ -33,7 +33,7 @@ spec:
       prometheus_metrics_enabled: true
     program_output:
         enabled: true
-        program: "jq '{channel: ${flux_falco_program_output_slack_channel}, text: .output}' | curl -d @- -X POST ${flux_falco_program_output_slack_webhookurl}"
+        program: "jq '{channel: \"#falco-event-valyria\", text: .output}' | curl -d @- -X POST ${flux_falco_program_output_slack_webhookurl}"
     falcosidekick:
       enabled: true
       priorityClassName: cluster-observability
