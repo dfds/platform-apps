@@ -38,7 +38,7 @@ spec:
         slack:
           webhookurl: ${flux_falco_sidekick_slack_alert_webhookurl}
           channel: ${flux_falco_sidekick_slack_alert_channel}
-          minimumpriority: "informational"
+          minimumpriority: "critical"
       resources:
         requests:
           cpu: 5m
