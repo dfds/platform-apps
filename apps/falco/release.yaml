@@ -34,6 +34,11 @@ spec:
     falcosidekick:
       enabled: true
       priorityClassName: cluster-observability
+      config:
+        slack:
+          webhookurl: ${flux_falco_sidekick_slack_webhookurl}
+          channel: ${flux_falco_sidekick_slack_channel}
+          minimumpriority: ${flux_falco_sidekick_slack_minimumpriority}
       resources:
         requests:
           cpu: 5m
