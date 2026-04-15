@@ -86,6 +86,10 @@ spec:
       enabled: true
       labels:
         scrape-service-metrics: "true"
+      annotations:
+        service.beta.kubernetes.io/aws-load-balancer-healthcheck-path: /ping # correspond to readinessProbe properties, https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/README.md
+        service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "8080" # correspond to readinessProbe properties, https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/README.md
+        service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: http # "if the service spec.externalTrafficPolicy is Local, do not use tcp for health check", https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/docs/guide/service/annotations.md#health-check
       spec:
         externalTrafficPolicy: Local
       type: NodePort
