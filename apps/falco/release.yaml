@@ -33,7 +33,6 @@ spec:
       prometheus_metrics_enabled: true
     program_output:
         enabled: true
-        program: "echo lala"
     falcosidekick:
       enabled: true
       priorityClassName: cluster-observability
