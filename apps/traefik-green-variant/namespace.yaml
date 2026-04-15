@@ -4,4 +4,4 @@ kind: Namespace
 metadata:
   name: traefik-green-variant
   labels:
-    pod-security.kubernetes.io/enforce: baseline
+  elbv2.k8s.aws/pod-readiness-gate-inject: enabled
