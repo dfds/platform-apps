@@ -31,8 +31,6 @@ spec:
         enabled: true
     webserver:
       prometheus_metrics_enabled: true
-    program_output:
-        enabled: true
     falcosidekick:
       enabled: true
       priorityClassName: cluster-observability
