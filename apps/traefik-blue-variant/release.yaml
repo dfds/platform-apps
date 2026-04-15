@@ -92,4 +92,4 @@ spec:
         service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: http # "if the service spec.externalTrafficPolicy is Local, do not use tcp for health check", https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/docs/guide/service/annotations.md#health-check
       spec:
         externalTrafficPolicy: Local
-      type: NodePort
+      type: ClusterIP
