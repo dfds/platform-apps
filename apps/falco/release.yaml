@@ -39,7 +39,7 @@ spec:
       priorityClassName: cluster-observability
       config:
         slack:
-          webhookurl: "${flux_falco_sidekick_slack_alert_webhookurl}"
+          webhookurl: "!!str ${flux_falco_sidekick_slack_alert_webhookurl}"
           channel: "!!str ${flux_falco_sidekick_slack_alert_channel}" #https://yaml.org/spec/1.1/current.html#:~:text=2.4.-,Tags,-In%20YAML%2C
           minimumpriority: "critical"
       resources:
