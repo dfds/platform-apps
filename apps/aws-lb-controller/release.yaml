@@ -33,7 +33,6 @@ spec:
         memory: 64Mi
       limits:
         memory: 64Mi
-    watchNamespace: aws-lb-controller
     vpcId: ${flux_vpc_id}
     defaultTargetType: ip
     enablePodReadinessGateInjector: true
