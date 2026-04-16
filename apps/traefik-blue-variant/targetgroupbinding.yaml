@@ -1,0 +1,26 @@
+---
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: alb-anon
+  namespace: traefik-blue-variant
+spec:
+  serviceRef:
+    name: traefik-blue-variant
+    port: traefik
+  targetGroupARN: ${flux_traefik_anon_blue_target_group_arn}
+
+  targetType: ip
+
+---
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: alb-auth
+  namespace: traefik-blue-variant
+spec:
+  serviceRef:
+    name: traefik-blue-variant
+    port: traefik
+  targetGroupARN: ${flux_traefik_auth_blue_target_group_arn}
+  targetType: ip
