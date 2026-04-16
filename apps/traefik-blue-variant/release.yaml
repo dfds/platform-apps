@@ -62,11 +62,9 @@ spec:
       traefik:
         expose:
           default: true
-        nodePort: ${flux_traefik_blue_target_admin_port}
       web:
         forwardedHeaders:
           insecure: true
-        nodePort: ${flux_traefik_blue_target_http_port}
       websecure:
         expose:
           default: false
@@ -93,5 +91,4 @@ spec:
         service.beta.kubernetes.io/aws-load-balancer-healthcheck-port: "8080" # correspond to readinessProbe properties, https://github.com/kubernetes/ingress-nginx/blob/main/charts/ingress-nginx/README.md
         service.beta.kubernetes.io/aws-load-balancer-healthcheck-protocol: http # "if the service spec.externalTrafficPolicy is Local, do not use tcp for health check", https://github.com/kubernetes-sigs/aws-load-balancer-controller/blob/main/docs/guide/service/annotations.md#health-check
       spec:
-        externalTrafficPolicy: Local
       type: ClusterIP
