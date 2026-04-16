@@ -4,6 +4,9 @@ metadata:
   name: karpenter
   namespace: karpenter
 spec:
+  dependsOn:
+    - name: aws-lb-controller
+      namespace: aws-lb-controller
   interval: 5m
   serviceAccountName: helm-controller
   targetNamespace: karpenter

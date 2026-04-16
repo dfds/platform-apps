@@ -4,6 +4,9 @@ metadata:
   name: external-secrets
   namespace: external-secrets
 spec:
+  dependsOn:
+    - name: aws-lb-controller
+      namespace: aws-lb-controller
   serviceAccountName: helm-controller
   releaseName: external-secrets
   chart:
