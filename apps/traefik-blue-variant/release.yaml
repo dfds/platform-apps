@@ -10,7 +10,7 @@ spec:
   dependsOn:
     - name: traefik-crds
       namespace: flux-system
-    - name: aws-load-balancer-controller
+    - name: aws-lb-controller
       namespace: aws-lb-controller
   chart:
     spec:
