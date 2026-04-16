@@ -37,7 +37,6 @@ spec:
       config:
         slack:
           webhookurl: "${flux_falco_sidekick_slack_alert_webhookurl}"
-          channel: "!!str ${flux_falco_sidekick_slack_alert_channel}"
           minimumpriority: "informational"
       resources:
         requests:
