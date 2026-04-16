@@ -7,7 +7,7 @@ metadata:
 spec:
   serviceRef:
     name: traefik-blue-variant
-    port: traefik
+    port: web
   targetGroupARN: ${flux_traefik_anon_blue_target_group_arn}
 
   targetType: ip
@@ -21,6 +21,6 @@ metadata:
 spec:
   serviceRef:
     name: traefik-blue-variant
-    port: traefik
+    port: web
   targetGroupARN: ${flux_traefik_auth_blue_target_group_arn}
   targetType: ip
