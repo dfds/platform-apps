@@ -17,6 +17,38 @@ spec:
   interval: 1m
   timeout: 15m
   values:
+    driver:
+      kind: modern_ebpf
+      modern_ebpf:
+        leastPrivileged: true
+    metrics:
+      enabled: true
+    collectors:
+      kubernetes:
+        enabled: true # Experimental
+    grafana:
+      dashboards:
+        enabled: true
+    webserver:
+      prometheus_metrics_enabled: true
+    falcosidekick:
+      enabled: true
+      priorityClassName: cluster-observability
+      config:
+        slack:
+          webhookurl: "${flux_falco_sidekick_slack_alert_webhookurl}"
+          minimumpriority: "critical"
+      resources:
+        requests:
+          cpu: 5m
+          memory: 256Mi
+        limits:
+          memory: 256Mi
+      webui:
+        enabled: true
+        priorityClassName: cluster-observability
+        redis:
+          priorityClassName: cluster-observability
     resources:
       requests:
         cpu: 25m
@@ -30,15 +62,3 @@ spec:
           rollingUpdate:
             maxUnavailable: 25%
     podPriorityClassName: node-observability
-    falcosidekick:
-      priorityClassName: cluster-observability
-      resources:
-        requests:
-          cpu: 5m
-          memory: 256Mi
-        limits:
-          memory: 256Mi
-      webui:
-        priorityClassName: cluster-observability
-        redis:
-          priorityClassName: cluster-observability
