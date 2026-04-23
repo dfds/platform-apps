@@ -28,6 +28,9 @@ spec:
         - jsonPath: .status.conditions[?(@.type=="Ready")].reason
           name: Status
           type: string
+        - jsonPath: .status.refreshTime
+          name: Last Sync
+          type: date
       name: v1alpha1
       schema:
         openAPIV3Schema:
@@ -103,7 +106,7 @@ spec:
                     - None
                   type: string
                 refreshInterval:
-                  default: 1h
+                  default: 1h0m0s
                   description: The Interval to which External Secrets will try to push a secret definition
                   type: string
                 secretStoreRefs:
@@ -387,11 +390,11 @@ spec:
                             type: object
                           target:
                             default: Data
-                            description: TemplateTarget specifies where the rendered templates should be applied.
-                            enum:
-                              - Data
-                              - Annotations
-                              - Labels
+                            description: |-
+                              Target specifies where to place the template result.
+                              For Secret resources, common values are: "Data", "Annotations", "Labels".
+                              For custom resources (when spec.target.manifest is set), this supports
+                              nested paths like "spec.database.config" or "data".
                             type: string
                         type: object
                       type: array
