@@ -69,7 +69,7 @@ spec:
         limits:
           memory: ${flux_velero_node_agent_pod_memory}
     initContainers:
-    - image: velero/velero-plugin-for-aws:v1.13.2
+    - image: velero/velero-plugin-for-aws:v1.14.0
       name: velero-plugin-for-aws
       volumeMounts:
       - mountPath: /target
