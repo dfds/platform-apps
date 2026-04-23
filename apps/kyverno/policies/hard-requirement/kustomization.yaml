@@ -4,3 +4,4 @@ resources:
   - require-external-secret-label.yaml
   - require-probes.yaml
   - restrict-ecr-images.yaml
+  - disallow-service-types.yaml
