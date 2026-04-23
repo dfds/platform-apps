@@ -7,7 +7,7 @@ metadata:
   namespace: atlantis
   labels:
     app: atlantis
-    chart: atlantis-5.28.0
+    chart: atlantis-6.2.0
     release: atlantis
     heritage: Helm
 spec:
@@ -24,7 +24,7 @@ spec:
         release: atlantis
       annotations:
         checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/repo-config: 97876ab09bec423c0be383ec2cedc22981ba7ba5512b2a279e6355bfc039b708
+        checksum/repo-config: 52c4892aae655292c564a1ee6762a056c3ecd8dd37c21b98107b82c4d453a123
     spec:
       hostNetwork: false
       serviceAccountName: atlantis
