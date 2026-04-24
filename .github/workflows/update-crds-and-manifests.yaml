@@ -32,7 +32,7 @@ jobs:
     - name: Update CRDs and render helm templates
       run: make
 
-    - uses: EndBug/add-and-commit@v9
+    - uses: EndBug/add-and-commit@v10
       with:
         add: '["**/crds.yaml", "**/manifests/*"]'
         message: "Update CRDs and render helm templates"
