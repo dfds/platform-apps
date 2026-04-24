@@ -4,3 +4,4 @@ resources:
   - require-external-secret-label.yaml
   - require-probes.yaml
   - require-hpa.yaml
+  - restrict-service-types.yaml
