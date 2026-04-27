@@ -66,6 +66,8 @@ webhooks:
     failurePolicy: Fail
     matchPolicy: Equivalent
     name: vingress.elbv2.k8s.aws
+    objectSelector:
+    namespaceSelector:
     admissionReviewVersions:
       - v1beta1
     rules:
