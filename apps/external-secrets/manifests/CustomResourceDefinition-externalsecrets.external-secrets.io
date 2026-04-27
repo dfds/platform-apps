@@ -37,6 +37,9 @@ spec:
         - jsonPath: .status.conditions[?(@.type=="Ready")].status
           name: Ready
           type: string
+        - jsonPath: .status.refreshTime
+          name: Last Sync
+          type: date
       name: v1
       schema:
         openAPIV3Schema:
@@ -420,13 +423,13 @@ spec:
                     type: object
                   type: array
                 refreshInterval:
-                  default: 1h
+                  default: 1h0m0s
                   description: |-
                     RefreshInterval is the amount of time before the values are read again from the SecretStore provider,
                     specified as Golang Duration strings.
                     Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h"
-                    Example values: "1h", "2h30m", "10s"
-                    May be set to zero to fetch and create it once. Defaults to 1h.
+                    Example values: "1h0m0s", "2h30m0s", "10m0s"
+                    May be set to "0s" to fetch and create it once. Defaults to 1h0m0s.
                   type: string
                 refreshPolicy:
                   description: |-
@@ -490,6 +493,25 @@ spec:
                     immutable:
                       description: Immutable defines if the final secret will be immutable
                       type: boolean
+                    manifest:
+                      description: |-
+                        Manifest defines a custom Kubernetes resource to create instead of a Secret.
+                        When specified, ExternalSecret will create the resource type defined here
+                        (e.g., ConfigMap, Custom Resource) instead of a Secret.
+                        Warning: Using Generic target. Make sure access policies and encryption are properly configured.
+                      properties:
+                        apiVersion:
+                          description: APIVersion of the target resource (e.g., "v1" for ConfigMap, "argoproj.io/v1alpha1" for ArgoCD Application)
+                          minLength: 1
+                          type: string
+                        kind:
+                          description: Kind of the target resource (e.g., "ConfigMap", "Application")
+                          minLength: 1
+                          type: string
+                      required:
+                        - apiVersion
+                        - kind
+                      type: object
                     name:
                       description: |-
                         The name of the Secret resource to be managed.
@@ -617,11 +639,11 @@ spec:
                                 type: object
                               target:
                                 default: Data
-                                description: TemplateTarget specifies where the rendered templates should be applied.
-                                enum:
-                                  - Data
-                                  - Annotations
-                                  - Labels
+                                description: |-
+                                  Target specifies where to place the template result.
+                                  For Secret resources, common values are: "Data", "Annotations", "Labels".
+                                  For custom resources (when spec.target.manifest is set), this supports
+                                  nested paths like "spec.database.config" or "data".
                                 type: string
                             type: object
                           type: array
@@ -708,6 +730,9 @@ spec:
         - jsonPath: .status.conditions[?(@.type=="Ready")].status
           name: Ready
           type: string
+        - jsonPath: .status.refreshTime
+          name: Last Sync
+          type: date
       deprecated: true
       name: v1beta1
       schema:
@@ -1046,13 +1071,13 @@ spec:
                     type: object
                   type: array
                 refreshInterval:
-                  default: 1h
+                  default: 1h0m0s
                   description: |-
                     RefreshInterval is the amount of time before the values are read again from the SecretStore provider,
                     specified as Golang Duration strings.
                     Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h"
-                    Example values: "1h", "2h30m", "10s"
-                    May be set to zero to fetch and create it once. Defaults to 1h.
+                    Example values: "1h0m0s", "2h30m0s", "10m0s"
+                    May be set to "0s" to fetch and create it once. Defaults to 1h0m0s.
                   type: string
                 refreshPolicy:
                   description: |-

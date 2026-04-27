@@ -738,13 +738,13 @@ spec:
                         type: object
                       type: array
                     refreshInterval:
-                      default: 1h
+                      default: 1h0m0s
                       description: |-
                         RefreshInterval is the amount of time before the values are read again from the SecretStore provider,
                         specified as Golang Duration strings.
                         Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h"
-                        Example values: "1h", "2h30m", "10s"
-                        May be set to zero to fetch and create it once. Defaults to 1h.
+                        Example values: "1h0m0s", "2h30m0s", "10m0s"
+                        May be set to "0s" to fetch and create it once. Defaults to 1h0m0s.
                       type: string
                     refreshPolicy:
                       description: |-
@@ -808,6 +808,25 @@ spec:
                         immutable:
                           description: Immutable defines if the final secret will be immutable
                           type: boolean
+                        manifest:
+                          description: |-
+                            Manifest defines a custom Kubernetes resource to create instead of a Secret.
+                            When specified, ExternalSecret will create the resource type defined here
+                            (e.g., ConfigMap, Custom Resource) instead of a Secret.
+                            Warning: Using Generic target. Make sure access policies and encryption are properly configured.
+                          properties:
+                            apiVersion:
+                              description: APIVersion of the target resource (e.g., "v1" for ConfigMap, "argoproj.io/v1alpha1" for ArgoCD Application)
+                              minLength: 1
+                              type: string
+                            kind:
+                              description: Kind of the target resource (e.g., "ConfigMap", "Application")
+                              minLength: 1
+                              type: string
+                          required:
+                            - apiVersion
+                            - kind
+                          type: object
                         name:
                           description: |-
                             The name of the Secret resource to be managed.
@@ -935,11 +954,11 @@ spec:
                                     type: object
                                   target:
                                     default: Data
-                                    description: TemplateTarget specifies where the rendered templates should be applied.
-                                    enum:
-                                      - Data
-                                      - Annotations
-                                      - Labels
+                                    description: |-
+                                      Target specifies where to place the template result.
+                                      For Secret resources, common values are: "Data", "Annotations", "Labels".
+                                      For custom resources (when spec.target.manifest is set), this supports
+                                      nested paths like "spec.database.config" or "data".
                                     type: string
                                 type: object
                               type: array
@@ -951,6 +970,7 @@ spec:
                 namespaceSelector:
                   description: |-
                     The labels to select by to find the Namespaces to create the ExternalSecrets in.
+
                     Deprecated: Use NamespaceSelectors instead.
                   properties:
                     matchExpressions:
@@ -1047,6 +1067,7 @@ spec:
                 namespaces:
                   description: |-
                     Choose namespaces by name. This field is ORed with anything that NamespaceSelectors ends up choosing.
+
                     Deprecated: Use NamespaceSelectors instead.
                   items:
                     maxLength: 63
@@ -1479,13 +1500,13 @@ spec:
                         type: object
                       type: array
                     refreshInterval:
-                      default: 1h
+                      default: 1h0m0s
                       description: |-
                         RefreshInterval is the amount of time before the values are read again from the SecretStore provider,
                         specified as Golang Duration strings.
                         Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h"
-                        Example values: "1h", "2h30m", "10s"
-                        May be set to zero to fetch and create it once. Defaults to 1h.
+                        Example values: "1h0m0s", "2h30m0s", "10m0s"
+                        May be set to "0s" to fetch and create it once. Defaults to 1h0m0s.
                       type: string
                     refreshPolicy:
                       description: |-
@@ -1780,6 +1801,7 @@ spec:
                 namespaces:
                   description: |-
                     Choose namespaces by name. This field is ORed with anything that NamespaceSelectors ends up choosing.
+
                     Deprecated: Use NamespaceSelectors instead.
                   items:
                     maxLength: 63
@@ -2684,6 +2706,14 @@ spec:
                           default: false
                           description: Set NoUpper to disable uppercase characters
                           type: boolean
+                        secretKeys:
+                          description: |-
+                            SecretKeys defines the keys that will be populated with generated passwords.
+                            Defaults to "password" when not set.
+                          items:
+                            type: string
+                          minItems: 1
+                          type: array
                         symbolCharacters:
                           description: |-
                             SymbolCharacters specifies the special characters that should be used
@@ -2748,17 +2778,19 @@ spec:
                           type: string
                         keySize:
                           description: |-
-                            KeySize specifies the key size for RSA keys (default: 2048)
+                            KeySize specifies the key size for RSA keys (default: 2048) and ECDSA keys (default: 256).
                             For RSA keys: 2048, 3072, 4096
+                            For ECDSA keys: 256, 384, 521
                             Ignored for ed25519 keys
                           maximum: 8192
                           minimum: 256
                           type: integer
                         keyType:
                           default: rsa
-                          description: KeyType specifies the SSH key type (rsa, ed25519)
+                          description: KeyType specifies the SSH key type (rsa, ecdsa, ed25519)
                           enum:
                             - rsa
+                            - ecdsa
                             - ed25519
                           type: string
                       type: object
@@ -3094,6 +3126,134 @@ spec:
                                           type: string
                                       type: object
                                   type: object
+                                gcp:
+                                  description: |-
+                                    Gcp authenticates with Vault using Google Cloud Platform authentication method
+                                    GCP authentication method
+                                  properties:
+                                    location:
+                                      description: Location optionally defines a location/region for the secret
+                                      type: string
+                                    path:
+                                      default: gcp
+                                      description: 'Path where the GCP auth method is enabled in Vault, e.g: "gcp"'
+                                      type: string
+                                    projectID:
+                                      description: Project ID of the Google Cloud Platform project
+                                      type: string
+                                    role:
+                                      description: Vault Role. In Vault, a role describes an identity with a set of permissions, groups, or policies you want to attach to a user of the secrets engine.
+                                      type: string
+                                    secretRef:
+                                      description: Specify credentials in a Secret object
+                                      properties:
+                                        secretAccessKeySecretRef:
+                                          description: The SecretAccessKey is used for authentication
+                                          properties:
+                                            key:
+                                              description: |-
+                                                A key in the referenced Secret.
+                                                Some instances of this field may be defaulted, in others it may be required.
+                                              maxLength: 253
+                                              minLength: 1
+                                              pattern: ^[-._a-zA-Z0-9]+$
+                                              type: string
+                                            name:
+                                              description: The name of the Secret resource being referred to.
+                                              maxLength: 253
+                                              minLength: 1
+                                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                              type: string
+                                            namespace:
+                                              description: |-
+                                                The namespace of the Secret resource being referred to.
+                                                Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                              maxLength: 63
+                                              minLength: 1
+                                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                              type: string
+                                          type: object
+                                      type: object
+                                    serviceAccountRef:
+                                      description: ServiceAccountRef to a service account for impersonation
+                                      properties:
+                                        audiences:
+                                          description: |-
+                                            Audience specifies the `aud` claim for the service account token
+                                            If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity
+                                            then this audiences will be appended to the list
+                                          items:
+                                            type: string
+                                          type: array
+                                        name:
+                                          description: The name of the ServiceAccount resource being referred to.
+                                          maxLength: 253
+                                          minLength: 1
+                                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                          type: string
+                                        namespace:
+                                          description: |-
+                                            Namespace of the resource being referred to.
+                                            Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                          maxLength: 63
+                                          minLength: 1
+                                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                          type: string
+                                      required:
+                                        - name
+                                      type: object
+                                    workloadIdentity:
+                                      description: Specify a service account with Workload Identity
+                                      properties:
+                                        clusterLocation:
+                                          description: |-
+                                            ClusterLocation is the location of the cluster
+                                            If not specified, it fetches information from the metadata server
+                                          type: string
+                                        clusterName:
+                                          description: |-
+                                            ClusterName is the name of the cluster
+                                            If not specified, it fetches information from the metadata server
+                                          type: string
+                                        clusterProjectID:
+                                          description: |-
+                                            ClusterProjectID is the project ID of the cluster
+                                            If not specified, it fetches information from the metadata server
+                                          type: string
+                                        serviceAccountRef:
+                                          description: ServiceAccountSelector is a reference to a ServiceAccount resource.
+                                          properties:
+                                            audiences:
+                                              description: |-
+                                                Audience specifies the `aud` claim for the service account token
+                                                If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity
+                                                then this audiences will be appended to the list
+                                              items:
+                                                type: string
+                                              type: array
+                                            name:
+                                              description: The name of the ServiceAccount resource being referred to.
+                                              maxLength: 253
+                                              minLength: 1
+                                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                              type: string
+                                            namespace:
+                                              description: |-
+                                                Namespace of the resource being referred to.
+                                                Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                              maxLength: 63
+                                              minLength: 1
+                                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                              type: string
+                                          required:
+                                            - name
+                                          type: object
+                                      required:
+                                        - serviceAccountRef
+                                      type: object
+                                  required:
+                                    - role
+                                  type: object
                                 iam:
                                   description: |-
                                     Iam authenticates with vault by passing a special AWS request signed with AWS IAM credentials
@@ -3252,6 +3412,7 @@ spec:
                                             Optional audiences field that will be used to request a temporary Kubernetes service
                                             account token for the service account referenced by `serviceAccountRef`.
                                             Defaults to a single audience `vault` it not specified.
+
                                             Deprecated: use serviceAccountRef.Audiences instead
                                           items:
                                             type: string
@@ -3261,6 +3422,7 @@ spec:
                                             Optional expiration time in seconds that will be used to request a temporary
                                             Kubernetes service account token for the service account referenced by
                                             `serviceAccountRef`.
+
                                             Deprecated: this will be removed in the future.
                                             Defaults to 10 minutes.
                                           format: int64
@@ -4119,7 +4281,7 @@ spec:
                         - None
                       type: string
                     refreshInterval:
-                      default: 1h
+                      default: 1h0m0s
                       description: The Interval to which External Secrets will try to push a secret definition
                       type: string
                     secretStoreRefs:
@@ -4403,11 +4565,11 @@ spec:
                                 type: object
                               target:
                                 default: Data
-                                description: TemplateTarget specifies where the rendered templates should be applied.
-                                enum:
-                                  - Data
-                                  - Annotations
-                                  - Labels
+                                description: |-
+                                  Target specifies where to place the template result.
+                                  For Secret resources, common values are: "Data", "Annotations", "Labels".
+                                  For custom resources (when spec.target.manifest is set), this supports
+                                  nested paths like "spec.database.config" or "data".
                                 type: string
                             type: object
                           type: array
@@ -4545,7 +4707,7 @@ spec:
               description: SecretStoreSpec defines the desired state of SecretStore.
               properties:
                 conditions:
-                  description: Used to constraint a ClusterSecretStore to specific namespaces. Relevant only to ClusterSecretStore
+                  description: Used to constrain a ClusterSecretStore to specific namespaces. Relevant only to ClusterSecretStore.
                   items:
                     description: |-
                       ClusterSecretStoreCondition describes a condition by which to choose namespaces to process ExternalSecrets in
@@ -4838,96 +5000,6 @@ spec:
                       required:
                         - akeylessGWApiURL
                         - authSecretRef
-                      type: object
-                    alibaba:
-                      description: Alibaba configures this store to sync secrets using Alibaba Cloud provider
-                      properties:
-                        auth:
-                          description: AlibabaAuth contains a secretRef for credentials.
-                          properties:
-                            rrsa:
-                              description: AlibabaRRSAAuth authenticates against Alibaba using RRSA.
-                              properties:
-                                oidcProviderArn:
-                                  type: string
-                                oidcTokenFilePath:
-                                  type: string
-                                roleArn:
-                                  type: string
-                                sessionName:
-                                  type: string
-                              required:
-                                - oidcProviderArn
-                                - oidcTokenFilePath
-                                - roleArn
-                                - sessionName
-                              type: object
-                            secretRef:
-                              description: AlibabaAuthSecretRef holds secret references for Alibaba credentials.
-                              properties:
-                                accessKeyIDSecretRef:
-                                  description: The AccessKeyID is used for authentication
-                                  properties:
-                                    key:
-                                      description: |-
-                                        A key in the referenced Secret.
-                                        Some instances of this field may be defaulted, in others it may be required.
-                                      maxLength: 253
-                                      minLength: 1
-                                      pattern: ^[-._a-zA-Z0-9]+$
-                                      type: string
-                                    name:
-                                      description: The name of the Secret resource being referred to.
-                                      maxLength: 253
-                                      minLength: 1
-                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
-                                      type: string
-                                    namespace:
-                                      description: |-
-                                        The namespace of the Secret resource being referred to.
-                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
-                                      maxLength: 63
-                                      minLength: 1
-                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-                                      type: string
-                                  type: object
-                                accessKeySecretSecretRef:
-                                  description: The AccessKeySecret is used for authentication
-                                  properties:
-                                    key:
-                                      description: |-
-                                        A key in the referenced Secret.
-                                        Some instances of this field may be defaulted, in others it may be required.
-                                      maxLength: 253
-                                      minLength: 1
-                                      pattern: ^[-._a-zA-Z0-9]+$
-                                      type: string
-                                    name:
-                                      description: The name of the Secret resource being referred to.
-                                      maxLength: 253
-                                      minLength: 1
-                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
-                                      type: string
-                                    namespace:
-                                      description: |-
-                                        The namespace of the Secret resource being referred to.
-                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
-                                      maxLength: 63
-                                      minLength: 1
-                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-                                      type: string
-                                  type: object
-                              required:
-                                - accessKeyIDSecretRef
-                                - accessKeySecretSecretRef
-                              type: object
-                          type: object
-                        regionID:
-                          description: Alibaba Region to be used for the provider
-                          type: string
-                      required:
-                        - auth
-                        - regionID
                       type: object
                     aws:
                       description: AWS configures this store to sync secrets using AWS Secret Manager provider
@@ -5252,8 +5324,11 @@ spec:
                           type: string
                         customCloudConfig:
                           description: |-
-                            CustomCloudConfig defines custom Azure Stack Hub or Azure Stack Edge endpoints.
+                            CustomCloudConfig defines custom Azure endpoints for non-standard clouds.
                             Required when EnvironmentType is AzureStackCloud.
+                            Optional for other environment types - useful for Azure China when using Workload Identity
+                            with AKS, where the OIDC issuer (login.partner.microsoftonline.cn) differs from the
+                            standard China Cloud endpoint (login.chinacloudapi.cn).
                             IMPORTANT: This feature REQUIRES UseAzureSDK to be set to true. Custom cloud
                             configuration is not supported with the legacy go-autorest SDK.
                           properties:
@@ -5336,6 +5411,97 @@ spec:
                           type: string
                       required:
                         - vaultUrl
+                      type: object
+                    barbican:
+                      description: Barbican configures this store to sync secrets using the OpenStack Barbican provider
+                      properties:
+                        auth:
+                          description: BarbicanAuth contains the authentication information for Barbican.
+                          properties:
+                            password:
+                              description: BarbicanProviderPasswordRef defines a reference to a secret containing password for the Barbican provider.
+                              properties:
+                                secretRef:
+                                  description: |-
+                                    SecretKeySelector is a reference to a specific 'key' within a Secret resource.
+                                    In some instances, `key` is a required field.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              required:
+                                - secretRef
+                              type: object
+                            username:
+                              description: BarbicanProviderUsernameRef defines a reference to a secret containing username for the Barbican provider.
+                              maxProperties: 1
+                              minProperties: 1
+                              properties:
+                                secretRef:
+                                  description: |-
+                                    SecretKeySelector is a reference to a specific 'key' within a Secret resource.
+                                    In some instances, `key` is a required field.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                                value:
+                                  type: string
+                              type: object
+                          required:
+                            - password
+                            - username
+                          type: object
+                        authURL:
+                          type: string
+                        domainName:
+                          type: string
+                        region:
+                          type: string
+                        tenantName:
+                          type: string
+                      required:
+                        - auth
                       type: object
                     beyondtrust:
                       description: Beyondtrust configures this store to sync secrets using Password Safe provider.
@@ -5519,6 +5685,10 @@ spec:
                             clientTimeOutSeconds:
                               description: Timeout specifies a time limit for requests made by this Client. The timeout includes connection time, any redirects, and reading the response body. Defaults to 45 seconds.
                               type: integer
+                            decrypt:
+                              default: true
+                              description: 'When true, the response includes the decrypted password. When false, the password field is omitted. This option only applies to the SECRET retrieval type. Default: true.'
+                              type: boolean
                             retrievalType:
                               description: The secret retrieval type. SECRET = Secrets Safe (credential, text, file). MANAGED_ACCOUNT = Password Safe account associated with a system.
                               type: string
@@ -6042,60 +6212,59 @@ spec:
                         - clientSecret
                         - tenant
                       type: object
-                    device42:
-                      description: Device42 configures this store to sync secrets using the Device42 provider
-                      properties:
-                        auth:
-                          description: Auth configures how secret-manager authenticates with a Device42 instance.
-                          properties:
-                            secretRef:
-                              description: Device42SecretRef contains the secret reference for accessing the Device42 instance.
-                              properties:
-                                credentials:
-                                  description: Username / Password is used for authentication.
-                                  properties:
-                                    key:
-                                      description: |-
-                                        A key in the referenced Secret.
-                                        Some instances of this field may be defaulted, in others it may be required.
-                                      maxLength: 253
-                                      minLength: 1
-                                      pattern: ^[-._a-zA-Z0-9]+$
-                                      type: string
-                                    name:
-                                      description: The name of the Secret resource being referred to.
-                                      maxLength: 253
-                                      minLength: 1
-                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
-                                      type: string
-                                    namespace:
-                                      description: |-
-                                        The namespace of the Secret resource being referred to.
-                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
-                                      maxLength: 63
-                                      minLength: 1
-                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-                                      type: string
-                                  type: object
-                              type: object
-                          required:
-                            - secretRef
-                          type: object
-                        host:
-                          description: URL configures the Device42 instance URL.
-                          type: string
-                      required:
-                        - auth
-                        - host
-                      type: object
                     doppler:
                       description: Doppler configures this store to sync secrets using the Doppler provider
                       properties:
                         auth:
                           description: Auth configures how the Operator authenticates with the Doppler API
                           properties:
+                            oidcConfig:
+                              description: OIDCConfig authenticates using Kubernetes ServiceAccount tokens via OIDC.
+                              properties:
+                                expirationSeconds:
+                                  default: 600
+                                  description: |-
+                                    ExpirationSeconds sets the ServiceAccount token validity duration.
+                                    Defaults to 10 minutes.
+                                  format: int64
+                                  type: integer
+                                identity:
+                                  description: Identity is the Doppler Service Account Identity ID configured for OIDC authentication.
+                                  type: string
+                                serviceAccountRef:
+                                  description: ServiceAccountRef specifies the Kubernetes ServiceAccount to use for authentication.
+                                  properties:
+                                    audiences:
+                                      description: |-
+                                        Audience specifies the `aud` claim for the service account token
+                                        If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity
+                                        then this audiences will be appended to the list
+                                      items:
+                                        type: string
+                                      type: array
+                                    name:
+                                      description: The name of the ServiceAccount resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        Namespace of the resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  required:
+                                    - name
+                                  type: object
+                              required:
+                                - identity
+                                - serviceAccountRef
+                              type: object
                             secretRef:
-                              description: DopplerAuthSecretRef contains the secret reference for accessing the Doppler API.
+                              description: SecretRef authenticates using a Doppler service token stored in a Kubernetes Secret.
                               properties:
                                 dopplerToken:
                                   description: |-
@@ -6129,9 +6298,10 @@ spec:
                               required:
                                 - dopplerToken
                               type: object
-                          required:
-                            - secretRef
                           type: object
+                          x-kubernetes-validations:
+                            - message: Exactly one of 'secretRef' or 'oidcConfig' must be specified
+                              rule: (has(self.secretRef) && !has(self.oidcConfig)) || (!has(self.secretRef) && has(self.oidcConfig))
                         config:
                           description: Doppler config (required if not using a Service Token)
                           type: string
@@ -6159,6 +6329,87 @@ spec:
                           type: string
                       required:
                         - auth
+                      type: object
+                    dvls:
+                      description: DVLS configures this store to sync secrets using Devolutions Server provider
+                      properties:
+                        auth:
+                          description: Auth defines the authentication method to use.
+                          properties:
+                            secretRef:
+                              description: SecretRef contains the Application ID and Application Secret for authentication.
+                              properties:
+                                appId:
+                                  description: AppID is the reference to the secret containing the Application ID.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                                appSecret:
+                                  description: AppSecret is the reference to the secret containing the Application Secret.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              required:
+                                - appId
+                                - appSecret
+                              type: object
+                          required:
+                            - secretRef
+                          type: object
+                        insecure:
+                          description: |-
+                            Insecure allows connecting to DVLS over plain HTTP.
+                            This is NOT RECOMMENDED for production use.
+                            Set to true only if you understand the security implications.
+                          type: boolean
+                        serverUrl:
+                          description: ServerURL is the DVLS instance URL (e.g., https://dvls.example.com).
+                          type: string
+                      required:
+                        - auth
+                        - serverUrl
                       type: object
                     fake:
                       description: Fake configures a store with static key/value pairs
@@ -6438,7 +6689,7 @@ spec:
                       type: object
                     github:
                       description: |-
-                        Github configures this store to push GitHub Action secrets using GitHub API provider.
+                        Github configures this store to push GitHub Actions secrets using the GitHub API provider.
                         Note: This provider only supports write operations (PushSecret) and cannot fetch secrets from GitHub
                       properties:
                         appID:
@@ -6628,6 +6879,9 @@ spec:
                             secretRef:
                               description: IBMAuthSecretRef contains the secret reference for IBM Cloud API key authentication.
                               properties:
+                                iamEndpoint:
+                                  description: The IAM endpoint used to obain a token
+                                  type: string
                                 secretApiKeySecretRef:
                                   description: The SecretAccessKey is used for authentication
                                   properties:
@@ -7383,6 +7637,48 @@ spec:
                                 - clientSecret
                               type: object
                           type: object
+                        caBundle:
+                          description: |-
+                            CABundle is a PEM-encoded CA certificate bundle used to validate
+                            the Infisical server's TLS certificate. Mutually exclusive with CAProvider.
+                          format: byte
+                          type: string
+                        caProvider:
+                          description: |-
+                            CAProvider is a reference to a Secret or ConfigMap that contains a CA certificate.
+                            The certificate is used to validate the Infisical server's TLS certificate.
+                            Mutually exclusive with CABundle.
+                          properties:
+                            key:
+                              description: The key where the CA certificate can be found in the Secret or ConfigMap.
+                              maxLength: 253
+                              minLength: 1
+                              pattern: ^[-._a-zA-Z0-9]+$
+                              type: string
+                            name:
+                              description: The name of the object located at the provider type.
+                              maxLength: 253
+                              minLength: 1
+                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                              type: string
+                            namespace:
+                              description: |-
+                                The namespace the Provider type is in.
+                                Can only be defined when used in a ClusterSecretStore.
+                              maxLength: 63
+                              minLength: 1
+                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                              type: string
+                            type:
+                              description: The type of provider to use such as "Secret", or "ConfigMap".
+                              enum:
+                                - Secret
+                                - ConfigMap
+                              type: string
+                          required:
+                            - name
+                            - type
+                          type: object
                         hostAPI:
                           default: https://app.infisical.com/api
                           description: HostAPI specifies the base URL of the Infisical API. If not provided, it defaults to "https://app.infisical.com/api".
@@ -7661,6 +7957,120 @@ spec:
                               type: string
                           type: object
                       type: object
+                    nebiusmysterybox:
+                      description: NebiusMysterybox configures this store to sync secrets using NebiusMysterybox provider
+                      properties:
+                        apiDomain:
+                          description: NebiusMysterybox API endpoint
+                          type: string
+                        auth:
+                          description: Auth defines parameters to authenticate in MysteryBox
+                          properties:
+                            serviceAccountCredsSecretRef:
+                              description: |-
+                                ServiceAccountCreds references a Kubernetes Secret key that contains a JSON
+                                document with service account credentials used to get an IAM token.
+
+                                Expected JSON structure:
+                                {
+                                  "subject-credentials": {
+                                    "alg": "RS256",
+                                    "private-key": "-----BEGIN PRIVATE KEY-----\n<private-key>\n-----END PRIVATE KEY-----\n",
+                                    "kid": "<public-key-id>",
+                                    "iss": "<issuer-service-account-id>",
+                                    "sub": "<subject-service-account-id>"
+                                  }
+                                }
+                              properties:
+                                key:
+                                  description: |-
+                                    A key in the referenced Secret.
+                                    Some instances of this field may be defaulted, in others it may be required.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[-._a-zA-Z0-9]+$
+                                  type: string
+                                name:
+                                  description: The name of the Secret resource being referred to.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                  type: string
+                                namespace:
+                                  description: |-
+                                    The namespace of the Secret resource being referred to.
+                                    Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                  maxLength: 63
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                  type: string
+                              type: object
+                            tokenSecretRef:
+                              description: Token authenticates with Nebius Mysterybox by presenting a token.
+                              properties:
+                                key:
+                                  description: |-
+                                    A key in the referenced Secret.
+                                    Some instances of this field may be defaulted, in others it may be required.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[-._a-zA-Z0-9]+$
+                                  type: string
+                                name:
+                                  description: The name of the Secret resource being referred to.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                  type: string
+                                namespace:
+                                  description: |-
+                                    The namespace of the Secret resource being referred to.
+                                    Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                  maxLength: 63
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                  type: string
+                              type: object
+                          type: object
+                          x-kubernetes-validations:
+                            - message: either serviceAccountCredsSecretRef or tokenSecretRef must be set
+                              rule: has(self.serviceAccountCredsSecretRef) || has(self.tokenSecretRef)
+                        caProvider:
+                          description: The provider for the CA bundle to use to validate NebiusMysterybox server certificate.
+                          properties:
+                            certSecretRef:
+                              description: |-
+                                SecretKeySelector is a reference to a specific 'key' within a Secret resource.
+                                In some instances, `key` is a required field.
+                              properties:
+                                key:
+                                  description: |-
+                                    A key in the referenced Secret.
+                                    Some instances of this field may be defaulted, in others it may be required.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[-._a-zA-Z0-9]+$
+                                  type: string
+                                name:
+                                  description: The name of the Secret resource being referred to.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                  type: string
+                                namespace:
+                                  description: |-
+                                    The namespace of the Secret resource being referred to.
+                                    Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                  maxLength: 63
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                  type: string
+                              type: object
+                          type: object
+                      required:
+                        - apiDomain
+                        - auth
+                      type: object
                     ngrok:
                       description: Ngrok configures this store to sync secrets using the ngrok provider.
                       properties:
@@ -7887,6 +8297,28 @@ spec:
                               type: object
                           required:
                             - serviceAccountSecretRef
+                          type: object
+                        cache:
+                          description: |-
+                            Cache configures client-side caching for read operations (GetSecret, GetSecretMap).
+                            When enabled, secrets are cached with the specified TTL.
+                            Write operations (PushSecret, DeleteSecret) automatically invalidate relevant cache entries.
+                            If omitted, caching is disabled (default).
+                            cache: {} is a valid option to set.
+                          properties:
+                            maxSize:
+                              default: 100
+                              description: |-
+                                MaxSize is the maximum number of secrets to cache.
+                                When the cache is full, least-recently-used entries are evicted.
+                              minimum: 1
+                              type: integer
+                            ttl:
+                              default: 5m
+                              description: |-
+                                TTL is the time-to-live for cached secrets.
+                                Format: duration string (e.g., "5m", "1h", "30s")
+                              type: string
                           type: object
                         integrationInfo:
                           description: |-
@@ -8276,7 +8708,7 @@ spec:
                         - project
                       type: object
                     scaleway:
-                      description: Scaleway
+                      description: Scaleway configures this store to sync secrets using the Scaleway provider.
                       properties:
                         accessKey:
                           description: AccessKey is the non-secret part of the api key.
@@ -8364,6 +8796,46 @@ spec:
                         SecretServer configures this store to sync secrets using SecretServer provider
                         https://docs.delinea.com/online-help/secret-server/start.htm
                       properties:
+                        caBundle:
+                          description: |-
+                            PEM/base64 encoded CA bundle used to validate Secret ServerURL. Only used
+                            if the ServerURL URL is using HTTPS protocol. If not set the system root certificates
+                            are used to validate the TLS connection.
+                          format: byte
+                          type: string
+                        caProvider:
+                          description: The provider for the CA bundle to use to validate Secret ServerURL certificate.
+                          properties:
+                            key:
+                              description: The key where the CA certificate can be found in the Secret or ConfigMap.
+                              maxLength: 253
+                              minLength: 1
+                              pattern: ^[-._a-zA-Z0-9]+$
+                              type: string
+                            name:
+                              description: The name of the object located at the provider type.
+                              maxLength: 253
+                              minLength: 1
+                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                              type: string
+                            namespace:
+                              description: |-
+                                The namespace the Provider type is in.
+                                Can only be defined when used in a ClusterSecretStore.
+                              maxLength: 63
+                              minLength: 1
+                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                              type: string
+                            type:
+                              description: The type of provider to use such as "Secret", or "ConfigMap".
+                              enum:
+                                - Secret
+                                - ConfigMap
+                              type: string
+                          required:
+                            - name
+                            - type
+                          type: object
                         domain:
                           description: Domain is the secret server domain.
                           type: string
@@ -8499,7 +8971,7 @@ spec:
                         - url
                       type: object
                     vault:
-                      description: Vault configures this store to sync secrets using Hashi provider
+                      description: Vault configures this store to sync secrets using the HashiCorp Vault provider.
                       properties:
                         auth:
                           description: Auth configures how secret-manager authenticates with the Vault server.
@@ -8651,6 +9123,134 @@ spec:
                                       pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                                       type: string
                                   type: object
+                              type: object
+                            gcp:
+                              description: |-
+                                Gcp authenticates with Vault using Google Cloud Platform authentication method
+                                GCP authentication method
+                              properties:
+                                location:
+                                  description: Location optionally defines a location/region for the secret
+                                  type: string
+                                path:
+                                  default: gcp
+                                  description: 'Path where the GCP auth method is enabled in Vault, e.g: "gcp"'
+                                  type: string
+                                projectID:
+                                  description: Project ID of the Google Cloud Platform project
+                                  type: string
+                                role:
+                                  description: Vault Role. In Vault, a role describes an identity with a set of permissions, groups, or policies you want to attach to a user of the secrets engine.
+                                  type: string
+                                secretRef:
+                                  description: Specify credentials in a Secret object
+                                  properties:
+                                    secretAccessKeySecretRef:
+                                      description: The SecretAccessKey is used for authentication
+                                      properties:
+                                        key:
+                                          description: |-
+                                            A key in the referenced Secret.
+                                            Some instances of this field may be defaulted, in others it may be required.
+                                          maxLength: 253
+                                          minLength: 1
+                                          pattern: ^[-._a-zA-Z0-9]+$
+                                          type: string
+                                        name:
+                                          description: The name of the Secret resource being referred to.
+                                          maxLength: 253
+                                          minLength: 1
+                                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                          type: string
+                                        namespace:
+                                          description: |-
+                                            The namespace of the Secret resource being referred to.
+                                            Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                          maxLength: 63
+                                          minLength: 1
+                                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                          type: string
+                                      type: object
+                                  type: object
+                                serviceAccountRef:
+                                  description: ServiceAccountRef to a service account for impersonation
+                                  properties:
+                                    audiences:
+                                      description: |-
+                                        Audience specifies the `aud` claim for the service account token
+                                        If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity
+                                        then this audiences will be appended to the list
+                                      items:
+                                        type: string
+                                      type: array
+                                    name:
+                                      description: The name of the ServiceAccount resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        Namespace of the resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  required:
+                                    - name
+                                  type: object
+                                workloadIdentity:
+                                  description: Specify a service account with Workload Identity
+                                  properties:
+                                    clusterLocation:
+                                      description: |-
+                                        ClusterLocation is the location of the cluster
+                                        If not specified, it fetches information from the metadata server
+                                      type: string
+                                    clusterName:
+                                      description: |-
+                                        ClusterName is the name of the cluster
+                                        If not specified, it fetches information from the metadata server
+                                      type: string
+                                    clusterProjectID:
+                                      description: |-
+                                        ClusterProjectID is the project ID of the cluster
+                                        If not specified, it fetches information from the metadata server
+                                      type: string
+                                    serviceAccountRef:
+                                      description: ServiceAccountSelector is a reference to a ServiceAccount resource.
+                                      properties:
+                                        audiences:
+                                          description: |-
+                                            Audience specifies the `aud` claim for the service account token
+                                            If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity
+                                            then this audiences will be appended to the list
+                                          items:
+                                            type: string
+                                          type: array
+                                        name:
+                                          description: The name of the ServiceAccount resource being referred to.
+                                          maxLength: 253
+                                          minLength: 1
+                                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                          type: string
+                                        namespace:
+                                          description: |-
+                                            Namespace of the resource being referred to.
+                                            Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                          maxLength: 63
+                                          minLength: 1
+                                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                          type: string
+                                      required:
+                                        - name
+                                      type: object
+                                  required:
+                                    - serviceAccountRef
+                                  type: object
+                              required:
+                                - role
                               type: object
                             iam:
                               description: |-
@@ -8810,6 +9410,7 @@ spec:
                                         Optional audiences field that will be used to request a temporary Kubernetes service
                                         account token for the service account referenced by `serviceAccountRef`.
                                         Defaults to a single audience `vault` it not specified.
+
                                         Deprecated: use serviceAccountRef.Audiences instead
                                       items:
                                         type: string
@@ -8819,6 +9420,7 @@ spec:
                                         Optional expiration time in seconds that will be used to request a temporary
                                         Kubernetes service account token for the service account referenced by
                                         `serviceAccountRef`.
+
                                         Deprecated: this will be removed in the future.
                                         Defaults to 10 minutes.
                                       format: int64
@@ -9740,7 +10342,7 @@ spec:
                   description: Used to configure store refresh interval in seconds. Empty or 0 will default to the controller config.
                   type: integer
                 retrySettings:
-                  description: Used to configure http retries if failed
+                  description: Used to configure HTTP retries on failures.
                   properties:
                     maxRetries:
                       format: int32
@@ -9824,7 +10426,7 @@ spec:
               description: SecretStoreSpec defines the desired state of SecretStore.
               properties:
                 conditions:
-                  description: Used to constraint a ClusterSecretStore to specific namespaces. Relevant only to ClusterSecretStore
+                  description: Used to constrain a ClusterSecretStore to specific namespaces. Relevant only to ClusterSecretStore.
                   items:
                     description: |-
                       ClusterSecretStoreCondition describes a condition by which to choose namespaces to process ExternalSecrets in
@@ -10764,6 +11366,10 @@ spec:
                             clientTimeOutSeconds:
                               description: Timeout specifies a time limit for requests made by this Client. The timeout includes connection time, any redirects, and reading the response body. Defaults to 45 seconds.
                               type: integer
+                            decrypt:
+                              default: true
+                              description: 'When true, the response includes the decrypted password. When false, the password field is omitted. This option only applies to the SECRET retrieval type. Default: true.'
+                              type: boolean
                             retrievalType:
                               description: The secret retrieval type. SECRET = Secrets Safe (credential, text, file). MANAGED_ACCOUNT = Password Safe account associated with a system.
                               type: string
@@ -11557,7 +12163,7 @@ spec:
                           type: string
                       type: object
                     github:
-                      description: Github configures this store to push Github Action secrets using Github API provider
+                      description: Github configures this store to push GitHub Actions secrets using the GitHub API provider.
                       properties:
                         appID:
                           description: appID specifies the Github APP that will be used to authenticate the client
@@ -12625,7 +13231,7 @@ spec:
                         - project
                       type: object
                     scaleway:
-                      description: Scaleway
+                      description: Scaleway configures this store to sync secrets using the Scaleway provider.
                       properties:
                         accessKey:
                           description: AccessKey is the non-secret part of the api key.
@@ -12845,7 +13451,7 @@ spec:
                         - url
                       type: object
                     vault:
-                      description: Vault configures this store to sync secrets using Hashi provider
+                      description: Vault configures this store to sync secrets using the HashiCorp Vault provider.
                       properties:
                         auth:
                           description: Auth configures how secret-manager authenticates with the Vault server.
@@ -13150,6 +13756,7 @@ spec:
                                         Optional audiences field that will be used to request a temporary Kubernetes service
                                         account token for the service account referenced by `serviceAccountRef`.
                                         Defaults to a single audience `vault` it not specified.
+
                                         Deprecated: use serviceAccountRef.Audiences instead
                                       items:
                                         type: string
@@ -13159,6 +13766,7 @@ spec:
                                         Optional expiration time in seconds that will be used to request a temporary
                                         Kubernetes service account token for the service account referenced by
                                         `serviceAccountRef`.
+
                                         Deprecated: this will be removed in the future.
                                         Defaults to 10 minutes.
                                       format: int64
@@ -13931,7 +14539,7 @@ spec:
                   description: Used to configure store refresh interval in seconds. Empty or 0 will default to the controller config.
                   type: integer
                 retrySettings:
-                  description: Used to configure http retries if failed
+                  description: Used to configure HTTP retries on failures.
                   properties:
                     maxRetries:
                       description: MaxRetries is the maximum number of retry attempts.
@@ -14212,6 +14820,9 @@ spec:
         - jsonPath: .status.conditions[?(@.type=="Ready")].status
           name: Ready
           type: string
+        - jsonPath: .status.refreshTime
+          name: Last Sync
+          type: date
       name: v1
       schema:
         openAPIV3Schema:
@@ -14595,13 +15206,13 @@ spec:
                     type: object
                   type: array
                 refreshInterval:
-                  default: 1h
+                  default: 1h0m0s
                   description: |-
                     RefreshInterval is the amount of time before the values are read again from the SecretStore provider,
                     specified as Golang Duration strings.
                     Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h"
-                    Example values: "1h", "2h30m", "10s"
-                    May be set to zero to fetch and create it once. Defaults to 1h.
+                    Example values: "1h0m0s", "2h30m0s", "10m0s"
+                    May be set to "0s" to fetch and create it once. Defaults to 1h0m0s.
                   type: string
                 refreshPolicy:
                   description: |-
@@ -14665,6 +15276,25 @@ spec:
                     immutable:
                       description: Immutable defines if the final secret will be immutable
                       type: boolean
+                    manifest:
+                      description: |-
+                        Manifest defines a custom Kubernetes resource to create instead of a Secret.
+                        When specified, ExternalSecret will create the resource type defined here
+                        (e.g., ConfigMap, Custom Resource) instead of a Secret.
+                        Warning: Using Generic target. Make sure access policies and encryption are properly configured.
+                      properties:
+                        apiVersion:
+                          description: APIVersion of the target resource (e.g., "v1" for ConfigMap, "argoproj.io/v1alpha1" for ArgoCD Application)
+                          minLength: 1
+                          type: string
+                        kind:
+                          description: Kind of the target resource (e.g., "ConfigMap", "Application")
+                          minLength: 1
+                          type: string
+                      required:
+                        - apiVersion
+                        - kind
+                      type: object
                     name:
                       description: |-
                         The name of the Secret resource to be managed.
@@ -14792,11 +15422,11 @@ spec:
                                 type: object
                               target:
                                 default: Data
-                                description: TemplateTarget specifies where the rendered templates should be applied.
-                                enum:
-                                  - Data
-                                  - Annotations
-                                  - Labels
+                                description: |-
+                                  Target specifies where to place the template result.
+                                  For Secret resources, common values are: "Data", "Annotations", "Labels".
+                                  For custom resources (when spec.target.manifest is set), this supports
+                                  nested paths like "spec.database.config" or "data".
                                 type: string
                             type: object
                           type: array
@@ -14883,6 +15513,9 @@ spec:
         - jsonPath: .status.conditions[?(@.type=="Ready")].status
           name: Ready
           type: string
+        - jsonPath: .status.refreshTime
+          name: Last Sync
+          type: date
       deprecated: true
       name: v1beta1
       schema:
@@ -15221,13 +15854,13 @@ spec:
                     type: object
                   type: array
                 refreshInterval:
-                  default: 1h
+                  default: 1h0m0s
                   description: |-
                     RefreshInterval is the amount of time before the values are read again from the SecretStore provider,
                     specified as Golang Duration strings.
                     Valid time units are "ns", "us" (or "µs"), "ms", "s", "m", "h"
-                    Example values: "1h", "2h30m", "10s"
-                    May be set to zero to fetch and create it once. Defaults to 1h.
+                    Example values: "1h0m0s", "2h30m0s", "10m0s"
+                    May be set to "0s" to fetch and create it once. Defaults to 1h0m0s.
                   type: string
                 refreshPolicy:
                   description: |-
@@ -16335,6 +16968,14 @@ spec:
                   default: false
                   description: Set NoUpper to disable uppercase characters
                   type: boolean
+                secretKeys:
+                  description: |-
+                    SecretKeys defines the keys that will be populated with generated passwords.
+                    Defaults to "password" when not set.
+                  items:
+                    type: string
+                  minItems: 1
+                  type: array
                 symbolCharacters:
                   description: |-
                     SymbolCharacters specifies the special characters that should be used
@@ -16385,6 +17026,9 @@ spec:
         - jsonPath: .status.conditions[?(@.type=="Ready")].reason
           name: Status
           type: string
+        - jsonPath: .status.refreshTime
+          name: Last Sync
+          type: date
       name: v1alpha1
       schema:
         openAPIV3Schema:
@@ -16460,7 +17104,7 @@ spec:
                     - None
                   type: string
                 refreshInterval:
-                  default: 1h
+                  default: 1h0m0s
                   description: The Interval to which External Secrets will try to push a secret definition
                   type: string
                 secretStoreRefs:
@@ -16744,11 +17388,11 @@ spec:
                             type: object
                           target:
                             default: Data
-                            description: TemplateTarget specifies where the rendered templates should be applied.
-                            enum:
-                              - Data
-                              - Annotations
-                              - Labels
+                            description: |-
+                              Target specifies where to place the template result.
+                              For Secret resources, common values are: "Data", "Annotations", "Labels".
+                              For custom resources (when spec.target.manifest is set), this supports
+                              nested paths like "spec.database.config" or "data".
                             type: string
                         type: object
                       type: array
@@ -17004,7 +17648,7 @@ spec:
               description: SecretStoreSpec defines the desired state of SecretStore.
               properties:
                 conditions:
-                  description: Used to constraint a ClusterSecretStore to specific namespaces. Relevant only to ClusterSecretStore
+                  description: Used to constrain a ClusterSecretStore to specific namespaces. Relevant only to ClusterSecretStore.
                   items:
                     description: |-
                       ClusterSecretStoreCondition describes a condition by which to choose namespaces to process ExternalSecrets in
@@ -17297,96 +17941,6 @@ spec:
                       required:
                         - akeylessGWApiURL
                         - authSecretRef
-                      type: object
-                    alibaba:
-                      description: Alibaba configures this store to sync secrets using Alibaba Cloud provider
-                      properties:
-                        auth:
-                          description: AlibabaAuth contains a secretRef for credentials.
-                          properties:
-                            rrsa:
-                              description: AlibabaRRSAAuth authenticates against Alibaba using RRSA.
-                              properties:
-                                oidcProviderArn:
-                                  type: string
-                                oidcTokenFilePath:
-                                  type: string
-                                roleArn:
-                                  type: string
-                                sessionName:
-                                  type: string
-                              required:
-                                - oidcProviderArn
-                                - oidcTokenFilePath
-                                - roleArn
-                                - sessionName
-                              type: object
-                            secretRef:
-                              description: AlibabaAuthSecretRef holds secret references for Alibaba credentials.
-                              properties:
-                                accessKeyIDSecretRef:
-                                  description: The AccessKeyID is used for authentication
-                                  properties:
-                                    key:
-                                      description: |-
-                                        A key in the referenced Secret.
-                                        Some instances of this field may be defaulted, in others it may be required.
-                                      maxLength: 253
-                                      minLength: 1
-                                      pattern: ^[-._a-zA-Z0-9]+$
-                                      type: string
-                                    name:
-                                      description: The name of the Secret resource being referred to.
-                                      maxLength: 253
-                                      minLength: 1
-                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
-                                      type: string
-                                    namespace:
-                                      description: |-
-                                        The namespace of the Secret resource being referred to.
-                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
-                                      maxLength: 63
-                                      minLength: 1
-                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-                                      type: string
-                                  type: object
-                                accessKeySecretSecretRef:
-                                  description: The AccessKeySecret is used for authentication
-                                  properties:
-                                    key:
-                                      description: |-
-                                        A key in the referenced Secret.
-                                        Some instances of this field may be defaulted, in others it may be required.
-                                      maxLength: 253
-                                      minLength: 1
-                                      pattern: ^[-._a-zA-Z0-9]+$
-                                      type: string
-                                    name:
-                                      description: The name of the Secret resource being referred to.
-                                      maxLength: 253
-                                      minLength: 1
-                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
-                                      type: string
-                                    namespace:
-                                      description: |-
-                                        The namespace of the Secret resource being referred to.
-                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
-                                      maxLength: 63
-                                      minLength: 1
-                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-                                      type: string
-                                  type: object
-                              required:
-                                - accessKeyIDSecretRef
-                                - accessKeySecretSecretRef
-                              type: object
-                          type: object
-                        regionID:
-                          description: Alibaba Region to be used for the provider
-                          type: string
-                      required:
-                        - auth
-                        - regionID
                       type: object
                     aws:
                       description: AWS configures this store to sync secrets using AWS Secret Manager provider
@@ -17711,8 +18265,11 @@ spec:
                           type: string
                         customCloudConfig:
                           description: |-
-                            CustomCloudConfig defines custom Azure Stack Hub or Azure Stack Edge endpoints.
+                            CustomCloudConfig defines custom Azure endpoints for non-standard clouds.
                             Required when EnvironmentType is AzureStackCloud.
+                            Optional for other environment types - useful for Azure China when using Workload Identity
+                            with AKS, where the OIDC issuer (login.partner.microsoftonline.cn) differs from the
+                            standard China Cloud endpoint (login.chinacloudapi.cn).
                             IMPORTANT: This feature REQUIRES UseAzureSDK to be set to true. Custom cloud
                             configuration is not supported with the legacy go-autorest SDK.
                           properties:
@@ -17795,6 +18352,97 @@ spec:
                           type: string
                       required:
                         - vaultUrl
+                      type: object
+                    barbican:
+                      description: Barbican configures this store to sync secrets using the OpenStack Barbican provider
+                      properties:
+                        auth:
+                          description: BarbicanAuth contains the authentication information for Barbican.
+                          properties:
+                            password:
+                              description: BarbicanProviderPasswordRef defines a reference to a secret containing password for the Barbican provider.
+                              properties:
+                                secretRef:
+                                  description: |-
+                                    SecretKeySelector is a reference to a specific 'key' within a Secret resource.
+                                    In some instances, `key` is a required field.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              required:
+                                - secretRef
+                              type: object
+                            username:
+                              description: BarbicanProviderUsernameRef defines a reference to a secret containing username for the Barbican provider.
+                              maxProperties: 1
+                              minProperties: 1
+                              properties:
+                                secretRef:
+                                  description: |-
+                                    SecretKeySelector is a reference to a specific 'key' within a Secret resource.
+                                    In some instances, `key` is a required field.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                                value:
+                                  type: string
+                              type: object
+                          required:
+                            - password
+                            - username
+                          type: object
+                        authURL:
+                          type: string
+                        domainName:
+                          type: string
+                        region:
+                          type: string
+                        tenantName:
+                          type: string
+                      required:
+                        - auth
                       type: object
                     beyondtrust:
                       description: Beyondtrust configures this store to sync secrets using Password Safe provider.
@@ -17978,6 +18626,10 @@ spec:
                             clientTimeOutSeconds:
                               description: Timeout specifies a time limit for requests made by this Client. The timeout includes connection time, any redirects, and reading the response body. Defaults to 45 seconds.
                               type: integer
+                            decrypt:
+                              default: true
+                              description: 'When true, the response includes the decrypted password. When false, the password field is omitted. This option only applies to the SECRET retrieval type. Default: true.'
+                              type: boolean
                             retrievalType:
                               description: The secret retrieval type. SECRET = Secrets Safe (credential, text, file). MANAGED_ACCOUNT = Password Safe account associated with a system.
                               type: string
@@ -18501,60 +19153,59 @@ spec:
                         - clientSecret
                         - tenant
                       type: object
-                    device42:
-                      description: Device42 configures this store to sync secrets using the Device42 provider
-                      properties:
-                        auth:
-                          description: Auth configures how secret-manager authenticates with a Device42 instance.
-                          properties:
-                            secretRef:
-                              description: Device42SecretRef contains the secret reference for accessing the Device42 instance.
-                              properties:
-                                credentials:
-                                  description: Username / Password is used for authentication.
-                                  properties:
-                                    key:
-                                      description: |-
-                                        A key in the referenced Secret.
-                                        Some instances of this field may be defaulted, in others it may be required.
-                                      maxLength: 253
-                                      minLength: 1
-                                      pattern: ^[-._a-zA-Z0-9]+$
-                                      type: string
-                                    name:
-                                      description: The name of the Secret resource being referred to.
-                                      maxLength: 253
-                                      minLength: 1
-                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
-                                      type: string
-                                    namespace:
-                                      description: |-
-                                        The namespace of the Secret resource being referred to.
-                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
-                                      maxLength: 63
-                                      minLength: 1
-                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
-                                      type: string
-                                  type: object
-                              type: object
-                          required:
-                            - secretRef
-                          type: object
-                        host:
-                          description: URL configures the Device42 instance URL.
-                          type: string
-                      required:
-                        - auth
-                        - host
-                      type: object
                     doppler:
                       description: Doppler configures this store to sync secrets using the Doppler provider
                       properties:
                         auth:
                           description: Auth configures how the Operator authenticates with the Doppler API
                           properties:
+                            oidcConfig:
+                              description: OIDCConfig authenticates using Kubernetes ServiceAccount tokens via OIDC.
+                              properties:
+                                expirationSeconds:
+                                  default: 600
+                                  description: |-
+                                    ExpirationSeconds sets the ServiceAccount token validity duration.
+                                    Defaults to 10 minutes.
+                                  format: int64
+                                  type: integer
+                                identity:
+                                  description: Identity is the Doppler Service Account Identity ID configured for OIDC authentication.
+                                  type: string
+                                serviceAccountRef:
+                                  description: ServiceAccountRef specifies the Kubernetes ServiceAccount to use for authentication.
+                                  properties:
+                                    audiences:
+                                      description: |-
+                                        Audience specifies the `aud` claim for the service account token
+                                        If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity
+                                        then this audiences will be appended to the list
+                                      items:
+                                        type: string
+                                      type: array
+                                    name:
+                                      description: The name of the ServiceAccount resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        Namespace of the resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  required:
+                                    - name
+                                  type: object
+                              required:
+                                - identity
+                                - serviceAccountRef
+                              type: object
                             secretRef:
-                              description: DopplerAuthSecretRef contains the secret reference for accessing the Doppler API.
+                              description: SecretRef authenticates using a Doppler service token stored in a Kubernetes Secret.
                               properties:
                                 dopplerToken:
                                   description: |-
@@ -18588,9 +19239,10 @@ spec:
                               required:
                                 - dopplerToken
                               type: object
-                          required:
-                            - secretRef
                           type: object
+                          x-kubernetes-validations:
+                            - message: Exactly one of 'secretRef' or 'oidcConfig' must be specified
+                              rule: (has(self.secretRef) && !has(self.oidcConfig)) || (!has(self.secretRef) && has(self.oidcConfig))
                         config:
                           description: Doppler config (required if not using a Service Token)
                           type: string
@@ -18618,6 +19270,87 @@ spec:
                           type: string
                       required:
                         - auth
+                      type: object
+                    dvls:
+                      description: DVLS configures this store to sync secrets using Devolutions Server provider
+                      properties:
+                        auth:
+                          description: Auth defines the authentication method to use.
+                          properties:
+                            secretRef:
+                              description: SecretRef contains the Application ID and Application Secret for authentication.
+                              properties:
+                                appId:
+                                  description: AppID is the reference to the secret containing the Application ID.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                                appSecret:
+                                  description: AppSecret is the reference to the secret containing the Application Secret.
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              required:
+                                - appId
+                                - appSecret
+                              type: object
+                          required:
+                            - secretRef
+                          type: object
+                        insecure:
+                          description: |-
+                            Insecure allows connecting to DVLS over plain HTTP.
+                            This is NOT RECOMMENDED for production use.
+                            Set to true only if you understand the security implications.
+                          type: boolean
+                        serverUrl:
+                          description: ServerURL is the DVLS instance URL (e.g., https://dvls.example.com).
+                          type: string
+                      required:
+                        - auth
+                        - serverUrl
                       type: object
                     fake:
                       description: Fake configures a store with static key/value pairs
@@ -18897,7 +19630,7 @@ spec:
                       type: object
                     github:
                       description: |-
-                        Github configures this store to push GitHub Action secrets using GitHub API provider.
+                        Github configures this store to push GitHub Actions secrets using the GitHub API provider.
                         Note: This provider only supports write operations (PushSecret) and cannot fetch secrets from GitHub
                       properties:
                         appID:
@@ -19087,6 +19820,9 @@ spec:
                             secretRef:
                               description: IBMAuthSecretRef contains the secret reference for IBM Cloud API key authentication.
                               properties:
+                                iamEndpoint:
+                                  description: The IAM endpoint used to obain a token
+                                  type: string
                                 secretApiKeySecretRef:
                                   description: The SecretAccessKey is used for authentication
                                   properties:
@@ -19842,6 +20578,48 @@ spec:
                                 - clientSecret
                               type: object
                           type: object
+                        caBundle:
+                          description: |-
+                            CABundle is a PEM-encoded CA certificate bundle used to validate
+                            the Infisical server's TLS certificate. Mutually exclusive with CAProvider.
+                          format: byte
+                          type: string
+                        caProvider:
+                          description: |-
+                            CAProvider is a reference to a Secret or ConfigMap that contains a CA certificate.
+                            The certificate is used to validate the Infisical server's TLS certificate.
+                            Mutually exclusive with CABundle.
+                          properties:
+                            key:
+                              description: The key where the CA certificate can be found in the Secret or ConfigMap.
+                              maxLength: 253
+                              minLength: 1
+                              pattern: ^[-._a-zA-Z0-9]+$
+                              type: string
+                            name:
+                              description: The name of the object located at the provider type.
+                              maxLength: 253
+                              minLength: 1
+                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                              type: string
+                            namespace:
+                              description: |-
+                                The namespace the Provider type is in.
+                                Can only be defined when used in a ClusterSecretStore.
+                              maxLength: 63
+                              minLength: 1
+                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                              type: string
+                            type:
+                              description: The type of provider to use such as "Secret", or "ConfigMap".
+                              enum:
+                                - Secret
+                                - ConfigMap
+                              type: string
+                          required:
+                            - name
+                            - type
+                          type: object
                         hostAPI:
                           default: https://app.infisical.com/api
                           description: HostAPI specifies the base URL of the Infisical API. If not provided, it defaults to "https://app.infisical.com/api".
@@ -20120,6 +20898,120 @@ spec:
                               type: string
                           type: object
                       type: object
+                    nebiusmysterybox:
+                      description: NebiusMysterybox configures this store to sync secrets using NebiusMysterybox provider
+                      properties:
+                        apiDomain:
+                          description: NebiusMysterybox API endpoint
+                          type: string
+                        auth:
+                          description: Auth defines parameters to authenticate in MysteryBox
+                          properties:
+                            serviceAccountCredsSecretRef:
+                              description: |-
+                                ServiceAccountCreds references a Kubernetes Secret key that contains a JSON
+                                document with service account credentials used to get an IAM token.
+
+                                Expected JSON structure:
+                                {
+                                  "subject-credentials": {
+                                    "alg": "RS256",
+                                    "private-key": "-----BEGIN PRIVATE KEY-----\n<private-key>\n-----END PRIVATE KEY-----\n",
+                                    "kid": "<public-key-id>",
+                                    "iss": "<issuer-service-account-id>",
+                                    "sub": "<subject-service-account-id>"
+                                  }
+                                }
+                              properties:
+                                key:
+                                  description: |-
+                                    A key in the referenced Secret.
+                                    Some instances of this field may be defaulted, in others it may be required.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[-._a-zA-Z0-9]+$
+                                  type: string
+                                name:
+                                  description: The name of the Secret resource being referred to.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                  type: string
+                                namespace:
+                                  description: |-
+                                    The namespace of the Secret resource being referred to.
+                                    Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                  maxLength: 63
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                  type: string
+                              type: object
+                            tokenSecretRef:
+                              description: Token authenticates with Nebius Mysterybox by presenting a token.
+                              properties:
+                                key:
+                                  description: |-
+                                    A key in the referenced Secret.
+                                    Some instances of this field may be defaulted, in others it may be required.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[-._a-zA-Z0-9]+$
+                                  type: string
+                                name:
+                                  description: The name of the Secret resource being referred to.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                  type: string
+                                namespace:
+                                  description: |-
+                                    The namespace of the Secret resource being referred to.
+                                    Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                  maxLength: 63
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                  type: string
+                              type: object
+                          type: object
+                          x-kubernetes-validations:
+                            - message: either serviceAccountCredsSecretRef or tokenSecretRef must be set
+                              rule: has(self.serviceAccountCredsSecretRef) || has(self.tokenSecretRef)
+                        caProvider:
+                          description: The provider for the CA bundle to use to validate NebiusMysterybox server certificate.
+                          properties:
+                            certSecretRef:
+                              description: |-
+                                SecretKeySelector is a reference to a specific 'key' within a Secret resource.
+                                In some instances, `key` is a required field.
+                              properties:
+                                key:
+                                  description: |-
+                                    A key in the referenced Secret.
+                                    Some instances of this field may be defaulted, in others it may be required.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[-._a-zA-Z0-9]+$
+                                  type: string
+                                name:
+                                  description: The name of the Secret resource being referred to.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                  type: string
+                                namespace:
+                                  description: |-
+                                    The namespace of the Secret resource being referred to.
+                                    Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                  maxLength: 63
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                  type: string
+                              type: object
+                          type: object
+                      required:
+                        - apiDomain
+                        - auth
+                      type: object
                     ngrok:
                       description: Ngrok configures this store to sync secrets using the ngrok provider.
                       properties:
@@ -20346,6 +21238,28 @@ spec:
                               type: object
                           required:
                             - serviceAccountSecretRef
+                          type: object
+                        cache:
+                          description: |-
+                            Cache configures client-side caching for read operations (GetSecret, GetSecretMap).
+                            When enabled, secrets are cached with the specified TTL.
+                            Write operations (PushSecret, DeleteSecret) automatically invalidate relevant cache entries.
+                            If omitted, caching is disabled (default).
+                            cache: {} is a valid option to set.
+                          properties:
+                            maxSize:
+                              default: 100
+                              description: |-
+                                MaxSize is the maximum number of secrets to cache.
+                                When the cache is full, least-recently-used entries are evicted.
+                              minimum: 1
+                              type: integer
+                            ttl:
+                              default: 5m
+                              description: |-
+                                TTL is the time-to-live for cached secrets.
+                                Format: duration string (e.g., "5m", "1h", "30s")
+                              type: string
                           type: object
                         integrationInfo:
                           description: |-
@@ -20735,7 +21649,7 @@ spec:
                         - project
                       type: object
                     scaleway:
-                      description: Scaleway
+                      description: Scaleway configures this store to sync secrets using the Scaleway provider.
                       properties:
                         accessKey:
                           description: AccessKey is the non-secret part of the api key.
@@ -20823,6 +21737,46 @@ spec:
                         SecretServer configures this store to sync secrets using SecretServer provider
                         https://docs.delinea.com/online-help/secret-server/start.htm
                       properties:
+                        caBundle:
+                          description: |-
+                            PEM/base64 encoded CA bundle used to validate Secret ServerURL. Only used
+                            if the ServerURL URL is using HTTPS protocol. If not set the system root certificates
+                            are used to validate the TLS connection.
+                          format: byte
+                          type: string
+                        caProvider:
+                          description: The provider for the CA bundle to use to validate Secret ServerURL certificate.
+                          properties:
+                            key:
+                              description: The key where the CA certificate can be found in the Secret or ConfigMap.
+                              maxLength: 253
+                              minLength: 1
+                              pattern: ^[-._a-zA-Z0-9]+$
+                              type: string
+                            name:
+                              description: The name of the object located at the provider type.
+                              maxLength: 253
+                              minLength: 1
+                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                              type: string
+                            namespace:
+                              description: |-
+                                The namespace the Provider type is in.
+                                Can only be defined when used in a ClusterSecretStore.
+                              maxLength: 63
+                              minLength: 1
+                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                              type: string
+                            type:
+                              description: The type of provider to use such as "Secret", or "ConfigMap".
+                              enum:
+                                - Secret
+                                - ConfigMap
+                              type: string
+                          required:
+                            - name
+                            - type
+                          type: object
                         domain:
                           description: Domain is the secret server domain.
                           type: string
@@ -20958,7 +21912,7 @@ spec:
                         - url
                       type: object
                     vault:
-                      description: Vault configures this store to sync secrets using Hashi provider
+                      description: Vault configures this store to sync secrets using the HashiCorp Vault provider.
                       properties:
                         auth:
                           description: Auth configures how secret-manager authenticates with the Vault server.
@@ -21110,6 +22064,134 @@ spec:
                                       pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                                       type: string
                                   type: object
+                              type: object
+                            gcp:
+                              description: |-
+                                Gcp authenticates with Vault using Google Cloud Platform authentication method
+                                GCP authentication method
+                              properties:
+                                location:
+                                  description: Location optionally defines a location/region for the secret
+                                  type: string
+                                path:
+                                  default: gcp
+                                  description: 'Path where the GCP auth method is enabled in Vault, e.g: "gcp"'
+                                  type: string
+                                projectID:
+                                  description: Project ID of the Google Cloud Platform project
+                                  type: string
+                                role:
+                                  description: Vault Role. In Vault, a role describes an identity with a set of permissions, groups, or policies you want to attach to a user of the secrets engine.
+                                  type: string
+                                secretRef:
+                                  description: Specify credentials in a Secret object
+                                  properties:
+                                    secretAccessKeySecretRef:
+                                      description: The SecretAccessKey is used for authentication
+                                      properties:
+                                        key:
+                                          description: |-
+                                            A key in the referenced Secret.
+                                            Some instances of this field may be defaulted, in others it may be required.
+                                          maxLength: 253
+                                          minLength: 1
+                                          pattern: ^[-._a-zA-Z0-9]+$
+                                          type: string
+                                        name:
+                                          description: The name of the Secret resource being referred to.
+                                          maxLength: 253
+                                          minLength: 1
+                                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                          type: string
+                                        namespace:
+                                          description: |-
+                                            The namespace of the Secret resource being referred to.
+                                            Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                          maxLength: 63
+                                          minLength: 1
+                                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                          type: string
+                                      type: object
+                                  type: object
+                                serviceAccountRef:
+                                  description: ServiceAccountRef to a service account for impersonation
+                                  properties:
+                                    audiences:
+                                      description: |-
+                                        Audience specifies the `aud` claim for the service account token
+                                        If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity
+                                        then this audiences will be appended to the list
+                                      items:
+                                        type: string
+                                      type: array
+                                    name:
+                                      description: The name of the ServiceAccount resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        Namespace of the resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  required:
+                                    - name
+                                  type: object
+                                workloadIdentity:
+                                  description: Specify a service account with Workload Identity
+                                  properties:
+                                    clusterLocation:
+                                      description: |-
+                                        ClusterLocation is the location of the cluster
+                                        If not specified, it fetches information from the metadata server
+                                      type: string
+                                    clusterName:
+                                      description: |-
+                                        ClusterName is the name of the cluster
+                                        If not specified, it fetches information from the metadata server
+                                      type: string
+                                    clusterProjectID:
+                                      description: |-
+                                        ClusterProjectID is the project ID of the cluster
+                                        If not specified, it fetches information from the metadata server
+                                      type: string
+                                    serviceAccountRef:
+                                      description: ServiceAccountSelector is a reference to a ServiceAccount resource.
+                                      properties:
+                                        audiences:
+                                          description: |-
+                                            Audience specifies the `aud` claim for the service account token
+                                            If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity
+                                            then this audiences will be appended to the list
+                                          items:
+                                            type: string
+                                          type: array
+                                        name:
+                                          description: The name of the ServiceAccount resource being referred to.
+                                          maxLength: 253
+                                          minLength: 1
+                                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                          type: string
+                                        namespace:
+                                          description: |-
+                                            Namespace of the resource being referred to.
+                                            Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                          maxLength: 63
+                                          minLength: 1
+                                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                          type: string
+                                      required:
+                                        - name
+                                      type: object
+                                  required:
+                                    - serviceAccountRef
+                                  type: object
+                              required:
+                                - role
                               type: object
                             iam:
                               description: |-
@@ -21269,6 +22351,7 @@ spec:
                                         Optional audiences field that will be used to request a temporary Kubernetes service
                                         account token for the service account referenced by `serviceAccountRef`.
                                         Defaults to a single audience `vault` it not specified.
+
                                         Deprecated: use serviceAccountRef.Audiences instead
                                       items:
                                         type: string
@@ -21278,6 +22361,7 @@ spec:
                                         Optional expiration time in seconds that will be used to request a temporary
                                         Kubernetes service account token for the service account referenced by
                                         `serviceAccountRef`.
+
                                         Deprecated: this will be removed in the future.
                                         Defaults to 10 minutes.
                                       format: int64
@@ -22199,7 +23283,7 @@ spec:
                   description: Used to configure store refresh interval in seconds. Empty or 0 will default to the controller config.
                   type: integer
                 retrySettings:
-                  description: Used to configure http retries if failed
+                  description: Used to configure HTTP retries on failures.
                   properties:
                     maxRetries:
                       format: int32
@@ -22283,7 +23367,7 @@ spec:
               description: SecretStoreSpec defines the desired state of SecretStore.
               properties:
                 conditions:
-                  description: Used to constraint a ClusterSecretStore to specific namespaces. Relevant only to ClusterSecretStore
+                  description: Used to constrain a ClusterSecretStore to specific namespaces. Relevant only to ClusterSecretStore.
                   items:
                     description: |-
                       ClusterSecretStoreCondition describes a condition by which to choose namespaces to process ExternalSecrets in
@@ -23223,6 +24307,10 @@ spec:
                             clientTimeOutSeconds:
                               description: Timeout specifies a time limit for requests made by this Client. The timeout includes connection time, any redirects, and reading the response body. Defaults to 45 seconds.
                               type: integer
+                            decrypt:
+                              default: true
+                              description: 'When true, the response includes the decrypted password. When false, the password field is omitted. This option only applies to the SECRET retrieval type. Default: true.'
+                              type: boolean
                             retrievalType:
                               description: The secret retrieval type. SECRET = Secrets Safe (credential, text, file). MANAGED_ACCOUNT = Password Safe account associated with a system.
                               type: string
@@ -24016,7 +25104,7 @@ spec:
                           type: string
                       type: object
                     github:
-                      description: Github configures this store to push Github Action secrets using Github API provider
+                      description: Github configures this store to push GitHub Actions secrets using the GitHub API provider.
                       properties:
                         appID:
                           description: appID specifies the Github APP that will be used to authenticate the client
@@ -25084,7 +26172,7 @@ spec:
                         - project
                       type: object
                     scaleway:
-                      description: Scaleway
+                      description: Scaleway configures this store to sync secrets using the Scaleway provider.
                       properties:
                         accessKey:
                           description: AccessKey is the non-secret part of the api key.
@@ -25304,7 +26392,7 @@ spec:
                         - url
                       type: object
                     vault:
-                      description: Vault configures this store to sync secrets using Hashi provider
+                      description: Vault configures this store to sync secrets using the HashiCorp Vault provider.
                       properties:
                         auth:
                           description: Auth configures how secret-manager authenticates with the Vault server.
@@ -25609,6 +26697,7 @@ spec:
                                         Optional audiences field that will be used to request a temporary Kubernetes service
                                         account token for the service account referenced by `serviceAccountRef`.
                                         Defaults to a single audience `vault` it not specified.
+
                                         Deprecated: use serviceAccountRef.Audiences instead
                                       items:
                                         type: string
@@ -25618,6 +26707,7 @@ spec:
                                         Optional expiration time in seconds that will be used to request a temporary
                                         Kubernetes service account token for the service account referenced by
                                         `serviceAccountRef`.
+
                                         Deprecated: this will be removed in the future.
                                         Defaults to 10 minutes.
                                       format: int64
@@ -26390,7 +27480,7 @@ spec:
                   description: Used to configure store refresh interval in seconds. Empty or 0 will default to the controller config.
                   type: integer
                 retrySettings:
-                  description: Used to configure http retries if failed
+                  description: Used to configure HTTP retries on failures.
                   properties:
                     maxRetries:
                       description: MaxRetries is the maximum number of retry attempts.
@@ -26488,17 +27578,19 @@ spec:
                   type: string
                 keySize:
                   description: |-
-                    KeySize specifies the key size for RSA keys (default: 2048)
+                    KeySize specifies the key size for RSA keys (default: 2048) and ECDSA keys (default: 256).
                     For RSA keys: 2048, 3072, 4096
+                    For ECDSA keys: 256, 384, 521
                     Ignored for ed25519 keys
                   maximum: 8192
                   minimum: 256
                   type: integer
                 keyType:
                   default: rsa
-                  description: KeyType specifies the SSH key type (rsa, ed25519)
+                  description: KeyType specifies the SSH key type (rsa, ecdsa, ed25519)
                   enum:
                     - rsa
+                    - ecdsa
                     - ed25519
                   type: string
               type: object
@@ -26985,6 +28077,134 @@ spec:
                                   type: string
                               type: object
                           type: object
+                        gcp:
+                          description: |-
+                            Gcp authenticates with Vault using Google Cloud Platform authentication method
+                            GCP authentication method
+                          properties:
+                            location:
+                              description: Location optionally defines a location/region for the secret
+                              type: string
+                            path:
+                              default: gcp
+                              description: 'Path where the GCP auth method is enabled in Vault, e.g: "gcp"'
+                              type: string
+                            projectID:
+                              description: Project ID of the Google Cloud Platform project
+                              type: string
+                            role:
+                              description: Vault Role. In Vault, a role describes an identity with a set of permissions, groups, or policies you want to attach to a user of the secrets engine.
+                              type: string
+                            secretRef:
+                              description: Specify credentials in a Secret object
+                              properties:
+                                secretAccessKeySecretRef:
+                                  description: The SecretAccessKey is used for authentication
+                                  properties:
+                                    key:
+                                      description: |-
+                                        A key in the referenced Secret.
+                                        Some instances of this field may be defaulted, in others it may be required.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[-._a-zA-Z0-9]+$
+                                      type: string
+                                    name:
+                                      description: The name of the Secret resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        The namespace of the Secret resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  type: object
+                              type: object
+                            serviceAccountRef:
+                              description: ServiceAccountRef to a service account for impersonation
+                              properties:
+                                audiences:
+                                  description: |-
+                                    Audience specifies the `aud` claim for the service account token
+                                    If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity
+                                    then this audiences will be appended to the list
+                                  items:
+                                    type: string
+                                  type: array
+                                name:
+                                  description: The name of the ServiceAccount resource being referred to.
+                                  maxLength: 253
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                  type: string
+                                namespace:
+                                  description: |-
+                                    Namespace of the resource being referred to.
+                                    Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                  maxLength: 63
+                                  minLength: 1
+                                  pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                  type: string
+                              required:
+                                - name
+                              type: object
+                            workloadIdentity:
+                              description: Specify a service account with Workload Identity
+                              properties:
+                                clusterLocation:
+                                  description: |-
+                                    ClusterLocation is the location of the cluster
+                                    If not specified, it fetches information from the metadata server
+                                  type: string
+                                clusterName:
+                                  description: |-
+                                    ClusterName is the name of the cluster
+                                    If not specified, it fetches information from the metadata server
+                                  type: string
+                                clusterProjectID:
+                                  description: |-
+                                    ClusterProjectID is the project ID of the cluster
+                                    If not specified, it fetches information from the metadata server
+                                  type: string
+                                serviceAccountRef:
+                                  description: ServiceAccountSelector is a reference to a ServiceAccount resource.
+                                  properties:
+                                    audiences:
+                                      description: |-
+                                        Audience specifies the `aud` claim for the service account token
+                                        If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity
+                                        then this audiences will be appended to the list
+                                      items:
+                                        type: string
+                                      type: array
+                                    name:
+                                      description: The name of the ServiceAccount resource being referred to.
+                                      maxLength: 253
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                      type: string
+                                    namespace:
+                                      description: |-
+                                        Namespace of the resource being referred to.
+                                        Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                      maxLength: 63
+                                      minLength: 1
+                                      pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                      type: string
+                                  required:
+                                    - name
+                                  type: object
+                              required:
+                                - serviceAccountRef
+                              type: object
+                          required:
+                            - role
+                          type: object
                         iam:
                           description: |-
                             Iam authenticates with vault by passing a special AWS request signed with AWS IAM credentials
@@ -27143,6 +28363,7 @@ spec:
                                     Optional audiences field that will be used to request a temporary Kubernetes service
                                     account token for the service account referenced by `serviceAccountRef`.
                                     Defaults to a single audience `vault` it not specified.
+
                                     Deprecated: use serviceAccountRef.Audiences instead
                                   items:
                                     type: string
@@ -27152,6 +28373,7 @@ spec:
                                     Optional expiration time in seconds that will be used to request a temporary
                                     Kubernetes service account token for the service account referenced by
                                     `serviceAccountRef`.
+
                                     Deprecated: this will be removed in the future.
                                     Defaults to 10 minutes.
                                   format: int64
