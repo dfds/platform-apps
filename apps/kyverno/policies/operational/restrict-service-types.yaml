@@ -4,7 +4,7 @@ metadata:
   name: restrict-service-types
   annotations:
     policies.kyverno.io/title: Service Type Restriction
-    policies.kyverno.io/category: Hard Requirement
+    policies.kyverno.io/category: Operational (Best Practices)
     policies.kyverno.io/severity: medium
     policies.kyverno.io/subject: Service
     policies.kyverno.io/description: >-
