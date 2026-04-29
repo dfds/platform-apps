@@ -40,8 +40,7 @@
                 "minor"
             ],
             "addLabels": [
-                "release:minor",
-                "on-hold"
+                "release:minor"
             ],
             "minimumReleaseAge": "7 days",
             "automerge": false,
@@ -54,8 +53,7 @@
                 "major"
             ],
             "addLabels": [
-                "release:major",
-                "on-hold"
+                "release:major"
             ],
             "minimumReleaseAge": "14 days",
             "automerge": false,
