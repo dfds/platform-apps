@@ -15,7 +15,7 @@ spec:
   chart:
     spec:
       chart: gha-runner-scale-set
-      version: 0.9.3
+      version: 0.14.1
       sourceRef:
         kind: HelmRepository
         name: arc
@@ -66,7 +66,3 @@ spec:
                   resources:
                     requests:
                       storage: 1Gi
-    metrics:
-      controllerManagerAddr: ":8080"
-      listenerAddr: ":8080"
-      listenerEndpoint: "/metrics"
