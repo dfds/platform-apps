@@ -11,7 +11,7 @@ metadata:
       Services of type LoadBalancer and NodePort are not allowed. This prevents the creation of LoadBalancer and NodePort Services which can lead to unintended exposure and costs.
 spec:
   validationFailureAction: Audit
-  emitWarning: false
+  emitWarning: true
   background: true
   rules:
     - name: service-types-loadbalancer-nodeport-disallowed
