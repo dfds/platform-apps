@@ -1,0 +1,12 @@
+---
+# Source: goldpinger/templates/configmap.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: goldpinger-zap
+  labels:
+    app.kubernetes.io/name: goldpinger
+    app.kubernetes.io/instance: goldpinger
+    app.kubernetes.io/managed-by: Helm
+data:
+  zap.json: "{\n  \"level\": \"info\",\n  \"encoding\": \"json\",\n  \"outputPaths\": [\n      \"stdout\"\n  ],\n  \"errorOutputPaths\": [\n      \"stderr\"\n  ],\n  \"initialFields\": {\n  },\n  \"encoderConfig\": {\n      \"messageKey\": \"message\",\n      \"levelKey\": \"level\",\n      \"levelEncoder\": \"lowercase\",\n      \"timeKey\": \"ts\",\n      \"timeEncoder\": \"ISO8601\",\n      \"callerKey\": \"caller\",\n      \"callerEncoder\": \"Short\"\n  }\n}\n"
