@@ -22,7 +22,7 @@ spec:
     spec:
       containers:
         - args:
-            - --v=5
+            - --v=0
             - --leader-election=true
           image: registry.k8s.io/sig-storage/snapshot-controller:v8.5.0
           imagePullPolicy: IfNotPresent
