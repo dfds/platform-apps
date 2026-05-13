@@ -1,0 +1,85 @@
+---
+# Source: goldpinger/templates/daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: goldpinger
+  labels:
+    app.kubernetes.io/name: goldpinger
+    app.kubernetes.io/instance: goldpinger
+    app.kubernetes.io/managed-by: Helm
+spec:
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 25%
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: goldpinger
+      app.kubernetes.io/instance: goldpinger
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: goldpinger
+        app.kubernetes.io/instance: goldpinger
+    spec:
+      priorityClassName: node-observability
+      serviceAccountName: goldpinger
+      containers:
+        - name: goldpinger-daemon
+          image: "bloomberg/goldpinger:3.11.0"
+          imagePullPolicy: IfNotPresent
+          volumeMounts:
+            - name: zap
+              mountPath: /config
+          env:
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: HOST
+              value: "0.0.0.0"
+            - name: PORT
+              value: "8080"
+            - name: LABEL_SELECTOR
+              value: "app.kubernetes.io/name=goldpinger"
+          securityContext:
+            allowPrivilegeEscalation: false
+            capabilities:
+              drop:
+                - ALL
+            readOnlyRootFilesystem: true
+            runAsNonRoot: true
+          ports:
+            - name: http
+              containerPort: 8080
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /
+              port: http
+          readinessProbe:
+            httpGet:
+              path: /
+              port: http
+          resources:
+            limits:
+              memory: 64Mi
+            requests:
+              cpu: 10m
+              memory: 64Mi
+      volumes:
+        - name: zap
+          configMap:
+            name: goldpinger-zap
+      tolerations:
+        - effect: NoExecute
+          operator: Exists
+        - effect: NoSchedule
+          operator: Exists
+      securityContext:
+        fsGroup: 2000
+        runAsNonRoot: true
+        runAsUser: 1000
+        seccompProfile:
+          type: RuntimeDefault
