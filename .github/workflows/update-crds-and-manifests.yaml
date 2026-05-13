@@ -4,6 +4,7 @@ on:
     paths:
       - "**/sources.yaml"
       - "**/release.yaml"
+      - "**/Makefile"
 jobs:
   update-crds-and-manifests:
     runs-on: ubuntu-latest
