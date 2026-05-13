@@ -1,0 +1,30 @@
+---
+# Source: traefik/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-blue-variant
+  namespace: traefik-blue-variant
+  labels:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: traefik-blue-variant-traefik-blue-variant
+    app.kubernetes.io/managed-by: Helm
+    scrape-service-metrics: "true"
+  annotations:
+spec:
+  type: NodePort
+  externalTrafficPolicy: Cluster
+  selector:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: traefik-blue-variant-traefik-blue-variant
+  ports:
+    - port: 8080
+      name: traefik
+      targetPort: traefik
+      protocol: TCP
+      nodePort: ${flux_traefik_blue_target_admin_port}
+    - port: 80
+      name: web
+      targetPort: web
+      protocol: TCP
+      nodePort: ${flux_traefik_blue_target_http_port}

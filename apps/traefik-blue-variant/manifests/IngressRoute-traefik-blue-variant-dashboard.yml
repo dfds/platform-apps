@@ -1,0 +1,21 @@
+---
+# Source: traefik/templates/ingressroute.yaml
+apiVersion: traefik.io/v1alpha1
+kind: IngressRoute
+metadata:
+  name: traefik-blue-variant-dashboard
+  namespace: traefik-blue-variant
+  labels:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: traefik-blue-variant-traefik-blue-variant
+    app.kubernetes.io/managed-by: Helm
+spec:
+  entryPoints:
+    - traefik
+    - web
+  routes:
+    - match: Host(`traefik-blue-variant.${flux_eks_fqdn}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
+      kind: Rule
+      services:
+        - kind: TraefikService
+          name: api@internal
