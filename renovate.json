@@ -1,64 +1,32 @@
 {
-    "$schema": "https://docs.renovatebot.com/renovate-schema.json",
-    "branchPrefix": "feature/renovate/",
-    "flux": {
-        "managerFilePatterns": [
-            "/\\.yaml$/"
-        ]
+  "$schema": "https://docs.renovatebot.com/renovate-schema.json",
+  "extends": [
+    "local>dfds/renovate-config"
+  ],
+  "packageRules": [
+    {
+      "matchUpdateTypes": [
+        "patch"
+      ],
+      "addLabels": [
+        "release:patch"
+      ]
     },
-    "packageRules": [
-        {
-            "matchUpdateTypes": [
-                "lockFileMaintenance"
-            ],
-            "addLabels": [
-                "lockFile"
-            ],
-            "minimumReleaseAge": "1 day",
-            "automerge": false,
-            "matchCurrentVersion": "!/^0/",
-            "ignoreTests": true,
-            "dependencyDashboardApproval": false
-        },
-        {
-            "matchUpdateTypes": [
-                "pin",
-                "digest",
-                "patch"
-            ],
-            "addLabels": [
-                "release:patch"
-            ],
-            "minimumReleaseAge": "1 day",
-            "automerge": false,
-            "matchCurrentVersion": "!/^0/",
-            "ignoreTests": true,
-            "dependencyDashboardApproval": false
-        },
-        {
-            "matchUpdateTypes": [
-                "minor"
-            ],
-            "addLabels": [
-                "release:minor"
-            ],
-            "minimumReleaseAge": "7 days",
-            "automerge": false,
-            "matchCurrentVersion": "!/^0/",
-            "ignoreTests": true,
-            "dependencyDashboardApproval": false
-        },
-        {
-            "matchUpdateTypes": [
-                "major"
-            ],
-            "addLabels": [
-                "release:major"
-            ],
-            "minimumReleaseAge": "14 days",
-            "automerge": false,
-            "dependencyDashboard": true,
-            "dependencyDashboardApproval": false
-        }
-    ]
+    {
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "addLabels": [
+        "release:minor"
+      ]
+    },
+    {
+      "matchUpdateTypes": [
+        "major"
+      ],
+      "addLabels": [
+        "release:major"
+      ]
+    }
+  ]
 }
