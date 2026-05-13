@@ -17,7 +17,7 @@ spec:
   restartPolicy: Never
   containers:
     - name: test
-      image: ghcr.io/kyverno/readiness-checker:v0.1.0
+      image: ghcr.io/kyverno/readiness-checker:latest
       imagePullPolicy: IfNotPresent
       resources:
         limits:
