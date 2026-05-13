@@ -2,31 +2,5 @@
   "$schema": "https://docs.renovatebot.com/renovate-schema.json",
   "extends": [
     "local>dfds/renovate-config"
-  ],
-  "packageRules": [
-    {
-      "matchUpdateTypes": [
-        "patch"
-      ],
-      "addLabels": [
-        "release:patch"
-      ]
-    },
-    {
-      "matchUpdateTypes": [
-        "minor"
-      ],
-      "addLabels": [
-        "release:minor"
-      ]
-    },
-    {
-      "matchUpdateTypes": [
-        "major"
-      ],
-      "addLabels": [
-        "release:major"
-      ]
-    }
   ]
 }
