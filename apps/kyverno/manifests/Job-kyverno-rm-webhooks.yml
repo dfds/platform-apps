@@ -1,14 +1,15 @@
 ---
-# Source: kyverno/templates/hooks/pre-delete-remove-mutatingwebhookconfiguration.yaml
+# Source: kyverno/templates/hooks/pre-delete-remove-webhooks.yaml
 apiVersion: batch/v1
 kind: Job
 metadata:
-  name: kyverno-rm-mutatingwhconfig
+  name: kyverno-rm-webhooks
   namespace: kyverno
   labels:
     app.kubernetes.io/component: hooks
     app.kubernetes.io/instance: kyverno
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kyverno-hooks
     app.kubernetes.io/part-of: kyverno
   annotations:
     helm.sh/hook: pre-delete
@@ -23,14 +24,10 @@ spec:
       restartPolicy: Never
       containers:
         - name: kubectl
-          image: "registry.k8s.io/kubectl:v1.34.3"
+          image: "ghcr.io/kyverno/readiness-checker:v1.18.0"
           imagePullPolicy:
-          command:
-            - kubectl
-            - delete
-            - mutatingwebhookconfiguration
-            - -l
-            - webhook.kyverno.io/managed-by=kyverno
+          args:
+            - delete-webhooks
           resources:
             limits:
               cpu: 100m
