@@ -1,0 +1,20 @@
+---
+# Source: traefik/templates/gateway.yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: Gateway
+metadata:
+  name: traefik-gateway
+  namespace: traefik-green-variant
+  labels:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: traefik-green-variant-traefik-green-variant
+    app.kubernetes.io/managed-by: Helm
+spec:
+  gatewayClassName: traefik
+  listeners:
+    - name: web
+      port: 8000
+      protocol: HTTP
+      allowedRoutes:
+        namespaces:
+          from: All

@@ -1,0 +1,18 @@
+---
+# Source: traefik/templates/rbac/clusterrolebinding.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: traefik-green-variant-traefik-green-variant
+  labels:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: traefik-green-variant-traefik-green-variant
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traefik-green-variant-traefik-green-variant
+subjects:
+  - kind: ServiceAccount
+    name: traefik-green-variant
+    namespace: traefik-green-variant
