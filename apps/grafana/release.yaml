@@ -171,3 +171,11 @@ spec:
           selector:
             matchLabels:
               scrape-service-metrics: "true"
+      - apiVersion: v1
+        kind: ServiceAccount
+        metadata:
+          annotations:
+            eks.amazonaws.com/role-arn: arn:aws:iam::${flux_workload_account_id}:role/grafana-irsa
+            eks.amazonaws.com/sts-regional-endpoints: "true"
+          name: grafana
+          namespace: grafana
