@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - secretstore-ssm.yaml
+  - externalsecret-1password-auth.yaml
   - secretstore-1password.yaml
   - sources.yaml
   - release.yaml
