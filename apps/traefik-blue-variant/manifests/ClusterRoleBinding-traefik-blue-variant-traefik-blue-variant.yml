@@ -1,0 +1,18 @@
+---
+# Source: traefik/templates/rbac/clusterrolebinding.yaml
+kind: ClusterRoleBinding
+apiVersion: rbac.authorization.k8s.io/v1
+metadata:
+  name: traefik-blue-variant-traefik-blue-variant
+  labels:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: traefik-blue-variant-traefik-blue-variant
+    app.kubernetes.io/managed-by: Helm
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: traefik-blue-variant-traefik-blue-variant
+subjects:
+  - kind: ServiceAccount
+    name: traefik-blue-variant
+    namespace: traefik-blue-variant

@@ -1,0 +1,25 @@
+---
+# Source: traefik/templates/service-metrics.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: traefik-blue-variant-metrics
+  namespace: traefik-blue-variant
+  labels:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: traefik-blue-variant-traefik-blue-variant
+    app.kubernetes.io/component: metrics
+    app.kubernetes.io/managed-by: Helm
+    app: traefik-blue-variant-metrics
+    scrape-service-metrics: "true"
+  annotations:
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: traefik
+    app.kubernetes.io/instance: traefik-blue-variant-traefik-blue-variant
+  ports:
+    - port: 9100
+      name: metrics
+      targetPort: metrics
+      protocol: TCP
