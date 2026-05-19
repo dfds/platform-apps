@@ -5,5 +5,8 @@ resources:
   - secretstore-ssm.yaml
   - externalsecret-1password-auth.yaml
   - secretstore-1password.yaml
+  - externalsecret-prometheus.yaml
+  - externalsecret-loki.yaml
+  - externalsecret-tempo.yaml
   - sources.yaml
   - release.yaml
