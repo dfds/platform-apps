@@ -20,7 +20,7 @@ spec:
       retries: 3
   values:
     cluster:
-      name: ${cluster_name}
+      name: ${flux_cluster_name}
     externalServices:
       # prometheus:
       #   host: ${prometheus_url}
