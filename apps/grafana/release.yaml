@@ -19,6 +19,8 @@ spec:
     remediation:
       retries: 3
   values:
+    cluster:
+      name: ${cluster_name}
     externalServices:
       # prometheus:
       #   host: ${prometheus_url}
@@ -64,17 +66,8 @@ spec:
           passwordKey: password
     opencost:
       enabled: false
-      opencost:
-        exporter:
-          defaultClusterId: ${cluster_name}
-        prometheus:
-          external:
-            url: ${prometheus_url}/api/prom
     traces:
       enabled: true
-    metrics:
-      cost:
-        enabled: false
     logs:
       enabled: true
       pod_logs:
@@ -124,7 +117,7 @@ spec:
       autoDiscover:
         enabled: false
       cost:
-        enabled: ${open_cost_enabled}
+        enabled: false
       node-exporter:
         enabled: true
         metricsTuning:
