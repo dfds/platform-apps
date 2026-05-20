@@ -8,7 +8,7 @@ spec:
   serviceRef:
     name: traefik-green-variant
     port: web
-  targetGroupARN: ${flux_traefik_anon_target_group_arn}
+  targetGroupARN: ${flux_alb_target_group_arn}
   targetType: ip
 
 ---
@@ -21,5 +21,5 @@ spec:
   serviceRef:
     name: traefik-green-variant
     port: web
-  targetGroupARN: ${flux_traefik_auth_target_group_arn}
+  targetGroupARN: ${flux_alb_auth_target_group_arn}
   targetType: ip
