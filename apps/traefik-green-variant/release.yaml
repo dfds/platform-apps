@@ -92,5 +92,5 @@ spec:
       labels:
         scrape-service-metrics: "true"
       spec:
-        externalTrafficPolicy: Cluster
+        externalTrafficPolicy: Local
       type: NodePort
