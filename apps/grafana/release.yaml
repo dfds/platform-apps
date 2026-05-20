@@ -19,6 +19,62 @@ spec:
     remediation:
       retries: 3
   values:
+    externalServices:
+      # prometheus:
+      #   host: ${prometheus_url}
+      #   basicAuth:
+      #     username: "${prometheus_username}"
+      #     password: ${api_token}
+      prometheus:
+        hostKey: prom_hostname
+        secret:
+          create: false
+          name: alloy-secret
+          namespace: grafana
+        basicAuth:
+          usernameKey: prom_username
+          passwordKey: password
+      # loki:
+      #   host: ${loki_url}
+      #   basicAuth:
+      #     username: ${loki_username}
+      #     password: ${api_token}
+      loki:
+        hostKey: loki_hostname
+        secret:
+          create: false
+          name: alloy-secret
+          namespace: grafana
+        basicAuth:
+          usernameKey: loki_username
+          passwordKey: password
+      # tempo:
+      #   host: ${tempo_url}
+      #   basicAuth:
+      #     username: ${tempo_username}
+      #     password: ${api_token}
+      tempo:
+        hostKey: tempo_hostname
+        secret:
+          create: false
+          name: alloy-secret
+          namespace: grafana
+        basicAuth:
+          usernameKey: tempo_username
+          passwordKey: password
+    opencost:
+      enabled: false
+      opencost:
+        exporter:
+          defaultClusterId: ${cluster_name}
+        prometheus:
+          external:
+            url: ${prometheus_url}/api/prom
+    traces:
+      enabled: true
+    metrics:
+      cost:
+        enabled: false
     logs:
       enabled: true
       pod_logs:
