@@ -4,6 +4,8 @@ kind: TargetGroupBinding
 metadata:
   name: alb-anon
   namespace: traefik-green-variant
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: enabled
 spec:
   serviceRef:
     name: traefik-green-variant
@@ -17,6 +19,8 @@ kind: TargetGroupBinding
 metadata:
   name: alb-auth
   namespace: traefik-green-variant
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: enabled
 spec:
   serviceRef:
     name: traefik-green-variant
