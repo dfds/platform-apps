@@ -19,6 +19,40 @@ spec:
     remediation:
       retries: 3
   values:
+    cluster:
+      name: ${flux_cluster_name}
+    externalServices:
+      prometheus:
+        hostKey: prom_hostname
+        secret:
+          create: false
+          name: alloy-secret
+          namespace: grafana
+        basicAuth:
+          usernameKey: prom_username
+          passwordKey: password
+      loki:
+        hostKey: loki_hostname
+        secret:
+          create: false
+          name: alloy-secret
+          namespace: grafana
+        basicAuth:
+          usernameKey: loki_username
+          passwordKey: password
+      tempo:
+        hostKey: tempo_hostname
+        secret:
+          create: false
+          name: alloy-secret
+          namespace: grafana
+        basicAuth:
+          usernameKey: tempo_username
+          passwordKey: password
+    opencost:
+      enabled: false
+    traces:
+      enabled: true
     logs:
       enabled: true
       pod_logs:
@@ -68,7 +102,7 @@ spec:
       autoDiscover:
         enabled: false
       cost:
-        enabled: ${open_cost_enabled}
+        enabled: false
       node-exporter:
         enabled: true
         metricsTuning:
