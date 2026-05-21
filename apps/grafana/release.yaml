@@ -22,11 +22,6 @@ spec:
     cluster:
       name: ${flux_cluster_name}
     externalServices:
-      # prometheus:
-      #   host: ${prometheus_url}
-      #   basicAuth:
-      #     username: "${prometheus_username}"
-      #     password: ${api_token}
       prometheus:
         hostKey: prom_hostname
         secret:
@@ -36,11 +31,6 @@ spec:
         basicAuth:
           usernameKey: prom_username
           passwordKey: password
-      # loki:
-      #   host: ${loki_url}
-      #   basicAuth:
-      #     username: ${loki_username}
-      #     password: ${api_token}
       loki:
         hostKey: loki_hostname
         secret:
@@ -50,11 +40,6 @@ spec:
         basicAuth:
           usernameKey: loki_username
           passwordKey: password
-      # tempo:
-      #   host: ${tempo_url}
-      #   basicAuth:
-      #     username: ${tempo_username}
-      #     password: ${api_token}
       tempo:
         hostKey: tempo_hostname
         secret:
@@ -224,7 +209,7 @@ spec:
         kind: ServiceAccount
         metadata:
           annotations:
-            eks.amazonaws.com/role-arn: arn:aws:iam::${flux_workload_account_id}:role/grafana-irsa
+            eks.amazonaws.com/role-arn: arn:aws:iam::${flux_workload_account_id}:role/grafana-${flux_cluster_name}-irsa
             eks.amazonaws.com/sts-regional-endpoints: "true"
           name: grafana
           namespace: grafana
