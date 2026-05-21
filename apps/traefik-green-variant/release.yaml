@@ -89,6 +89,4 @@ spec:
       enabled: true
       labels:
         scrape-service-metrics: "true"
-      spec:
-        externalTrafficPolicy: Local
       type: ClusterIP
