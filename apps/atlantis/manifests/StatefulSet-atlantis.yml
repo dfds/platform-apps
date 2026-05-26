@@ -312,6 +312,11 @@ spec:
                 secretKeyRef:
                   name: atlantis-environment
                   key: PRODUCTION_ONEPASSWORD_TOKEN_FOR_ATLANTIS
+            - name: PRODUCTION_ONEPASSWORD_TOKEN_FOR_GRAFANA
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: PRODUCTION_ONEPASSWORD_TOKEN_FOR_GRAFANA
             - name: STAGING_ONEPASSWORD_CREDENTIALS_JSON
               valueFrom:
                 secretKeyRef:
@@ -322,6 +327,11 @@ spec:
                 secretKeyRef:
                   name: atlantis-environment
                   key: STAGING_ONEPASSWORD_TOKEN_FOR_ATLANTIS
+            - name: STAGING_ONEPASSWORD_TOKEN_FOR_GRAFANA
+              valueFrom:
+                secretKeyRef:
+                  name: atlantis-environment
+                  key: STAGING_ONEPASSWORD_TOKEN_FOR_GRAFANA
             - name: SHARED_docker_hub_username
               valueFrom:
                 secretKeyRef:
