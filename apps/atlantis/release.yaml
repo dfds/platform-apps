@@ -179,34 +179,6 @@ spec:
         secretKeyRef:
           key: STAGING_AWS_SECRET_ACCESS_KEY
           name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_API_TOKEN
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_API_TOKEN
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_LOKI_URL
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_LOKI_URL
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_LOKI_USERNAME
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_LOKI_USERNAME
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_PROMETHEUS_URL
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_PROMETHEUS_URL
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_PROMETHEUS_USERNAME
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_PROMETHEUS_USERNAME
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_TEMPO_URL
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_TEMPO_URL
-          name: atlantis-environment
-      - name: STAGING_GRAFANA_AGENT_TEMPO_USERNAME
-        secretKeyRef:
-          key: STAGING_GRAFANA_AGENT_TEMPO_USERNAME
-          name: atlantis-environment
       - name: DS_SSU_VM_ENDPOINT
         secretKeyRef:
           key: DS_SSU_VM_ENDPOINT
@@ -298,10 +270,6 @@ spec:
       - name: STAGING_falco_slack_alert_webhook_url
         secretKeyRef:
           key: STAGING_falco_slack_alert_webhook_url
-          name: atlantis-environment
-      - name: STAGING_falco_stream_webhook_url
-        secretKeyRef:
-          key: STAGING_falco_stream_webhook_url
           name: atlantis-environment
       - name: PRODUCTION_falco_slack_alert_webhook_url
         secretKeyRef:
