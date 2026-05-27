@@ -84,8 +84,46 @@ spec:
           ]
         }
     alloy:
+      alloy:
+        clustering:
+          enabled: true
+        storagePath: /var/lib/agent
+        mounts:
+          extra:
+            - mountPath: /var/lib/agent
+              name: agent-wal
+        resources:
+          requests:
+            memory: ${flux_grafana_agent_resource_memory_request}
+          limits:
+            memory: ${flux_grafana_agent_resource_memory_limit}
       controller:
         priorityClassName: cluster-observability
+        tolerations:
+        - key: observability.dfds
+          operator: Exists
+          effect: NoSchedule
+        affinity:
+          nodeAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                - key: dedicated
+                  operator: In
+                  values:
+                  - observability
+        replicas: ${flux_grafana_agent_replicas}
+        volumeClaimTemplates:
+          - metadata:
+              name: agent-wal
+            spec:
+              accessModes: [ "ReadWriteOnce" ]
+              storageClassName: csi-gp3
+              resources:
+                requests:
+                  storage: ${flux_grafana_agent_storage_size}
+
     alloy-events:
       controller:
         priorityClassName: cluster-observability
@@ -98,6 +136,20 @@ spec:
           maxUnavailable: 25%
     metrics:
       enabled: true
+      tolerations:
+      - key: observability.dfds
+        operator: Exists
+        effect: NoSchedule
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                - observability
       scrapeInterval: 120s
       autoDiscover:
         enabled: false
