@@ -29,9 +29,9 @@ spec:
             name: agent-wal
         resources:
           limits:
-            memory: 4Gi
+            memory: 512Mi
           requests:
-            memory: 4Gi
+            memory: 512Mi
         storagePath: /var/lib/agent
       controller:
         affinity:
