@@ -58,7 +58,7 @@ spec:
             - ReadWriteOnce
             resources:
               requests:
-                storage: 10Gi
+                storage: ${flux_grafana_agent_storage_size}
             storageClassName: csi-gp3
     alloy-events:
       controller:
