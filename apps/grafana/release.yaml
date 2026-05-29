@@ -113,7 +113,7 @@ spec:
                   operator: In
                   values:
                   - observability
-        replicas: 1
+        replicas: 2
         volumeClaimTemplates:
           - metadata:
               name: agent-wal
