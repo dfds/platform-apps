@@ -71,7 +71,7 @@ spec:
           maxUnavailable: 25%
         type: RollingUpdate
     cluster:
-      name: cargo
+      name: ${flux_cluster_name}
     externalServices:
       loki:
         basicAuth:
