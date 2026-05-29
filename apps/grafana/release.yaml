@@ -29,9 +29,9 @@ spec:
             name: agent-wal
         resources:
           limits:
-            memory: 512Mi
+            memory: ${flux_grafana_agent_resource_memory_limit}
           requests:
-            memory: 512Mi
+            memory: ${flux_grafana_agent_resource_memory_request}
         storagePath: /var/lib/agent
       controller:
         affinity:
@@ -58,7 +58,7 @@ spec:
             - ReadWriteOnce
             resources:
               requests:
-                storage: 10Gi
+                storage: ${flux_grafana_agent_storage_size}
             storageClassName: csi-gp3
     alloy-events:
       controller:
