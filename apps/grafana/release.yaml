@@ -113,7 +113,7 @@ spec:
                   operator: In
                   values:
                   - observability
-        replicas: ${flux_grafana_agent_replicas}
+        replicas: 1
         volumeClaimTemplates:
           - metadata:
               name: agent-wal
