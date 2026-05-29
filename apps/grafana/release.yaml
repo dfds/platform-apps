@@ -98,6 +98,7 @@ spec:
           limits:
             memory: ${flux_grafana_agent_resource_memory_limit}
       controller:
+        replicas: 4
         priorityClassName: cluster-observability
         tolerations:
         - key: observability.dfds
@@ -113,7 +114,6 @@ spec:
                   operator: In
                   values:
                   - observability
-        replicas: 2
         volumeClaimTemplates:
           - metadata:
               name: agent-wal
