@@ -45,7 +45,7 @@ spec:
                   - observability
               weight: 1
         priorityClassName: cluster-observability
-        replicas: 2
+        replicas: 1
         tolerations:
         - effect: NoSchedule
           key: observability.dfds
