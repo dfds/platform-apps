@@ -45,7 +45,7 @@ spec:
                   - observability
               weight: 1
         priorityClassName: cluster-observability
-        replicas: 1
+        replicas: ${flux_grafana_agent_replicas}
         tolerations:
         - effect: NoSchedule
           key: observability.dfds
