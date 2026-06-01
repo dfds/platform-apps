@@ -19,139 +19,55 @@ spec:
     remediation:
       retries: 3
   values:
-    alloy:
-      alloy:
-        clustering:
-          enabled: true
-        mounts:
-          extra:
-          - mountPath: /var/lib/agent
-            name: agent-wal
-        resources:
-          limits:
-            memory: ${flux_grafana_agent_resource_memory_limit}
-          requests:
-            memory: ${flux_grafana_agent_resource_memory_request}
-        storagePath: /var/lib/agent
-      controller:
-        affinity:
-          nodeAffinity:
-            preferredDuringSchedulingIgnoredDuringExecution:
-            - preference:
-                matchExpressions:
-                - key: dedicated
-                  operator: In
-                  values:
-                  - observability
-              weight: 1
-        priorityClassName: cluster-observability
-        replicas: ${flux_grafana_agent_replicas}
-        tolerations:
-        - effect: NoSchedule
-          key: observability.dfds
-          operator: Exists
-        volumeClaimTemplates:
-        - metadata:
-            name: agent-wal
-          spec:
-            accessModes:
-            - ReadWriteOnce
-            resources:
-              requests:
-                storage: ${flux_grafana_agent_storage_size}
-            storageClassName: csi-gp3
-    alloy-events:
-      controller:
-        priorityClassName: cluster-observability
-    alloy-logs:
-      controller:
-        priorityClassName: node-observability
-      updateStrategy:
-        rollingUpdate:
-          maxUnavailable: 25%
-        type: RollingUpdate
     cluster:
       name: ${flux_cluster_name}
     externalServices:
-      loki:
-        basicAuth:
-          passwordKey: password
-          usernameKey: loki_username
-        hostKey: loki_hostname
-        secret:
-          create: false
-          name: alloy-secret
-          namespace: grafana
       prometheus:
-        basicAuth:
-          passwordKey: password
-          usernameKey: prom_username
         hostKey: prom_hostname
         secret:
           create: false
           name: alloy-secret
           namespace: grafana
-      tempo:
         basicAuth:
+          usernameKey: prom_username
           passwordKey: password
-          usernameKey: tempo_username
+      loki:
+        hostKey: loki_hostname
+        secret:
+          create: false
+          name: alloy-secret
+          namespace: grafana
+        basicAuth:
+          usernameKey: loki_username
+          passwordKey: password
+      tempo:
         hostKey: tempo_hostname
         secret:
           create: false
           name: alloy-secret
           namespace: grafana
-    extraObjects:
-    - apiVersion: monitoring.coreos.com/v1
-      kind: ServiceMonitor
-      metadata:
-        labels:
-          app: prometheus-service-metrics-scraper
-        name: prometheus-service-metrics-scraper
-      spec:
-        endpoints:
-        - path: /metrics
-          port: metrics
-          scrapeTimeout: 120s
-        - path: /metrics
-          port: admin
-        - path: /metrics
-          port: http
-        namespaceSelector:
-          any: true
-        selector:
-          matchLabels:
-            scrape-service-metrics: "true"
-    kube-state-metrics:
-      customLabels:
-        jobLabel: kube-state-metrics
+        basicAuth:
+          usernameKey: tempo_username
+          passwordKey: password
+    opencost:
+      enabled: false
+    traces:
       enabled: true
-      priorityClassName: cluster-observability
-      rbac:
-        create: true
-        extraRules:
-        - apiGroups:
-          - traefik.io
-          resources:
-          - ingressroutes
-          - middlewares
-          - tlsoptions
-          verbs:
-          - list
-          - watch
-      resources:
-        requests:
-          cpu: 20m
-          memory: 100Mi
     logs:
+      enabled: true
+      pod_logs:
+        enabled: true
       cluster_events:
         enabled: true
-      enabled: true
+      journal:
+        enabled: true
+        units: []
       extraConfig: |
         local.file_match "worker_nodes_logs" {
           path_targets = [{
             __address__ = "localhost",
             __path__    = "/var/log/**",
-            __path_exclude__ = "/var/log/{pods,containers,journal}/**",
+             __path_exclude__ = "/var/log/{pods,containers,journal}/**",
             instance = env("HOSTNAME"),
             job         = "integrations/kubernetes/worker-node",
           }]
@@ -167,334 +83,176 @@ spec:
             loki.process.logs_service.receiver,
           ]
         }
-      journal:
-        enabled: true
-        units: []
-      pod_logs:
-        enabled: true
+    alloy:
+      alloy:
+        clustering:
+          enabled: true
+        storagePath: /var/lib/agent
+        mounts:
+          extra:
+            - mountPath: /var/lib/agent
+              name: agent-wal
+        resources:
+          requests:
+            memory: ${flux_grafana_agent_resource_memory_request}
+          limits:
+            memory: ${flux_grafana_agent_resource_memory_limit}
+      controller:
+        priorityClassName: cluster-observability
+        tolerations:
+        - key: observability.dfds
+          operator: Exists
+          effect: NoSchedule
+        affinity:
+          nodeAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                - key: dedicated
+                  operator: In
+                  values:
+                  - observability
+        volumeClaimTemplates:
+          - metadata:
+              name: agent-wal
+            spec:
+              accessModes: [ "ReadWriteOnce" ]
+              storageClassName: csi-gp3
+              resources:
+                requests:
+                  storage: ${flux_grafana_agent_storage_size}
+
+    alloy-events:
+      controller:
+        priorityClassName: cluster-observability
+    alloy-logs:
+      controller:
+        priorityClassName: node-observability
+      updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 25%
     metrics:
+      enabled: true
+      tolerations:
+      - key: observability.dfds
+        operator: Exists
+        effect: NoSchedule
       affinity:
         nodeAffinity:
           preferredDuringSchedulingIgnoredDuringExecution:
-          - preference:
+          - weight: 1
+            preference:
               matchExpressions:
               - key: dedicated
                 operator: In
                 values:
                 - observability
-            weight: 1
-      apiserver:
-        enabled: false
+      scrapeInterval: 120s
       autoDiscover:
         enabled: false
-      cadvisor:
-        metricsTuning:
-          useDefaultAllowList: true
       cost:
         enabled: false
-      enabled: true
-      kube-state-metrics:
-        extraMetricRelabelingRules: |-
-          rule {
-            regex = "uid"
-            action = "drop"
-          }
-        metricsTuning:
-          excludeMetrics:
-          - kube_replicaset_status_ready_replicas
-          - kube_replicaset_created
-          - kube_replicaset_metadata_generation
-          - kube_replicaset_spec_replicas
-          - kube_replicaset_status_fully_labeled_replicas
-          - kube_replicaset_status_observed_generation
-          - kube_replicaset_status_replicas
-          - kube_pod_start_time
-          includeMetrics:
-          - kube_deployment_status_replicas_unavailable
-          - kube_pod_deletion_timestamp
-          useDefaultAllowList: true
-      kubelet:
-        enabled: true
-        metricsTuning:
-          includeMetrics:
-          - storage_operation_duration_seconds_bucket
-          - rest_client_request_duration_seconds_bucket
-          - process_resident_memory_bytes
-          - process_cpu_seconds_total
-          - go_goroutines
-          - kubelet_runtime_operations_duration_seconds_bucket
-          useDefaultAllowList: true
       node-exporter:
         enabled: true
         metricsTuning:
           useDefaultAllowList: true
-      scrapeInterval: 120s
       serviceMonitors:
         enabled: true
-        selector: |-
+        selector:
+          |- # Generic ServiceMonitor selector to include everything except old Prometheus releases labels
           match_expression {
             key = "release"
             operator = "NotIn"
             values = ["monitoring"]
           }
-      tolerations:
-      - effect: NoSchedule
-        key: observability.dfds
-        operator: Exists
-    opencost:
-      enabled: false
+      kube-state-metrics:
+        metricsTuning:
+          useDefaultAllowList: true
+          excludeMetrics:
+            - kube_replicaset_status_ready_replicas
+            - kube_replicaset_created
+            - kube_replicaset_metadata_generation
+            - kube_replicaset_spec_replicas
+            - kube_replicaset_status_fully_labeled_replicas
+            - kube_replicaset_status_observed_generation
+            - kube_replicaset_status_replicas
+            - kube_pod_start_time
+          includeMetrics:
+            - kube_deployment_status_replicas_unavailable
+            - kube_pod_deletion_timestamp
+        extraMetricRelabelingRules: |-
+          rule {
+            regex = "uid"
+            action = "drop"
+          }
+      cadvisor:
+        metricsTuning:
+          useDefaultAllowList: true
+      apiserver:
+        enabled: false
+      kubelet:
+        enabled: true
+        metricsTuning:
+          useDefaultAllowList: true
+          includeMetrics:
+            - storage_operation_duration_seconds_bucket
+            - rest_client_request_duration_seconds_bucket
+            - process_resident_memory_bytes
+            - process_cpu_seconds_total
+            - go_goroutines
+            - kubelet_runtime_operations_duration_seconds_bucket
+      kube-controller-manager:
+    kube-state-metrics:
+      enabled: true
+      customLabels:
+        jobLabel: kube-state-metrics
+      resources:
+        requests:
+          cpu: 20m
+          memory: 100Mi
+      priorityClassName: cluster-observability
+      rbac:
+        create: true
+        extraRules:
+          - apiGroups: ["traefik.io"]
+            resources: ["ingressroutes", "middlewares", "tlsoptions"]
+            verbs: ["list", "watch"]
     prometheus-node-exporter:
       enabled: true
       podLabels:
-        jobLabel: node-exporter
-      priorityClassName: node-observability
+        jobLabel: node-exporter # Used for to set the label on the service for the ServiceMonitor
       resources:
         requests:
           cpu: 20m
           memory: 50Mi
+      priorityClassName: node-observability
       updateStrategy:
+        type: RollingUpdate
         rollingUpdate:
           maxUnavailable: 25%
-        type: RollingUpdate
+
     prometheus-operator-crds:
       enabled: true
-    traces:
-      enabled: true
-
-    # cluster:
-    #   name: ${flux_cluster_name}
-    # externalServices:
-    #   prometheus:
-    #     hostKey: prom_hostname
-    #     secret:
-    #       create: false
-    #       name: alloy-secret
-    #       namespace: grafana
-    #     basicAuth:
-    #       usernameKey: prom_username
-    #       passwordKey: password
-    #   loki:
-    #     hostKey: loki_hostname
-    #     secret:
-    #       create: false
-    #       name: alloy-secret
-    #       namespace: grafana
-    #     basicAuth:
-    #       usernameKey: loki_username
-    #       passwordKey: password
-    #   tempo:
-    #     hostKey: tempo_hostname
-    #     secret:
-    #       create: false
-    #       name: alloy-secret
-    #       namespace: grafana
-    #     basicAuth:
-    #       usernameKey: tempo_username
-    #       passwordKey: password
-    # opencost:
-    #   enabled: false
-    # traces:
-    #   enabled: true
-    # logs:
-    #   enabled: true
-    #   pod_logs:
-    #     enabled: true
-    #   cluster_events:
-    #     enabled: true
-    #   journal:
-    #     enabled: true
-    #     units: []
-    #   extraConfig: |
-    #     local.file_match "worker_nodes_logs" {
-    #       path_targets = [{
-    #         __address__ = "localhost",
-    #         __path__    = "/var/log/**",
-    #          __path_exclude__ = "/var/log/{pods,containers,journal}/**",
-    #         instance = env("HOSTNAME"),
-    #         job         = "integrations/kubernetes/worker-node",
-    #       }]
-    #     }
-
-    #     loki.source.file "worker_nodes_logs" {
-    #       targets    = local.file_match.worker_nodes_logs.targets
-    #       forward_to = [loki.process.worker_nodes_logs.receiver]
-    #     }
-
-    #     loki.process "worker_nodes_logs" {
-    #       forward_to = [
-    #         loki.process.logs_service.receiver,
-    #       ]
-    #     }
-    # alloy:
-    #   alloy:
-    #     clustering:
-    #       enabled: true
-    #     storagePath: /var/lib/agent
-    #     mounts:
-    #       extra:
-    #         - mountPath: /var/lib/agent
-    #           name: agent-wal
-    #     resources:
-    #       requests:
-    #         memory: ${flux_grafana_agent_resource_memory_request}
-    #       limits:
-    #         memory: ${flux_grafana_agent_resource_memory_limit}
-    #   controller:
-    #     priorityClassName: cluster-observability
-    #     tolerations:
-    #     - key: observability.dfds
-    #       operator: Exists
-    #       effect: NoSchedule
-    #     affinity:
-    #       nodeAffinity:
-    #         preferredDuringSchedulingIgnoredDuringExecution:
-    #         - weight: 1
-    #           preference:
-    #             matchExpressions:
-    #             - key: dedicated
-    #               operator: In
-    #               values:
-    #               - observability
-    #     volumeClaimTemplates:
-    #       - metadata:
-    #           name: agent-wal
-    #         spec:
-    #           accessModes: [ "ReadWriteOnce" ]
-    #           storageClassName: csi-gp3
-    #           resources:
-    #             requests:
-    #               storage: ${flux_grafana_agent_storage_size}
-
-    # alloy-events:
-    #   controller:
-    #     priorityClassName: cluster-observability
-    # alloy-logs:
-    #   controller:
-    #     priorityClassName: node-observability
-    #   updateStrategy:
-    #     type: RollingUpdate
-    #     rollingUpdate:
-    #       maxUnavailable: 25%
-    # metrics:
-    #   enabled: true
-    #   tolerations:
-    #   - key: observability.dfds
-    #     operator: Exists
-    #     effect: NoSchedule
-    #   affinity:
-    #     nodeAffinity:
-    #       preferredDuringSchedulingIgnoredDuringExecution:
-    #       - weight: 1
-    #         preference:
-    #           matchExpressions:
-    #           - key: dedicated
-    #             operator: In
-    #             values:
-    #             - observability
-    #   scrapeInterval: 120s
-    #   autoDiscover:
-    #     enabled: false
-    #   cost:
-    #     enabled: false
-    #   node-exporter:
-    #     enabled: true
-    #     metricsTuning:
-    #       useDefaultAllowList: true
-    #   serviceMonitors:
-    #     enabled: true
-    #     selector:
-    #       |- # Generic ServiceMonitor selector to include everything except old Prometheus releases labels
-    #       match_expression {
-    #         key = "release"
-    #         operator = "NotIn"
-    #         values = ["monitoring"]
-    #       }
-    #   kube-state-metrics:
-    #     metricsTuning:
-    #       useDefaultAllowList: true
-    #       excludeMetrics:
-    #         - kube_replicaset_status_ready_replicas
-    #         - kube_replicaset_created
-    #         - kube_replicaset_metadata_generation
-    #         - kube_replicaset_spec_replicas
-    #         - kube_replicaset_status_fully_labeled_replicas
-    #         - kube_replicaset_status_observed_generation
-    #         - kube_replicaset_status_replicas
-    #         - kube_pod_start_time
-    #       includeMetrics:
-    #         - kube_deployment_status_replicas_unavailable
-    #         - kube_pod_deletion_timestamp
-    #     extraMetricRelabelingRules: |-
-    #       rule {
-    #         regex = "uid"
-    #         action = "drop"
-    #       }
-    #   cadvisor:
-    #     metricsTuning:
-    #       useDefaultAllowList: true
-    #   apiserver:
-    #     enabled: false
-    #   kubelet:
-    #     enabled: true
-    #     metricsTuning:
-    #       useDefaultAllowList: true
-    #       includeMetrics:
-    #         - storage_operation_duration_seconds_bucket
-    #         - rest_client_request_duration_seconds_bucket
-    #         - process_resident_memory_bytes
-    #         - process_cpu_seconds_total
-    #         - go_goroutines
-    #         - kubelet_runtime_operations_duration_seconds_bucket
-    #   kube-controller-manager:
-    # kube-state-metrics:
-    #   enabled: true
-    #   customLabels:
-    #     jobLabel: kube-state-metrics
-    #   resources:
-    #     requests:
-    #       cpu: 20m
-    #       memory: 100Mi
-    #   priorityClassName: cluster-observability
-    #   rbac:
-    #     create: true
-    #     extraRules:
-    #       - apiGroups: ["traefik.io"]
-    #         resources: ["ingressroutes", "middlewares", "tlsoptions"]
-    #         verbs: ["list", "watch"]
-    # prometheus-node-exporter:
-    #   enabled: true
-    #   podLabels:
-    #     jobLabel: node-exporter # Used for to set the label on the service for the ServiceMonitor
-    #   resources:
-    #     requests:
-    #       cpu: 20m
-    #       memory: 50Mi
-    #   priorityClassName: node-observability
-    #   updateStrategy:
-    #     type: RollingUpdate
-    #     rollingUpdate:
-    #       maxUnavailable: 25%
-
-    # prometheus-operator-crds:
-    #   enabled: true
-    # extraObjects:
-    #   - apiVersion: monitoring.coreos.com/v1
-    #     kind: ServiceMonitor
-    #     metadata:
-    #       labels:
-    #         app: prometheus-service-metrics-scraper
-    #       name: prometheus-service-metrics-scraper
-    #     spec:
-    #       endpoints:
-    #         - path: /metrics
-    #           port: metrics
-    #           scrapeTimeout: 120s
-    #         - path: /metrics
-    #           port: admin
-    #         - path: /metrics
-    #           port: http
-    #       namespaceSelector:
-    #         any: true
-    #       selector:
-    #         matchLabels:
-    #           scrape-service-metrics: "true"
+    extraObjects:
+      - apiVersion: monitoring.coreos.com/v1
+        kind: ServiceMonitor
+        metadata:
+          labels:
+            app: prometheus-service-metrics-scraper
+          name: prometheus-service-metrics-scraper
+        spec:
+          endpoints:
+            - path: /metrics
+              port: metrics
+              scrapeTimeout: 120s
+            - path: /metrics
+              port: admin
+            - path: /metrics
+              port: http
+          namespaceSelector:
+            any: true
+          selector:
+            matchLabels:
+              scrape-service-metrics: "true"
