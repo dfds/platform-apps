@@ -23,6 +23,9 @@ spec:
     githubConfigUrl: https://github.com/dfds
     githubConfigSecret: github-arc-dfds
     runnerScaleSetName: ${flux_github_arc_runners_scale_set_name}
+    controllerServiceAccount:
+      name: arc-gha-rs-controller # This is the service account used by the gha-runner-scale-set-controller, which needs permissions to manage the runner sets
+      namespace: arc-systems # This is the namespace where the gha-runner-scale-set-controller is deployed
     minRunners: 1
     maxRunners: 5
     template:
