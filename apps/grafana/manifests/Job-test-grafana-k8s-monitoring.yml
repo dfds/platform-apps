@@ -1,0 +1,132 @@
+---
+# Source: k8s-monitoring/templates/tests/test.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "test-grafana-k8s-monitoring"
+  namespace: grafana
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/instance: "grafana-k8s-monitoring"
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "0"
+spec:
+  completions: 1
+  parallelism: 1
+  backoffLimit: 9
+  template:
+    metadata:
+      name: "test-grafana-k8s-monitoring"
+      namespace: grafana
+      labels:
+        app.kubernetes.io/managed-by: "Helm"
+        app.kubernetes.io/instance: "grafana-k8s-monitoring"
+    spec:
+      restartPolicy: Never
+      nodeSelector:
+        kubernetes.io/os: linux
+      containers:
+        - name: query-test
+          image: ghcr.io/grafana/k8s-monitoring-test:1.6.52
+          command: ["bash", "-c", "/etc/bin/query-test.sh /etc/test/testQueries.json"]
+          volumeMounts:
+            - name: test-files
+              mountPath: /etc/test
+          env:
+            - name: SINCE
+              value:
+            - name: PROMETHEUS_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: alloy-secret
+                  key: prom_hostname
+                  optional: true
+            - name: PROMETHEUS_URL
+              value: $(PROMETHEUS_HOST)/api/prom/api/v1/query
+            - name: PROMETHEUS_USER
+              valueFrom:
+                secretKeyRef:
+                  name: alloy-secret
+                  key: prom_username
+                  optional: true
+            - name: PROMETHEUS_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: alloy-secret
+                  key: password
+                  optional: true
+            - name: LOKI_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: alloy-secret
+                  key: loki_hostname
+            - name: LOKI_URL
+              value: $(LOKI_HOST)/loki/api/v1/query
+            - name: LOKI_USER
+              valueFrom:
+                secretKeyRef:
+                  name: alloy-secret
+                  key: loki_username
+                  optional: true
+            - name: LOKI_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: alloy-secret
+                  key: password
+                  optional: true
+            - name: LOKI_TENANTID
+              valueFrom:
+                secretKeyRef:
+                  name: alloy-secret
+                  key: tenantId
+                  optional: true
+            - name: TEMPO_HOST
+              valueFrom:
+                secretKeyRef:
+                  name: alloy-secret
+                  key: tempo_hostname
+                  optional: true
+            - name: TEMPO_URL
+              value: $(TEMPO_HOST)/api/search
+            - name: TEMPO_USER
+              valueFrom:
+                secretKeyRef:
+                  name: alloy-secret
+                  key: tempo_username
+                  optional: true
+            - name: TEMPO_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: alloy-secret
+                  key: password
+                  optional: true
+            - name: PROFILECLI_URL
+              valueFrom:
+                secretKeyRef:
+                  name: pyroscope-k8s-monitoring
+                  key: host
+                  optional: true
+            - name: PROFILECLI_USERNAME
+              valueFrom:
+                secretKeyRef:
+                  name: pyroscope-k8s-monitoring
+                  key: username
+                  optional: true
+            - name: PROFILECLI_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: pyroscope-k8s-monitoring
+                  key: password
+                  optional: true
+            - name: PROFILECLI_TENANT_ID
+              valueFrom:
+                secretKeyRef:
+                  name: pyroscope-k8s-monitoring
+                  key: tenantId
+                  optional: true
+      volumes:
+        - name: test-files
+          configMap:
+            name: "test-grafana-k8s-monitoring"

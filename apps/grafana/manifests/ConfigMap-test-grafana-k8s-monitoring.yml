@@ -1,0 +1,52 @@
+---
+# Source: k8s-monitoring/templates/tests/test.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "test-grafana-k8s-monitoring"
+  namespace: grafana
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/instance: "grafana-k8s-monitoring"
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+    "helm.sh/hook-weight": "-1"
+data:
+  testQueries.json: |-
+    {
+      "queries": [
+        {
+          "query": "up{cluster=\"${flux_cluster_name}\"}",
+          "type": "promql"
+        },
+        {
+          "query": "alloy_build_info{cluster=\"${flux_cluster_name}\"}",
+          "type": "promql"
+        },
+        {
+          "query": "kubernetes_build_info{cluster=\"${flux_cluster_name}\"}",
+          "type": "promql"
+        },
+        {
+          "query": "node_cpu_usage_seconds_total{cluster=\"${flux_cluster_name}\"}",
+          "type": "promql"
+        },
+        {
+          "query": "machine_memory_bytes{cluster=\"${flux_cluster_name}\"}",
+          "type": "promql"
+        },
+        {
+          "query": "kube_node_info{cluster=\"${flux_cluster_name}\"}",
+          "type": "promql"
+        },
+        {
+          "query": "node_exporter_build_info{cluster=\"${flux_cluster_name}\"}",
+          "type": "promql"
+        },
+        {
+          "query": "grafana_kubernetes_monitoring_build_info{cluster=\"${flux_cluster_name}\"}",
+          "type": "promql"
+        }
+      ]
+    }

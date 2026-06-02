@@ -1,0 +1,72 @@
+---
+# Source: k8s-monitoring/templates/hooks/validate-configuration.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "validate-grafana-k8s-monitoring"
+  namespace: grafana
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/instance: "grafana-k8s-monitoring"
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade
+    "helm.sh/hook-weight": "-5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+spec:
+  restartPolicy: Never
+  nodeSelector:
+    kubernetes.io/os: linux
+  tolerations:
+    - effect: NoSchedule
+      key: kubernetes.io/arch
+      operator: Equal
+      value: arm64
+  containers:
+    - name: alloy
+      image: "docker.io/grafana/alloy:v1.16.1"
+      command:
+        - bash
+        - -c
+        - |
+          echo Validating Grafana Alloy config file
+          if ! alloy fmt /etc/alloy/config.alloy > /dev/null; then
+            exit 1
+          fi
+          output=$(alloy run --stability.level generally-available  "/etc/alloy/config.alloy" 2>&1)
+          if ! echo "${output}" | grep "KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT must be defined" >/dev/null; then
+            echo "${output}"
+            exit 1
+          fi
+          echo "Grafana Alloy config file is valid"
+          echo Validating Grafana Alloy for Events config file
+          if ! alloy fmt /etc/alloy/events.alloy > /dev/null; then
+            exit 1
+          fi
+          output=$(alloy run --stability.level generally-available  "/etc/alloy/events.alloy" 2>&1)
+          if ! echo "${output}" | grep "KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT must be defined" >/dev/null; then
+            echo "${output}"
+            exit 1
+          fi
+          echo "Grafana Alloy for Events config file is valid"
+          echo Validating Grafana Alloy for Logs config file
+          if ! alloy fmt /etc/alloy/logs.alloy > /dev/null; then
+            exit 1
+          fi
+          output=$(alloy run --stability.level generally-available  "/etc/alloy/logs.alloy" 2>&1)
+          if ! echo "${output}" | grep "KUBERNETES_SERVICE_HOST and KUBERNETES_SERVICE_PORT must be defined" >/dev/null; then
+            echo "${output}"
+            exit 1
+          fi
+          echo "Grafana Alloy for Logs config file is valid"
+      env:
+        - name: KUBERNETES_SERVICE_HOST # Intentionally disable its connection to Kubernetes to make it fail in a known way
+          value: ""
+        - name: KUBERNETES_SERVICE_PORT # Intentionally disable its connection to Kubernetes to make it fail in a known way
+          value: ""
+      volumeMounts:
+        - name: config
+          mountPath: /etc/alloy
+  volumes:
+    - name: config
+      configMap:
+        name: "validate-grafana-k8s-monitoring"

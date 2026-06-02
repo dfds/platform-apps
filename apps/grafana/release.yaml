@@ -84,11 +84,63 @@ spec:
           ]
         }
     alloy:
+      alloy:
+        clustering:
+          enabled: true
+        storagePath: /var/lib/agent
+        mounts:
+          extra:
+            - mountPath: /var/lib/agent
+              name: agent-wal
+        resources:
+          requests:
+            memory: ${flux_grafana_agent_resource_memory_request}
+          limits:
+            memory: ${flux_grafana_agent_resource_memory_limit}
       controller:
+        replicas: ${flux_grafana_agent_replicas}
         priorityClassName: cluster-observability
+        tolerations:
+        - key: observability.dfds
+          operator: Exists
+          effect: NoSchedule
+        affinity:
+          nodeAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                - key: dedicated
+                  operator: In
+                  values:
+                  - observability
+        volumeClaimTemplates:
+          - metadata:
+              name: agent-wal
+            spec:
+              accessModes: [ "ReadWriteOnce" ]
+              storageClassName: csi-gp3
+              resources:
+                requests:
+                  storage: ${flux_grafana_agent_storage_size}
+
     alloy-events:
       controller:
         priorityClassName: cluster-observability
+        tolerations:
+        - key: observability.dfds
+          operator: Exists
+          effect: NoSchedule
+        affinity:
+          nodeAffinity:
+            preferredDuringSchedulingIgnoredDuringExecution:
+            - weight: 1
+              preference:
+                matchExpressions:
+                - key: dedicated
+                  operator: In
+                  values:
+                  - observability
     alloy-logs:
       controller:
         priorityClassName: node-observability
@@ -168,6 +220,20 @@ spec:
           - apiGroups: ["traefik.io"]
             resources: ["ingressroutes", "middlewares", "tlsoptions"]
             verbs: ["list", "watch"]
+      tolerations:
+      - key: observability.dfds
+        operator: Exists
+        effect: NoSchedule
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - weight: 1
+            preference:
+              matchExpressions:
+              - key: dedicated
+                operator: In
+                values:
+                - observability
     prometheus-node-exporter:
       enabled: true
       podLabels:

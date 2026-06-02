@@ -1,0 +1,24 @@
+---
+# Source: k8s-monitoring/charts/alloy-logs/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-k8s-monitoring-alloy-logs
+  namespace: grafana
+  labels:
+    app.kubernetes.io/name: alloy-logs
+    app.kubernetes.io/instance: grafana-k8s-monitoring
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: alloy
+    app.kubernetes.io/component: networking
+spec:
+  type: ClusterIP
+  selector:
+    app.kubernetes.io/name: alloy-logs
+    app.kubernetes.io/instance: grafana-k8s-monitoring
+  internalTrafficPolicy: Cluster
+  ports:
+    - name: http-metrics
+      port: 12345
+      targetPort: 12345
+      protocol: "TCP"
