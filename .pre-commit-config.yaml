@@ -26,4 +26,4 @@ repos:
           - -schema-location
           - "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json"
         files: ^apps/.*
-        exclude: ^apps/traefik-.*-variant/manifests/Service-traefik-.*-variant.yml$ # excluded due to nodePort values that are substituted by flux and not valid integers
+        exclude: ^apps/.*/manifests/.*
