@@ -1,0 +1,145 @@
+---
+# Source: k8s-monitoring/charts/alloy/templates/controllers/statefulset.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: grafana-k8s-monitoring-alloy
+  namespace: grafana
+  labels:
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/instance: grafana-k8s-monitoring
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: alloy
+spec:
+  replicas: ${flux_grafana_agent_replicas}
+  podManagementPolicy: Parallel
+  minReadySeconds: 10
+  serviceName: grafana-k8s-monitoring-alloy
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: alloy
+      app.kubernetes.io/instance: grafana-k8s-monitoring
+  template:
+    metadata:
+      annotations:
+        kubectl.kubernetes.io/default-container: alloy
+        k8s.grafana.com/logs.job: integrations/alloy
+      labels:
+        app.kubernetes.io/name: alloy
+        app.kubernetes.io/instance: grafana-k8s-monitoring
+    spec:
+      serviceAccountName: grafana-k8s-monitoring-alloy
+      containers:
+        - name: alloy
+          image: docker.io/grafana/alloy:v1.16.1
+          imagePullPolicy: IfNotPresent
+          args:
+            - run
+            - /etc/alloy/config.alloy
+            - --storage.path=/var/lib/agent
+            - --server.http.listen-addr=0.0.0.0:12345
+            - --server.http.ui-path-prefix=/
+            - --cluster.enabled=true
+            - --cluster.join-addresses=grafana-k8s-monitoring-alloy-cluster
+            - --cluster.name=alloy
+            - --stability.level=generally-available
+          env:
+            - name: ALLOY_DEPLOY_MODE
+              value: "helm"
+            - name: HOSTNAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: K8S_NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+          ports:
+            - containerPort: 12345
+              name: http-metrics
+            - containerPort: 4317
+              name: otlp-grpc
+              protocol: TCP
+            - containerPort: 4318
+              name: otlp-http
+              protocol: TCP
+            - containerPort: 9999
+              name: prometheus
+              protocol: TCP
+            - containerPort: 14250
+              name: jaeger-grpc
+              protocol: TCP
+            - containerPort: 6832
+              name: jaeger-binary
+              protocol: UDP
+            - containerPort: 6831
+              name: jaeger-compact
+              protocol: UDP
+            - containerPort: 14268
+              name: jaeger-http
+              protocol: TCP
+            - containerPort: 9411
+              name: zipkin
+              protocol: TCP
+          readinessProbe:
+            httpGet:
+              path: /-/ready
+              port: 12345
+              scheme: HTTP
+            initialDelaySeconds: 10
+            timeoutSeconds: 1
+          resources:
+            limits:
+              memory: ${flux_grafana_agent_resource_memory_limit}
+            requests:
+              memory: ${flux_grafana_agent_resource_memory_request}
+          volumeMounts:
+            - name: config
+              mountPath: /etc/alloy
+            - mountPath: /var/lib/agent
+              name: agent-wal
+        - name: config-reloader
+          image: quay.io/prometheus-operator/prometheus-config-reloader:v0.81.0
+          imagePullPolicy: IfNotPresent
+          args:
+            - --watched-dir=/etc/alloy
+            - --reload-url=http://localhost:12345/-/reload
+          volumeMounts:
+            - name: config
+              mountPath: /etc/alloy
+          resources:
+            requests:
+              cpu: 10m
+              memory: 50Mi
+      priorityClassName: cluster-observability
+      dnsPolicy: ClusterFirst
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - preference:
+                matchExpressions:
+                  - key: dedicated
+                    operator: In
+                    values:
+                      - observability
+              weight: 1
+      nodeSelector:
+        kubernetes.io/os: linux
+      tolerations:
+        - effect: NoSchedule
+          key: observability.dfds
+          operator: Exists
+      volumes:
+        - name: config
+          configMap:
+            name: grafana-k8s-monitoring-alloy
+  volumeClaimTemplates:
+    - metadata:
+        name: agent-wal
+      spec:
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: ${flux_grafana_agent_storage_size}
+        storageClassName: csi-gp3

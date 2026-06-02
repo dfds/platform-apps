@@ -1,0 +1,25 @@
+---
+# Source: k8s-monitoring/templates/tests/test.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: "analyze-grafana-k8s-monitoring"
+  namespace: grafana
+  labels:
+    app.kubernetes.io/managed-by: "Helm"
+    app.kubernetes.io/instance: "grafana-k8s-monitoring"
+  annotations:
+    "helm.sh/hook": test
+    "helm.sh/hook-delete-policy": before-hook-creation
+    "helm.sh/hook-weight": "0"
+spec:
+  restartPolicy: OnFailure
+  nodeSelector:
+    kubernetes.io/os: linux
+  containers:
+    - name: config-analysis
+      image: ghcr.io/grafana/k8s-monitoring-test:1.6.52
+      command: [/etc/bin/config-analysis.sh]
+      env:
+        - name: ALLOY_HOST
+          value: grafana-k8s-monitoring-alloy.grafana.svc:12345
