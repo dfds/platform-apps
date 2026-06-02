@@ -1,0 +1,64 @@
+---
+# Source: gha-runner-scale-set/templates/autoscalingrunnerset.yaml
+apiVersion: actions.github.com/v1alpha1
+kind: AutoscalingRunnerSet
+metadata:
+  name: ${flux-github-arc-runners-scale-set-name}
+  namespace: arc-runners
+  labels:
+    app.kubernetes.io/component: "autoscaling-runner-set"
+    app.kubernetes.io/name: ${flux_github_arc_runners_scale_set_name}
+    app.kubernetes.io/instance: ${flux_github_arc_runners_scale_set_name}
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: gha-rs
+    actions.github.com/scale-set-name: ${flux_github_arc_runners_scale_set_name}
+    actions.github.com/scale-set-namespace: arc-runners
+  annotations:
+    actions.github.com/values-hash: 5638407ee7a6891884408da684745ecd6b04897da56ab7ab2fc61ae3c04a565
+    actions.github.com/cleanup-manager-role-binding: ${flux_github_arc_runners_scale_set_name}-gha-rs-manager
+    actions.github.com/cleanup-manager-role-name: ${flux_github_arc_runners_scale_set_name}-gha-rs-manager
+spec:
+  githubConfigUrl: https://github.com/dfds
+  githubConfigSecret: github-arc-dfds
+  runnerScaleSetName: ${flux_github_arc_runners_scale_set_name}
+  maxRunners: 5
+  minRunners: 1
+  template:
+    spec:
+      securityContext:
+        fsGroup: 123
+      restartPolicy: Never
+      serviceAccountName: arc-runner-set-sa
+      containers:
+        - name: runner
+          command:
+            - /home/runner/run.sh
+          image: ghcr.io/actions/actions-runner:latest
+          resources:
+            limits:
+              memory: ${flux_github_arc_runners_resource_memory}
+            requests:
+              memory: ${flux_github_arc_runners_resource_memory}
+          env:
+            - name: ACTIONS_RUNNER_CONTAINER_HOOKS
+              value: /home/runner/k8s/index.js
+            - name: ACTIONS_RUNNER_POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: ACTIONS_RUNNER_REQUIRE_JOB_CONTAINER
+              value: "false"
+          volumeMounts:
+            - mountPath: /home/runner/_work
+              name: work
+      volumes:
+        - ephemeral:
+            volumeClaimTemplate:
+              spec:
+                accessModes:
+                  - ReadWriteOnce
+                resources:
+                  requests:
+                    storage: 50Gi
+                storageClassName: csi-gp3
+          name: work

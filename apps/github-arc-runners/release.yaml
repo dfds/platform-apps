@@ -12,14 +12,9 @@ spec:
       namespace: arc-systems
     - name: external-secrets
       namespace: external-secrets
-  chart:
-    spec:
-      chart: gha-runner-scale-set
-      version: 0.14.1
-      sourceRef:
-        kind: HelmRepository
-        name: arc
-        namespace: arc-runners
+  chartRef:
+    kind: OCIRepository
+    name: arc
   interval: 10m0s
   install:
     remediation:
@@ -28,6 +23,9 @@ spec:
     githubConfigUrl: https://github.com/dfds
     githubConfigSecret: github-arc-dfds
     runnerScaleSetName: ${flux_github_arc_runners_scale_set_name}
+    controllerServiceAccount:
+      name: arc-gha-rs-controller # This is the service account used by the gha-runner-scale-set-controller, which needs permissions to manage the runner sets
+      namespace: arc-systems # This is the namespace where the gha-runner-scale-set-controller is deployed
     minRunners: 1
     maxRunners: 5
     template:

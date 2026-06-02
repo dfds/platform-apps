@@ -1,0 +1,26 @@
+---
+# Source: gha-runner-scale-set/templates/manager_role_binding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: ${flux_github_arc_runners_scale_set_name}-gha-rs-manager
+  namespace: arc-runners
+  labels:
+    app.kubernetes.io/name: ${flux_github_arc_runners_scale_set_name}
+    app.kubernetes.io/instance: ${flux_github_arc_runners_scale_set_name}
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: gha-rs
+    actions.github.com/scale-set-name: ${flux_github_arc_runners_scale_set_name}
+    actions.github.com/scale-set-namespace: arc-runners
+    app.kubernetes.io/component: manager-role-binding
+  annotations:
+  finalizers:
+    - actions.github.com/cleanup-protection
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: ${flux_github_arc_runners_scale_set_name}-gha-rs-manager
+subjects:
+  - kind: ServiceAccount
+    name: arc-gha-rs-controller
+    namespace: arc-systems
