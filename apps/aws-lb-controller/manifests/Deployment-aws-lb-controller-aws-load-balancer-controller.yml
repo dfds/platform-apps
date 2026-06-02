@@ -40,7 +40,6 @@ spec:
             - --ingress-class=alb
             - --aws-region=${flux_aws_region}
             - --aws-vpc-id=${flux_vpc_id}
-            - --watch-namespace=aws-lb-controller
           securityContext:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
@@ -60,10 +59,10 @@ spec:
               protocol: TCP
           resources:
             limits:
-              memory: 64Mi
+              memory: 128Mi
             requests:
               cpu: 100m
-              memory: 64Mi
+              memory: 128Mi
           livenessProbe:
             failureThreshold: 2
             httpGet:

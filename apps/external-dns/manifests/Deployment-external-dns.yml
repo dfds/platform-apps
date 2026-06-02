@@ -43,7 +43,7 @@ spec:
             runAsGroup: 65532
             runAsNonRoot: true
             runAsUser: 65532
-          image: registry.k8s.io/external-dns/external-dns:v0.20.0
+          image: registry.k8s.io/external-dns/external-dns:v0.21.0
           imagePullPolicy: IfNotPresent
           env:
             - name: AWS_DEFAULT_REGION
@@ -60,11 +60,11 @@ spec:
             - --managed-record-types=AAAA
             - --managed-record-types=CNAME
             - --provider=aws
-            - --aws-assume-role=${flux_external_dns_assume_role_arn}
-            - --aws-prefer-cname
-            - --namespace=external-dns
-            - --zone-id-filter=${flux_external_dns_core_zone_id}
-            - --zone-id-filter=${flux_external_dns_workload_zone_id}
+            - "--aws-assume-role=${flux_external_dns_assume_role_arn}"
+            - "--aws-prefer-cname"
+            - "--namespace=external-dns"
+            - "--zone-id-filter=${flux_external_dns_core_zone_id}"
+            - "--zone-id-filter=${flux_external_dns_workload_zone_id}"
           ports:
             - name: http
               protocol: TCP

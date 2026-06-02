@@ -1,0 +1,63 @@
+---
+# Source: k8s-monitoring/charts/alloy/templates/cluster_service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: grafana-k8s-monitoring-alloy-cluster
+  namespace: grafana
+  labels:
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/instance: grafana-k8s-monitoring
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: alloy
+    app.kubernetes.io/component: networking
+spec:
+  type: ClusterIP
+  clusterIP: 'None'
+  publishNotReadyAddresses: true
+  selector:
+    app.kubernetes.io/name: alloy
+    app.kubernetes.io/instance: grafana-k8s-monitoring
+  ports:
+    # Do not include the -metrics suffix in the port name, otherwise metrics
+    # can be double-collected with the non-headless Service if it's also
+    # enabled.
+    #
+    # This service should only be used for clustering, and not metric
+    # collection.
+    - name: http
+      port: 12345
+      targetPort: 12345
+      protocol: "TCP"
+    - name: otlp-grpc
+      port: 4317
+      targetPort: 4317
+      protocol: TCP
+    - name: otlp-http
+      port: 4318
+      targetPort: 4318
+      protocol: TCP
+    - name: prometheus
+      port: 9999
+      targetPort: 9999
+      protocol: TCP
+    - name: jaeger-grpc
+      port: 14250
+      targetPort: 14250
+      protocol: TCP
+    - name: jaeger-binary
+      port: 6832
+      targetPort: 6832
+      protocol: UDP
+    - name: jaeger-compact
+      port: 6831
+      targetPort: 6831
+      protocol: UDP
+    - name: jaeger-http
+      port: 14268
+      targetPort: 14268
+      protocol: TCP
+    - name: zipkin
+      port: 9411
+      targetPort: 9411
+      protocol: TCP
