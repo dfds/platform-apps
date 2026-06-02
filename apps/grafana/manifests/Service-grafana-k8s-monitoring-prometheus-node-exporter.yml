@@ -12,8 +12,6 @@ metadata:
     app.kubernetes.io/name: prometheus-node-exporter
     app.kubernetes.io/instance: grafana-k8s-monitoring
     release: grafana-k8s-monitoring
-  annotations:
-    prometheus.io/scrape: "true"
 spec:
   type: ClusterIP
   ports:
