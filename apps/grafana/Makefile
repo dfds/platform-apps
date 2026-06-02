@@ -23,6 +23,13 @@ crds.yaml: $(release) $(source)
 manifests: $(release) $(source)
 	mkdir -p manifests
 	rm -rf manifests/*
-	helm template $(name) $(chart) --repo $(url) --version $(version) --namespace $(namespace) --skip-crds -f <(echo "$$($(values))") | grep -vE "helm.sh/chart|app.kubernetes.io/version" | yq -s '"manifests/" + .kind + "-" + .metadata.name'
+	helm template $(name) $(chart) --repo $(url) --version $(version) --namespace $(namespace) --skip-crds -f <(echo "$$($(values))") | grep -vE "helm.sh/chart|app.kubernetes.io/version" | yq 'select(. != null)' | yq -s '"manifests/" + .kind + "-" + .metadata.name'
 
-.PHONY: all manifests
+# Move Prometheus CRDs from manifests to crds.yaml
+move-prometheus-crds:
+	@if ls manifests/CustomResourceDefinition-* 1> /dev/null 2>&1; then \
+		cat manifests/CustomResourceDefinition-* >> crds.yaml; \
+		rm manifests/CustomResourceDefinition-*; \
+	fi
+
+.PHONY: all manifests move-prometheus-crds
