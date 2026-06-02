@@ -23,7 +23,7 @@ crds.yaml: $(release) $(source)
 manifests: $(release) $(source)
 	mkdir -p manifests
 	rm -rf manifests/*
-	helm template $(name) $(chart) --repo $(url) --version $(version) --namespace $(namespace) --skip-crds -f <(echo "$$($(values))") | grep -vE "helm.sh/chart|app.kubernetes.io/version" | yq 'select(. != null)' | yq -s '"manifests/" + .kind + "-" + .metadata.name'
+	helm template $(name) $(chart) --repo $(url) --version $(version) --namespace $(namespace) --skip-crds --set prometheus-operator-crds.enabled=true -f <(echo "$$($(values))") | grep -vE "helm.sh/chart|app.kubernetes.io/version" | yq 'select(. != null)' | yq -s '"manifests/" + .kind + "-" + .metadata.name'
 
 # Move Prometheus CRDs from manifests to crds.yaml
 move-prometheus-crds:
