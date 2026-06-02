@@ -13,7 +13,7 @@ values := yq '.spec.values' $(release)
 url := $(shell yq '.spec.url' $(source))
 
 # Run all tasks
-all: crds.yaml manifests
+all: crds.yaml manifests move-prometheus-crds
 
 # Generate CRDs with helm
 crds.yaml: $(release) $(source)
@@ -32,4 +32,4 @@ move-prometheus-crds:
 		rm manifests/CustomResourceDefinition-*; \
 	fi
 
-.PHONY: all manifests move-prometheus-crds
+.PHONY: all manifests crds.yaml move-prometheus-crds

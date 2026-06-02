@@ -14,7 +14,6 @@ spec:
   selector:
     app.kubernetes.io/name: alloy
     app.kubernetes.io/instance: grafana-k8s-monitoring
-  internalTrafficPolicy: Cluster
   ports:
     - name: http-metrics
       port: 12345
