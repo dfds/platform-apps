@@ -11,7 +11,7 @@ on:
 
 jobs:
   shared:
-    uses: dfds/shared-workflows/.github/workflows/automation-auto-release.yml@master
+    uses: dfds/shared-workflows/.github/workflows/automation-auto-release.yml@v2.0.1
     # Note, make sure to use `secrets: inherit` if utilizing the organizational secret `GH_RELEASE`
     secrets: inherit
 
