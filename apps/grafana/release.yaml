@@ -94,9 +94,9 @@ spec:
               name: agent-wal
         resources:
           requests:
-            memory: ${flux_grafana_agent_resource_memory_request}
+            memory: ${flux_grafana_agent_resource_memory}
           limits:
-            memory: ${flux_grafana_agent_resource_memory_limit}
+            memory: ${flux_grafana_agent_resource_memory}
       controller:
         replicas: ${flux_grafana_agent_replicas}
         priorityClassName: cluster-observability
