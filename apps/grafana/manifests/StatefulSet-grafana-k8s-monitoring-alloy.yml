@@ -90,9 +90,9 @@ spec:
             timeoutSeconds: 1
           resources:
             limits:
-              memory: ${flux_grafana_agent_resource_memory_limit}
+              memory: ${flux_grafana_agent_resource_memory}
             requests:
-              memory: ${flux_grafana_agent_resource_memory_request}
+              memory: ${flux_grafana_agent_resource_memory}
           volumeMounts:
             - name: config
               mountPath: /etc/alloy
