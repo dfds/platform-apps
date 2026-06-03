@@ -4,6 +4,7 @@ repos:
     hooks:
       - id: check-yaml
         args: [--allow-multiple-documents]
+        exclude: ^apps/grafana/crds.yaml$ # failing could not determine a constructor for the tag 'tag:yaml.org,2002:value'
   - repo: local
     hooks:
       - id: kustomize
