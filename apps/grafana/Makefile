@@ -18,11 +18,14 @@ all: crds.yaml manifests
 # Generate CRDs with helm
 crds.yaml: $(release) $(source)
 	helm show crds $(chart) --repo $(url) --version $(version) > $@
+	echo "---" >> $@
+	helm template $(name) $(chart) --repo $(url) --version $(version) --namespace $(namespace) -f <(echo "$$($(values))") --set prometheus-operator-crds.enabled=true | yq 'select(.kind == "CustomResourceDefinition")' >> $@
 
 # Render template with helm (filtering away noisy annotations when diffing)
 manifests: $(release) $(source)
 	mkdir -p manifests
 	rm -rf manifests/*
-	helm template $(name) $(chart) --repo $(url) --version $(version) --namespace $(namespace) --skip-crds -f <(echo "$$($(values))") | grep -vE "helm.sh/chart|app.kubernetes.io/version" | yq -s '"manifests/" + .kind + "-" + .metadata.name'
+	helm template $(name) $(chart) --repo $(url) --version $(version) --namespace $(namespace) --skip-crds -f <(echo "$$($(values))") | grep -vE "helm.sh/chart|app.kubernetes.io/version" | yq 'select(. != null)' | yq -s '"manifests/" + .kind + "-" + .metadata.name'
+	rm -rf manifests/CustomResourceDefinition-*
 
-.PHONY: all manifests
+.PHONY: all manifests crds.yaml
