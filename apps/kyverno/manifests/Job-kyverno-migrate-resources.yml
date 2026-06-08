@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/component: hooks
     app.kubernetes.io/instance: kyverno
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kyverno-hooks
     app.kubernetes.io/part-of: kyverno
   annotations:
     helm.sh/hook: post-upgrade
@@ -22,8 +23,8 @@ spec:
       automountServiceAccountToken: true
       restartPolicy: Never
       containers:
-        - name: kubectl
-          image: "reg.kyverno.io/kyverno/kyverno-cli:v1.17.1"
+        - name: kyverno-cli
+          image: "reg.kyverno.io/kyverno/kyverno-cli:v1.18.0"
           imagePullPolicy: IfNotPresent
           args:
             - migrate

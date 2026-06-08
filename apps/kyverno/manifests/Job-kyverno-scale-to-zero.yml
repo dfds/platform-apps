@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/component: hooks
     app.kubernetes.io/instance: kyverno
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kyverno-hooks
     app.kubernetes.io/part-of: kyverno
   annotations:
     helm.sh/hook: pre-delete
@@ -23,17 +24,10 @@ spec:
       restartPolicy: Never
       containers:
         - name: kubectl
-          image: "registry.k8s.io/kubectl:v1.34.3"
+          image: "ghcr.io/kyverno/readiness-checker:v1.18.0"
           imagePullPolicy:
-          command:
-            - kubectl
-            - scale
-            - -n
-            - kyverno
-            - deployment
-            - -l
-            - app.kubernetes.io/part-of=kyverno
-            - --replicas=0
+          args:
+            - scale-deploy
           resources:
             limits:
               cpu: 100m
