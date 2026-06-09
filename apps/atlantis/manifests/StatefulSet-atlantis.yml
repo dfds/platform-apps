@@ -367,21 +367,6 @@ spec:
                 secretKeyRef:
                   name: atlantis-environment
                   key: PRODUCTION_falco_slack_alert_webhook_url
-            - name: PRODUCTION_falco_stream_webhook_url
-              valueFrom:
-                secretKeyRef:
-                  name: atlantis-environment
-                  key: PRODUCTION_falco_stream_webhook_url
-            - name: STANDBY_falco_slack_alert_webhook_url
-              valueFrom:
-                secretKeyRef:
-                  name: atlantis-environment
-                  key: STANDBY_falco_slack_alert_webhook_url
-            - name: STANDBY_falco_stream_webhook_url
-              valueFrom:
-                secretKeyRef:
-                  name: atlantis-environment
-                  key: STANDBY_falco_stream_webhook_url
             - name: ATLANTIS_DISABLE_APPLY
               value: "true"
             - name: ATLANTIS_DISABLE_APPLY_ALL
