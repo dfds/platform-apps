@@ -1,10 +1,10 @@
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
-namespace: grafana
 metadata:
   labels:
     app: prometheus-service-metrics-scraper
   name: prometheus-service-metrics-scraper
+  namespace: grafana
 spec:
   endpoints:
     - path: /metrics
