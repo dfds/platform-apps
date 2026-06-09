@@ -9,4 +9,4 @@ resources:
   - externalsecret-alloy.yaml
   - sources.yaml
   - release.yaml
-  - servicemonitor.yaml
+  #- servicemonitor.yaml
