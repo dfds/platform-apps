@@ -275,6 +275,10 @@ spec:
         secretKeyRef:
           key: PRODUCTION_falco_slack_alert_webhook_url
           name: atlantis-environment
+      - name: STANDBY_falco_slack_alert_webhook_url
+        secretKeyRef:
+          key: STANDBY_falco_slack_alert_webhook_url
+          name: atlantis-environment
     extraArgs:
       - --parallel-pool-size=15
       - --default-tf-distribution=opentofu
