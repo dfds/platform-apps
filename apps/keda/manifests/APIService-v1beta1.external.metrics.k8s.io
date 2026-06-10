@@ -1,0 +1,21 @@
+---
+# Source: keda/templates/metrics-server/apiservice.yaml
+apiVersion: apiregistration.k8s.io/v1
+kind: APIService
+metadata:
+  labels:
+    app.kubernetes.io/name: v1beta1.external.metrics.k8s.io
+    app.kubernetes.io/component: operator
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/part-of: keda-operator
+    app.kubernetes.io/instance: keda
+  name: v1beta1.external.metrics.k8s.io
+spec:
+  service:
+    name: keda-operator-metrics-apiserver
+    namespace: keda
+    port: 443
+  group: external.metrics.k8s.io
+  version: v1beta1
+  groupPriorityMinimum: 100
+  versionPriority: 100
