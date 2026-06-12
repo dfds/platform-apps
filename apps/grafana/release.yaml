@@ -19,8 +19,6 @@ spec:
     crds: CreateReplace
   upgrade:
     crds: CreateReplace
-    remediation:
-      retries: 3
   values:
     cluster:
       name: ${flux_cluster_name}
