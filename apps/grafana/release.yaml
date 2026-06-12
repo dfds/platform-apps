@@ -252,7 +252,7 @@ spec:
           maxUnavailable: 25%
 
     prometheus-operator-crds:
-      enabled: false
+      enabled: true
     extraObjects:
       - apiVersion: monitoring.coreos.com/v1
         kind: ServiceMonitor
