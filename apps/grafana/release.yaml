@@ -16,8 +16,9 @@ spec:
         namespace: grafana
   interval: 1m0s
   install:
-    remediation:
-      retries: 3
+    crds: Skip
+  upgrade:
+    crds: Skip
   values:
     cluster:
       name: ${flux_cluster_name}
@@ -249,7 +250,7 @@ spec:
           maxUnavailable: 25%
 
     prometheus-operator-crds:
-      enabled: true
+      enabled: false
     extraObjects:
       - apiVersion: monitoring.coreos.com/v1
         kind: ServiceMonitor
