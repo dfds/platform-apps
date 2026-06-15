@@ -26,6 +26,11 @@ spec:
   values:
     deployment:
       replicas: 3
+      terminationGracePeriodSeconds: 320 # needs to be higher than lifecycle.prestop period
+      lifecycle:
+        preStop:
+          sleep:
+            seconds: 300 # has be on the order of targetgroup derigstration delay 300s and needs to be lower than terminationGracePeriodSeconds
     gateway:
       listeners:
         web:

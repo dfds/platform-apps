@@ -35,7 +35,7 @@ spec:
     spec:
       serviceAccountName: traefik-blue-variant
       automountServiceAccountToken: true
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: 320
       hostNetwork: false
       containers:
         - image: docker.io/traefik:v3.6.2
@@ -68,6 +68,9 @@ spec:
             successThreshold: 1
             timeoutSeconds: 2
           lifecycle:
+            preStop:
+              sleep:
+                seconds: 300
           ports:
             - name: metrics
               containerPort: 9100
