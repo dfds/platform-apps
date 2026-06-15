@@ -250,24 +250,4 @@ spec:
 
     prometheus-operator-crds:
       enabled: true
-    extraObjects:
-      - apiVersion: monitoring.coreos.com/v1
-        kind: ServiceMonitor
-        metadata:
-          labels:
-            app: prometheus-service-metrics-scraper
-          name: prometheus-service-metrics-scraper
-        spec:
-          endpoints:
-            - path: /metrics
-              port: metrics
-              scrapeTimeout: 120s
-            - path: /metrics
-              port: admin
-            - path: /metrics
-              port: http
-          namespaceSelector:
-            any: true
-          selector:
-            matchLabels:
-              scrape-service-metrics: "true"
+    extraObjects: []
