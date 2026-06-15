@@ -1,0 +1,18 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: traefik-nlb-metrics
+    scrape-service-metrics: "true"
+  name: traefik-nlb-metrics
+  namespace: traefik-nlb
+spec:
+  ports:
+    - name: metrics
+      port: 9100
+      protocol: TCP
+      targetPort: 9100
+  selector:
+    app.kubernetes.io/instance: traefik-nlb-traefik-nlb
+    app.kubernetes.io/name: traefik
+  type: ClusterIP
