@@ -16,6 +16,7 @@ spec:
         namespace: grafana
   interval: 1m0s
   install:
+    crds: Skip
     remediation:
       retries: 3
   values:
@@ -249,5 +250,5 @@ spec:
           maxUnavailable: 25%
 
     prometheus-operator-crds:
-      enabled: true
+      enabled: false
     extraObjects: []
