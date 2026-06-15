@@ -4,6 +4,7 @@ metadata:
   labels:
     app: prometheus-service-metrics-scraper
   name: prometheus-service-metrics-scraper
+  namespace: grafana
 spec:
   endpoints:
     - path: /metrics
