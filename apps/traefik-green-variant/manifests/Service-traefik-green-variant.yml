@@ -12,8 +12,7 @@ metadata:
     scrape-service-metrics: "true"
   annotations:
 spec:
-  type: NodePort
-  externalTrafficPolicy: Cluster
+  type: ClusterIP
   selector:
     app.kubernetes.io/name: traefik
     app.kubernetes.io/instance: traefik-green-variant-traefik-green-variant
@@ -22,9 +21,7 @@ spec:
       name: traefik
       targetPort: traefik
       protocol: TCP
-      nodePort: ${flux_traefik_green_target_admin_port}
     - port: 80
       name: web
       targetPort: web
       protocol: TCP
-      nodePort: ${flux_traefik_green_target_http_port}

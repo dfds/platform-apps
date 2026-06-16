@@ -65,11 +65,9 @@ spec:
       traefik:
         expose:
           default: true
-        nodePort: ${flux_traefik_green_target_admin_port}
       web:
         forwardedHeaders:
           insecure: true
-        nodePort: ${flux_traefik_green_target_http_port}
       websecure:
         expose:
           default: false
@@ -91,6 +89,4 @@ spec:
       enabled: true
       labels:
         scrape-service-metrics: "true"
-      spec:
-        externalTrafficPolicy: Cluster
-      type: NodePort
+      type: ClusterIP
