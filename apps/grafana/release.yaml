@@ -17,6 +17,8 @@ spec:
   interval: 1m0s
   install:
     crds: Skip
+  upgrade:
+    crds: Skip
     remediation:
       retries: 3
   values:
@@ -251,4 +253,3 @@ spec:
 
     prometheus-operator-crds:
       enabled: false
-    extraObjects: []

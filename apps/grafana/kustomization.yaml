@@ -10,4 +10,4 @@ resources:
   - externalsecret-alloy.yaml
   - sources.yaml
   - release.yaml
-  - servicemonitor.yaml # disabling this because the install is still failing on this message: ServiceMonitor/prometheus-service-metrics-scraper namespace not specified: the server could not find the requested resource (patch servicemonitors.monitoring.coreos.com prometheus-service-metrics-scraper)
+  - servicemonitor.yaml
