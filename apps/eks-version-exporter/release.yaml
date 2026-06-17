@@ -18,9 +18,9 @@ spec:
         name: eks-version-exporter
         namespace: monitoring
   interval: 1m0s
-  # install:
-  #   remediation:
-  #     retries: 3
+  install:
+    remediation:
+      retries: 3
   values:
     priorityClassName: cluster-observability
     image:
