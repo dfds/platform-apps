@@ -1,0 +1,56 @@
+apiVersion: kyverno.io/v1
+kind: ClusterPolicy
+metadata:
+  name: ecr-pull-compliance
+  annotations:
+    policies.kyverno.io/title: ECR Pull Policy Compliance Check
+    policies.kyverno.io/category: Requirement
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Pod
+    policies.kyverno.io/description: >-
+      Validates that container images from org-owned ECR repositories have
+      compliant pull policies that allow cross-account access within the
+      AWS Organization.
+spec:
+  validationFailureAction: Audit
+  background: true
+  emitWarning: true
+  rules:
+    - name: check-ecr-image-compliance
+      match:
+        any:
+          - resources:
+              kinds:
+                - Pod
+              operations:
+                - CREATE
+                - UPDATE
+      exclude:
+        any:
+        - resources:
+            namespaces:
+              - kube-system
+              - kyverno
+      validate:
+        message: >-
+          Image {{ element.image }} references an ECR repository that does not
+          have a compliant pull policy. The repository must have a policy that
+          allows pull access for all accounts in the AWS Organization.
+          Reason: {{ complianceCheck.reason }}
+        foreach:
+          - list: "request.object.spec.containers"
+            context:
+              - name: complianceCheck
+                apiCall:
+                  method: POST
+                  data:
+                    - key: image
+                      value: "{{ element.image }}"
+                  service:
+                    url: http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc:8080/api/v1/compliance/check
+            deny:
+              conditions:
+                all:
+                  - key: "{{ complianceCheck.allowed }}"
+                    operator: Equals
+                    value: false
