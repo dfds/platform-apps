@@ -31,6 +31,13 @@ spec:
         preStop:
           sleep:
             seconds: 300 # has be on the order of targetgroup derigstration delay 300s and needs to be lower than terminationGracePeriodSeconds
+    topologySpreadConstraints:
+     - labelSelector:
+         matchLabels:
+           app.kubernetes.io/instance: traefik-green-variant-traefik-green-variant
+       maxSkew: 1
+       topologyKey: kubernetes.io/hostname
+       whenUnsatisfiable: DoNotSchedule
     gateway:
       listeners:
         web:
