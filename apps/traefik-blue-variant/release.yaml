@@ -19,6 +19,7 @@ spec:
         name: traefik
         namespace: traefik-blue-variant
   interval: 1m0s
+  timeout: 10m
   install:
     crds: Skip
     remediation:
