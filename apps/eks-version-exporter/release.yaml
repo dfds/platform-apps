@@ -23,5 +23,3 @@ spec:
       retries: 3
   values:
     priorityClassName: cluster-observability
-    image:
-      tag: "887808"
