@@ -29,7 +29,7 @@ spec:
         kubernetes.io/os: linux
       containers:
         - name: query-test
-          image: ghcr.io/grafana/k8s-monitoring-test:1.6.52
+          image: ghcr.io/grafana/k8s-monitoring-test:1.6.54
           command: ["bash", "-c", "/etc/bin/query-test.sh /etc/test/testQueries.json"]
           volumeMounts:
             - name: test-files

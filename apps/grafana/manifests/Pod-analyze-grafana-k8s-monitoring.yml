@@ -18,7 +18,7 @@ spec:
     kubernetes.io/os: linux
   containers:
     - name: config-analysis
-      image: ghcr.io/grafana/k8s-monitoring-test:1.6.52
+      image: ghcr.io/grafana/k8s-monitoring-test:1.6.54
       command: [/etc/bin/config-analysis.sh]
       env:
         - name: ALLOY_HOST
