@@ -150,4 +150,4 @@ spec:
               app.kubernetes.io/instance: traefik-blue-variant-traefik-blue-variant
           maxSkew: 1
           topologyKey: kubernetes.io/hostname
-          whenUnsatisfiable: DoNotSchedule
+          whenUnsatisfiable: ScheduleAnyway
