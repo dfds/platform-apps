@@ -1,0 +1,27 @@
+---
+apiVersion: helm.toolkit.fluxcd.io/v2
+kind: HelmRelease
+metadata:
+  name: eks-version-exporter
+  namespace: monitoring
+spec:
+  releaseName: eks-version-exporter
+  serviceAccountName: helm-controller
+  driftDetection:
+    mode: enabled # This is not a traditional helm chart with releases, so it is consumed from branch
+  chart:
+    spec:
+      chart: chart
+      reconcileStrategy: Revision # This is not a traditional helm chart with releases, so it is consumed from branch
+      sourceRef:
+        kind: GitRepository
+        name: eks-version-exporter
+        namespace: monitoring
+  interval: 1m0s
+  install:
+    remediation:
+      retries: 3
+  values:
+    priorityClassName: cluster-observability
+    image:
+      tag: "latest"
