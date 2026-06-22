@@ -19,6 +19,7 @@ spec:
         name: traefik
         namespace: traefik-blue-variant
   interval: 1m0s
+  timeout: 10m
   install:
     crds: Skip
     remediation:
@@ -37,7 +38,7 @@ spec:
            app.kubernetes.io/instance: traefik-blue-variant-traefik-blue-variant
        maxSkew: 1
        topologyKey: kubernetes.io/hostname
-       whenUnsatisfiable: DoNotSchedule
+       whenUnsatisfiable: ScheduleAnyway
     gateway:
       listeners:
         web:
