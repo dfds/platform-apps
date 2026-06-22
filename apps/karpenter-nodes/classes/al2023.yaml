@@ -28,6 +28,8 @@ spec:
     maxPods: 110
     kubeReserved:
       memory: 1465Mi # 255Mi + (11Mi * maxPods)
+    systemReserved:
+      memory: 200Mi
   userData: |
     MIME-Version: 1.0
     Content-Type: multipart/mixed; boundary="BOUNDARY"
@@ -92,6 +94,8 @@ spec:
     maxPods: 110
     kubeReserved:
       memory: 1465Mi # 255Mi + (11Mi * maxPods)
+    systemReserved:
+      memory: 200Mi
   userData: |
     MIME-Version: 1.0
     Content-Type: multipart/mixed; boundary="BOUNDARY"
