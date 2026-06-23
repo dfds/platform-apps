@@ -15,6 +15,7 @@ spec:
   validationFailureAction: Audit
   background: true
   emitWarning: true
+
   rules:
     - name: check-ecr-image-compliance
       match:
@@ -25,20 +26,20 @@ spec:
               operations:
                 - CREATE
                 - UPDATE
+
       exclude:
         any:
-        - resources:
-            namespaces:
-              - kube-system
-              - kyverno
+          - resources:
+              namespaces:
+                - kube-system
+                - kyverno
+
       validate:
-        message: >-
-          Image {{ element.image }} references an ECR repository that does not
-          have a compliant pull policy. The repository must have a policy that
-          allows pull access for all accounts in the AWS Organization.
-          Reason: {{ complianceCheck.reason }}
         foreach:
+
+          # Regular containers
           - list: "request.object.spec.containers"
+
             context:
               - name: complianceCheck
                 apiCall:
@@ -48,6 +49,63 @@ spec:
                       value: "{{ element.image }}"
                   service:
                     url: http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc:8080/api/v1/compliance/check
+
+            message: >-
+              Image {{ element.image }} references an ECR repository that does
+              not have a compliant pull policy. The repository must have a
+              policy that allows pull access for all accounts in the AWS
+              Organization. Reason: {{ complianceCheck.reason }}
+
+            deny:
+              conditions:
+                all:
+                  - key: "{{ complianceCheck.allowed }}"
+                    operator: Equals
+                    value: false
+
+          # Init containers
+          - list: "request.object.spec.initContainers || `[]`"
+
+            context:
+              - name: complianceCheck
+                apiCall:
+                  method: POST
+                  data:
+                    - key: image
+                      value: "{{ element.image }}"
+                  service:
+                    url: http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc:8080/api/v1/compliance/check
+
+            message: >-
+              Init container image {{ element.image }} references an ECR
+              repository that does not have a compliant pull policy.
+              Reason: {{ complianceCheck.reason }}
+
+            deny:
+              conditions:
+                all:
+                  - key: "{{ complianceCheck.allowed }}"
+                    operator: Equals
+                    value: false
+
+          # Ephemeral containers
+          - list: "request.object.spec.ephemeralContainers || `[]`"
+
+            context:
+              - name: complianceCheck
+                apiCall:
+                  method: POST
+                  data:
+                    - key: image
+                      value: "{{ element.image }}"
+                  service:
+                    url: http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc:8080/api/v1/compliance/check
+
+            message: >-
+              Ephemeral container image {{ element.image }} references an ECR
+              repository that does not have a compliant pull policy.
+              Reason: {{ complianceCheck.reason }}
+
             deny:
               conditions:
                 all:
