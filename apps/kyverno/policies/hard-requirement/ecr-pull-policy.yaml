@@ -35,11 +35,14 @@ spec:
                 - kyverno
 
       validate:
+        message: >-
+          One or more container images reference an ECR repository that does
+          not have a compliant pull policy.
+
         foreach:
 
-          # Regular containers
+          # Standard containers
           - list: "request.object.spec.containers"
-
             context:
               - name: complianceCheck
                 apiCall:
@@ -49,13 +52,6 @@ spec:
                       value: "{{ element.image }}"
                   service:
                     url: http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc:8080/api/v1/compliance/check
-
-            message: >-
-              Image {{ element.image }} references an ECR repository that does
-              not have a compliant pull policy. The repository must have a
-              policy that allows pull access for all accounts in the AWS
-              Organization. Reason: {{ complianceCheck.reason }}
-
             deny:
               conditions:
                 all:
@@ -65,7 +61,6 @@ spec:
 
           # Init containers
           - list: "request.object.spec.initContainers || `[]`"
-
             context:
               - name: complianceCheck
                 apiCall:
@@ -75,12 +70,6 @@ spec:
                       value: "{{ element.image }}"
                   service:
                     url: http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc:8080/api/v1/compliance/check
-
-            message: >-
-              Init container image {{ element.image }} references an ECR
-              repository that does not have a compliant pull policy.
-              Reason: {{ complianceCheck.reason }}
-
             deny:
               conditions:
                 all:
@@ -90,7 +79,6 @@ spec:
 
           # Ephemeral containers
           - list: "request.object.spec.ephemeralContainers || `[]`"
-
             context:
               - name: complianceCheck
                 apiCall:
@@ -100,12 +88,6 @@ spec:
                       value: "{{ element.image }}"
                   service:
                     url: http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc:8080/api/v1/compliance/check
-
-            message: >-
-              Ephemeral container image {{ element.image }} references an ECR
-              repository that does not have a compliant pull policy.
-              Reason: {{ complianceCheck.reason }}
-
             deny:
               conditions:
                 all:
