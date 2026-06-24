@@ -43,10 +43,10 @@ spec:
           name: traefik-blue-variant
           resources:
             limits:
-              memory: 512Mi
+              memory: 640Mi
             requests:
-              cpu: 150m
-              memory: 512Mi
+              cpu: 200m
+              memory: 640Mi
           readinessProbe:
             httpGet:
               path: /ping
@@ -133,7 +133,7 @@ spec:
             - name: USER
               value: traefik
             - name: GOMEMLIMIT
-              value: "460MiB"
+              value: "576MiB"
       volumes:
         - name: data
           emptyDir: {}
