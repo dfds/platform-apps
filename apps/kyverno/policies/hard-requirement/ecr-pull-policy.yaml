@@ -16,6 +16,12 @@ spec:
   background: true
   emitWarning: true
 
+  # Fail-open at the webhook level: if Kyverno (or its webhook) is
+  # unreachable or times out, allow the request rather than block it.
+  webhookConfiguration:
+    failurePolicy: Ignore
+    timeoutSeconds: 10
+
   rules:
     - name: check-ecr-image-compliance
       match:
@@ -39,6 +45,7 @@ spec:
           One or more container images reference an ECR repository that does
           not have a compliant pull policy. Visit https://wiki.dfds.cloud/en/playbooks/requirements/ECR 
           for more information.
+
         foreach:
 
           # Standard containers
@@ -55,6 +62,9 @@ spec:
                     headers:
                       - key: Content-Type
                         value: application/json
+                  # Fail-open: if the service errors, treat the image as allowed.
+                  default:
+                    allowed: true
             deny:
               conditions:
                 all:
@@ -76,6 +86,9 @@ spec:
                     headers:
                       - key: Content-Type
                         value: application/json
+                  # Fail-open: if the service errors, treat the image as allowed.
+                  default:
+                    allowed: true
             deny:
               conditions:
                 all:
@@ -97,6 +110,9 @@ spec:
                     headers:
                       - key: Content-Type
                         value: application/json
+                  # Fail-open: if the service errors, treat the image as allowed.
+                  default:
+                    allowed: true
             deny:
               conditions:
                 all:
