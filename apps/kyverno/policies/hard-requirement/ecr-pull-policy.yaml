@@ -37,8 +37,8 @@ spec:
       validate:
         message: >-
           One or more container images reference an ECR repository that does
-          not have a compliant pull policy.
-
+          not have a compliant pull policy. Visit https://wiki.dfds.cloud/en/playbooks/requirements/ECR 
+          for more information.
         foreach:
 
           # Standard containers
