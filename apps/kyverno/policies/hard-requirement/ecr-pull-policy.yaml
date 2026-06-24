@@ -52,6 +52,9 @@ spec:
                       value: "{{ element.image }}"
                   service:
                     url: http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc.cluster.local:8080/api/v1/compliance/check
+                    headers:
+                      - key: Content-Type
+                        value: application/json
             deny:
               conditions:
                 all:
@@ -69,7 +72,10 @@ spec:
                     - key: image
                       value: "{{ element.image }}"
                   service:
-                    url: http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc:8080/api/v1/compliance/check
+                    url: http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc.cluster.local:8080/api/v1/compliance/check
+                    headers:
+                      - key: Content-Type
+                        value: application/json
             deny:
               conditions:
                 all:
@@ -87,7 +93,10 @@ spec:
                     - key: image
                       value: "{{ element.image }}"
                   service:
-                    url: http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc:8080/api/v1/compliance/check
+                    url: http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc.cluster.local:8080/api/v1/compliance/check
+                    headers:
+                      - key: Content-Type
+                        value: application/json
             deny:
               conditions:
                 all:
