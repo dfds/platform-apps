@@ -14,9 +14,9 @@ metadata:
 spec:
   # Fail-open at the webhook level: if Kyverno (or the compliance service) is
   # unreachable or times out, the http.Post expression errors and the request
-  # is admitted rather than blocked (the failure is still recorded as an `error`
-  # result in policy reports). This replaces the ClusterPolicy
-  # webhookConfiguration.failurePolicy: Ignore and apiCall.default fail-open.
+  # is admitted rather than blocked.
+  # Note: this does not emit a  a dedicated "admitted without verification" warning
+  # as it does not seem possible with the new CEL policies
   failurePolicy: Ignore
 
   # Without this, ValidatingPolicy only matches Pods,
@@ -64,104 +64,20 @@ spec:
         object.spec.containers
         + object.spec.?initContainers.orValue([])
         + object.spec.?ephemeralContainers.orValue([])
-    # One compliance check per image. http.Post merges the decoded JSON body
-    # with a "statusCode" field, so r.statusCode, r.allowed and r.reason are
-    # all available. If any call errors at the transport level (service down,
-    # timeout, DNS), this whole expression throws and the request fails open
-    # via failurePolicy: Ignore.
-    - name: responses
-      expression: >-
-        variables.allContainers.map(c,
+
+  validations:
+    # Per-image POST to the compliance exporter. deny(allowed == false) is
+    # inverted to an assertion that every image is allowed.
+    - expression: >-
+        variables.allContainers.all(c,
           http.Post(
             "http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc.cluster.local:8080/api/v1/compliance/check",
             {"image": c.image},
-            {"Content-Type": "application/json"}))
-
-  validations:
-    # Fail-open: only block when the service returned 200 AND said allowed:false.
-    # A non-200 response means we could not verify, so it passes here (the
-    # ecr-pull-availability policy surfaces those as warnings instead).
-    - expression: >-
-        variables.responses.all(r, r.statusCode != 200 || r.?allowed.orValue(true) == true)
+            {"Content-Type": "application/json"}
+          ).allowed == true
+        )
       message: >-
         One or more container images reference an ECR repository that does
         not have a compliant pull policy. Visit
         https://wiki.dfds.cloud/en/playbooks/requirements/ECR
         for more information.
----
-apiVersion: policies.kyverno.io/v1
-kind: ValidatingPolicy
-metadata:
-  name: ecr-pull-availability
-  annotations:
-    policies.kyverno.io/title: ECR Pull Compliance Service Availability
-    policies.kyverno.io/category: Requirement
-    policies.kyverno.io/severity: medium
-    policies.kyverno.io/subject: Pod
-    policies.kyverno.io/description: >-
-      Warns (never blocks) when the ECR pull compliance service answered with a
-      non-OK status or self-reported as degraded, meaning one or more images
-      were admitted without verification. True service outages (unreachable)
-      cannot be turned into a warning and instead surface as `error` results in
-      policy reports.
-spec:
-  failurePolicy: Ignore
-
-  autogen:
-    podControllers:
-      controllers:
-        - deployments
-        - statefulsets
-        - daemonsets
-        - jobs
-        - cronjobs
-
-  webhookConfiguration:
-    timeoutSeconds: 10
-
-  evaluation:
-    background:
-      enabled: true
-
-  # Audit records a report entry; Warn returns a user-facing admission warning.
-  validationActions:
-    - Audit
-    - Warn
-
-  matchConstraints:
-    resourceRules:
-      - apiGroups: ['']
-        apiVersions: ['v1']
-        operations:
-          - CREATE
-          - UPDATE
-        resources:
-          - pods
-
-  matchConditions:
-    - name: exclude-system-namespaces
-      expression: "!(object.metadata.namespace in ['kube-system', 'kyverno'])"
-
-  variables:
-    - name: allContainers
-      expression: >-
-        object.spec.containers
-        + object.spec.?initContainers.orValue([])
-        + object.spec.?ephemeralContainers.orValue([])
-    - name: responses
-      expression: >-
-        variables.allContainers.map(c,
-          http.Post(
-            "http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc.cluster.local:8080/api/v1/compliance/check",
-            {"image": c.image},
-            {"Content-Type": "application/json"}))
-
-  validations:
-    # Warn when the service answered but not with a clean 200, or when it
-    # self-reported as degraded. Passing means every image got a healthy 200.
-    - expression: >-
-        variables.responses.all(r, r.statusCode == 200 && r.?reason.orValue('') != 'check_unavailable')
-      message: >-
-        The ECR pull compliance service was unavailable or returned a non-OK
-        status; one or more container images were admitted without verification.
-        See https://wiki.dfds.cloud/en/playbooks/requirements/ECR
