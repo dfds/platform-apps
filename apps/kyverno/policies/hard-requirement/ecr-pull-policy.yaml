@@ -19,17 +19,6 @@ spec:
   # as it does not seem possible with the new CEL policies
   failurePolicy: Ignore
 
-  # Without this, ValidatingPolicy only matches Pods,
-  # so a bad Deployment would be admitted and silently fail to create pods.
-  autogen:
-    podControllers:
-      controllers:
-        - deployments
-        - statefulsets
-        - daemonsets
-        - jobs
-        - cronjobs
-
   webhookConfiguration:
     timeoutSeconds: 10
 
