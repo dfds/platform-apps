@@ -37,9 +37,9 @@ spec:
     background:
       enabled: true
 
-  # Audit (warn only). Switch to [Deny] to start blocking non-compliant images.
   validationActions:
     - Audit
+    - Warn
 
   matchConstraints:
     resourceRules:
