@@ -38,7 +38,11 @@ spec:
           - CREATE
           - UPDATE
         resources:
-          - pods
+          - deployments
+          - statefulsets
+          - daemonsets
+          - jobs
+          - cronjobs
 
   # Equivalent of the ClusterPolicy exclude on namespaces.
   matchConditions:
