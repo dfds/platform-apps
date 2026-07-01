@@ -6,7 +6,7 @@ metadata:
     policies.kyverno.io/title: ECR Pull Policy Compliance Check
     policies.kyverno.io/category: Requirement
     policies.kyverno.io/severity: medium
-    policies.kyverno.io/subject: Deployment,StatefulSet,DaemonSet,Job,CronJob
+    policies.kyverno.io/subject: Pod
     policies.kyverno.io/description: >-
       Validates that container images from org-owned ECR repositories have
       compliant pull policies that allow cross-account access within the
@@ -18,6 +18,17 @@ spec:
   # Note: this does not emit a  a dedicated "admitted without verification" warning
   # as it does not seem possible with the new CEL policies
   failurePolicy: Ignore
+
+  # Without this, ValidatingPolicy only matches Pods,
+  # so a bad Deployment would be admitted and silently fail to create pods.
+  autogen:
+    podControllers:
+      controllers:
+        - deployments
+        - statefulsets
+        - daemonsets
+        - jobs
+        - cronjobs
 
   webhookConfiguration:
     timeoutSeconds: 10
@@ -32,23 +43,13 @@ spec:
 
   matchConstraints:
     resourceRules:
-      - apiGroups: ['apps']
+      - apiGroups: ['']
         apiVersions: ['v1']
         operations:
           - CREATE
           - UPDATE
         resources:
-          - deployments
-          - statefulsets
-          - daemonsets
-      - apiGroups: ['batch']
-        apiVersions: ['v1']
-        operations:
-          - CREATE
-          - UPDATE
-        resources:
-          - jobs
-          - cronjobs
+          - pods
 
   # Equivalent of the ClusterPolicy exclude on namespaces.
   matchConditions:
