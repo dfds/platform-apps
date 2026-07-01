@@ -40,7 +40,6 @@ spec:
         resources:
           - deployments
           - statefulsets
-          - daemonsets
       - apiGroups: ['batch']
         apiVersions: ['v1']
         operations:
@@ -73,17 +72,30 @@ spec:
         + variables.podSpec.?initContainers.orValue([])
         + variables.podSpec.?ephemeralContainers.orValue([])
 
-  validations:
-    # Per-image POST to the compliance exporter. deny(allowed == false) is
-    # inverted to an assertion that every image is allowed.
-    - expression: >-
-        variables.allContainers.all(c,
+    # Per-image POST to the compliance exporter, keeping only the images that
+    # are not allowed. Reused by both the validation expression and the
+    # messageExpression so the compliance check runs once per container.
+    - name: offendingImages
+      expression: >-
+        variables.allContainers.filter(c,
           http.Post(
             "http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc.cluster.local:8080/api/v1/compliance/check",
             {"image": c.image},
             {"Content-Type": "application/json"}
-          ).allowed == true
-        )
+          ).allowed != true
+        ).map(c, c.image)
+
+  validations:
+    # Assert that no container image is non-compliant.
+    - expression: >-
+        size(variables.offendingImages) == 0
+      # messageExpression lists the offending image names. The folded scalar
+      # collapses newlines into spaces so the result is a single line (a
+      # multi-line result would make Kyverno fall back to the static message).
+      messageExpression: >-
+        "The following container image(s) reference an ECR repository that does
+        not have a compliant pull policy: " + variables.offendingImages.join(", ")
+        + ". Visit https://wiki.dfds.cloud/en/playbooks/requirements/ECR for more information."
       message: >-
         One or more container images reference an ECR repository that does
         not have a compliant pull policy. Visit
