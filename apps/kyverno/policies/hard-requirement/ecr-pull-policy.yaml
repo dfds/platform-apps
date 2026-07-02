@@ -1,0 +1,103 @@
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
+metadata:
+  name: ecr-pull-compliance
+  annotations:
+    policies.kyverno.io/title: ECR Pull Policy Compliance Check
+    policies.kyverno.io/category: Requirement
+    policies.kyverno.io/severity: medium
+    policies.kyverno.io/subject: Deployment,StatefulSet,Job,CronJob
+    policies.kyverno.io/description: >-
+      Validates that container images from org-owned ECR repositories have
+      compliant pull policies that allow cross-account access within the
+      AWS Organization.
+spec:
+  # Fail-open at the webhook level: if Kyverno (or the compliance service) is
+  # unreachable or times out, the http.Post expression errors and the request
+  # is admitted rather than blocked.
+  # Note: this does not emit a  a dedicated "admitted without verification" warning
+  # as it does not seem possible with the new CEL policies
+  failurePolicy: Ignore
+
+  webhookConfiguration:
+    timeoutSeconds: 10
+
+  evaluation:
+    background:
+      enabled: true
+
+  validationActions:
+    - Audit
+    - Warn
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['apps']
+        apiVersions: ['v1']
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - deployments
+          - statefulsets
+      - apiGroups: ['batch']
+        apiVersions: ['v1']
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - jobs
+          - cronjobs
+
+  # Equivalent of the ClusterPolicy exclude on namespaces.
+  matchConditions:
+    - name: exclude-system-namespaces
+      expression: "!(object.metadata.namespace in ['kube-system', 'kyverno'])"
+
+  variables:
+    # Resolve the pod spec depending on the workload kind:
+    # - CronJob nests under spec.jobTemplate.spec.template.spec
+    # - all other supported kinds (Deployment, StatefulSet, DaemonSet, Job)
+    #   nest under spec.template.spec
+    - name: podSpec
+      expression: >-
+        object.kind == 'CronJob'
+          ? object.spec.jobTemplate.spec.template.spec
+          : object.spec.template.spec
+
+    # Combine standard, init, and ephemeral containers into a single list.
+    - name: allContainers
+      expression: >-
+        variables.podSpec.containers
+        + variables.podSpec.?initContainers.orValue([])
+        + variables.podSpec.?ephemeralContainers.orValue([])
+
+    # Per-image POST to the compliance exporter, keeping only the images that
+    # are not allowed. Reused by both the validation expression and the
+    # messageExpression so the compliance check runs once per container.
+    - name: offendingImages
+      expression: >-
+        variables.allContainers.filter(c,
+          http.Post(
+            "http://platform-requirements-ecr-pull-compliance-exporter.ssu-mgmt-dznts.svc.cluster.local:8080/api/v1/compliance/check",
+            {"image": c.image},
+            {"Content-Type": "application/json"}
+          ).allowed != true
+        ).map(c, c.image)
+
+  validations:
+    # Assert that no container image is non-compliant.
+    - expression: >-
+        size(variables.offendingImages) == 0
+      # messageExpression lists the offending image names. The folded scalar
+      # collapses newlines into spaces so the result is a single line (a
+      # multi-line result would make Kyverno fall back to the static message).
+      messageExpression: >-
+        "The following container image(s) reference an ECR repository that does
+        not have a compliant pull policy: " + variables.offendingImages.join(", ")
+        + ". Visit https://wiki.dfds.cloud/en/playbooks/requirements/ECR for more information."
+      message: >-
+        One or more container images reference an ECR repository that does
+        not have a compliant pull policy. Visit
+        https://wiki.dfds.cloud/en/playbooks/requirements/ECR
+        for more information.
