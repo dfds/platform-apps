@@ -2,8 +2,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources: # crds.yaml is intentionally left out
-  - https://github.com/kubernetes-csi/external-snapshotter/client/config/crd?timeout=120&ref=v8.5.0
-  - https://github.com/kubernetes-csi/external-snapshotter/deploy/kubernetes/snapshot-controller?timeout=120&ref=v8.5.0
+  - https://github.com/kubernetes-csi/external-snapshotter/client/config/crd?timeout=120&ref=v8.6.0
+  - https://github.com/kubernetes-csi/external-snapshotter/deploy/kubernetes/snapshot-controller?timeout=120&ref=v8.6.0
   - volumesnapshotclass.yaml
 images:
   - name: registry.k8s.io/sig-storage/snapshot-controller
