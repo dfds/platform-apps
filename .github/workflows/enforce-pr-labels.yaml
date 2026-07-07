@@ -7,4 +7,4 @@ on:
 
 jobs:
   shared:
-    uses: dfds/shared-workflows/.github/workflows/automation-enforce-release-labels.yml@v2.0.1
+    uses: dfds/shared-workflows/.github/workflows/automation-enforce-release-labels.yml@2.0.4
