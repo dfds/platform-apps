@@ -7,7 +7,7 @@ metadata:
   namespace: atlantis
   labels:
     app: atlantis
-    chart: atlantis-6.4.0
+    chart: atlantis-6.9.3
     release: atlantis
     heritage: Helm
 spec:
@@ -24,7 +24,7 @@ spec:
         release: atlantis
       annotations:
         checksum/config: 01ba4719c80b6fe911b091a7c05124b64eeece964e09c058ef8f9805daca546b
-        checksum/repo-config: a57bc146f22dc235e5de128f0ed333a0ebd3d51a9607ea5faecfac11673b38b6
+        checksum/repo-config: ade2f7e2324151d4847df8991e0506c791107976f09ebbeb18de09a81710ff68
     spec:
       hostNetwork: false
       serviceAccountName: atlantis
@@ -48,7 +48,7 @@ spec:
             secretName: kubeconfigs
       containers:
         - name: atlantis
-          image: "dfdsdk/atlantis-prime-pipeline:2.1.2"
+          image: "dfdsdk/atlantis-prime-pipeline:2.1.3"
           imagePullPolicy: IfNotPresent
           args:
             - server
