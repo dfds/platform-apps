@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: velero
-      version: 12.0.1
+      version: 12.1.0
       sourceRef:
         kind: HelmRepository
         name: vmware-tanzu
@@ -69,12 +69,12 @@ spec:
         limits:
           memory: ${flux_velero_node_agent_pod_memory}
     initContainers:
-    - image: velero/velero-plugin-for-aws:v1.14.0
+    - image: velero/velero-plugin-for-aws:v1.14.2
       name: velero-plugin-for-aws
       volumeMounts:
       - mountPath: /target
         name: plugins
-    - image: velero/velero-plugin-for-microsoft-azure:v1.14.0
+    - image: velero/velero-plugin-for-microsoft-azure:v1.14.2
       name: velero-plugin-for-microsoft-azure
       volumeMounts:
       - mountPath: /target

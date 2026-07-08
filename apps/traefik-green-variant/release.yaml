@@ -19,6 +19,7 @@ spec:
         name: traefik
         namespace: traefik-green-variant
   interval: 1m0s
+  timeout: 10m
   install:
     crds: Skip
     remediation:
@@ -31,6 +32,13 @@ spec:
         preStop:
           sleep:
             seconds: 300 # has be on the order of targetgroup derigstration delay 300s and needs to be lower than terminationGracePeriodSeconds
+    topologySpreadConstraints:
+     - labelSelector:
+         matchLabels:
+           app.kubernetes.io/instance: traefik-green-variant-traefik-green-variant
+       maxSkew: 1
+       topologyKey: kubernetes.io/hostname
+       whenUnsatisfiable: ScheduleAnyway
     gateway:
       listeners:
         web:

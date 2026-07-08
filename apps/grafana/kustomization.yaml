@@ -1,6 +1,7 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
+  - crds.yaml
   - namespace.yaml
   - serviceaccount.yaml
   - secretstore-ssm.yaml
@@ -9,3 +10,4 @@ resources:
   - externalsecret-alloy.yaml
   - sources.yaml
   - release.yaml
+  - servicemonitor.yaml
