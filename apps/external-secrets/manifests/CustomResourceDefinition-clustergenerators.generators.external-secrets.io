@@ -566,6 +566,18 @@ spec:
                                     credential_source.url in the provided credConfig. This field is merely to double-check the external token source
                                     URL is having the expected value.
                                   type: string
+                                gcpServiceAccountEmail:
+                                  description: |-
+                                    GCPServiceAccountEmail is the email of the Google Cloud service account to impersonate
+                                    after Workload Identity Federation. Use this to grant access through the service account's
+                                    IAM bindings (for example roles/secretmanager.secretAccessor). When set, it overrides
+                                    service_account_impersonation_url in the external account JSON from credConfig;
+                                    when serviceAccountRef is set, it also overrides the "iam.gke.io/gcp-service-account" annotation
+                                    on that ServiceAccount.
+                                  example: my-gsa@my-project.iam.gserviceaccount.com
+                                  minLength: 1
+                                  pattern: ^.*@.*\.iam\.gserviceaccount\.com$
+                                  type: string
                                 serviceAccountRef:
                                   description: |-
                                     serviceAccountRef is the reference to the kubernetes ServiceAccount to be used for obtaining the tokens,
@@ -841,6 +853,14 @@ spec:
                           default: false
                           description: Set NoUpper to disable uppercase characters
                           type: boolean
+                        secretKeys:
+                          description: |-
+                            SecretKeys defines the keys that will be populated with generated passwords.
+                            Defaults to "password" when not set.
+                          items:
+                            type: string
+                          minItems: 1
+                          type: array
                         symbolCharacters:
                           description: |-
                             SymbolCharacters specifies the special characters that should be used
@@ -905,17 +925,19 @@ spec:
                           type: string
                         keySize:
                           description: |-
-                            KeySize specifies the key size for RSA keys (default: 2048)
+                            KeySize specifies the key size for RSA keys (default: 2048) and ECDSA keys (default: 256).
                             For RSA keys: 2048, 3072, 4096
+                            For ECDSA keys: 256, 384, 521
                             Ignored for ed25519 keys
                           maximum: 8192
                           minimum: 256
                           type: integer
                         keyType:
                           default: rsa
-                          description: KeyType specifies the SSH key type (rsa, ed25519)
+                          description: KeyType specifies the SSH key type (rsa, ecdsa, ed25519)
                           enum:
                             - rsa
+                            - ecdsa
                             - ed25519
                           type: string
                       type: object
@@ -1088,6 +1110,16 @@ spec:
                             Used to select the correct ESO controller (think: ingress.ingressClassName)
                             The ESO controller is instantiated with a specific controller name and filters VDS based on this property
                           type: string
+                        getParameters:
+                          additionalProperties:
+                            items:
+                              type: string
+                            type: array
+                          description: |-
+                            GetParameters are query-string parameters passed to Vault on GET calls.
+                            Each key may map to multiple values, matching HTTP query-string semantics.
+                            Ignored for non-GET methods; use Parameters for write bodies.
+                          type: object
                         method:
                           description: Vault API method to use (GET/POST/other)
                           type: string
@@ -1250,6 +1282,137 @@ spec:
                                           pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
                                           type: string
                                       type: object
+                                    vaultRole:
+                                      description: VaultRole specifies the Vault role to use for TLS certificate authentication.
+                                      type: string
+                                  type: object
+                                gcp:
+                                  description: |-
+                                    Gcp authenticates with Vault using Google Cloud Platform authentication method
+                                    GCP authentication method
+                                  properties:
+                                    location:
+                                      description: Location optionally defines a location/region for the secret
+                                      type: string
+                                    path:
+                                      default: gcp
+                                      description: 'Path where the GCP auth method is enabled in Vault, e.g: "gcp"'
+                                      type: string
+                                    projectID:
+                                      description: Project ID of the Google Cloud Platform project
+                                      type: string
+                                    role:
+                                      description: Vault Role. In Vault, a role describes an identity with a set of permissions, groups, or policies you want to attach to a user of the secrets engine.
+                                      type: string
+                                    secretRef:
+                                      description: Specify credentials in a Secret object
+                                      properties:
+                                        secretAccessKeySecretRef:
+                                          description: The SecretAccessKey is used for authentication
+                                          properties:
+                                            key:
+                                              description: |-
+                                                A key in the referenced Secret.
+                                                Some instances of this field may be defaulted, in others it may be required.
+                                              maxLength: 253
+                                              minLength: 1
+                                              pattern: ^[-._a-zA-Z0-9]+$
+                                              type: string
+                                            name:
+                                              description: The name of the Secret resource being referred to.
+                                              maxLength: 253
+                                              minLength: 1
+                                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                              type: string
+                                            namespace:
+                                              description: |-
+                                                The namespace of the Secret resource being referred to.
+                                                Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                              maxLength: 63
+                                              minLength: 1
+                                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                              type: string
+                                          type: object
+                                      type: object
+                                    serviceAccountRef:
+                                      description: ServiceAccountRef to a service account for impersonation
+                                      properties:
+                                        audiences:
+                                          description: |-
+                                            Audience specifies the `aud` claim for the service account token
+                                            If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity
+                                            then this audiences will be appended to the list
+                                          items:
+                                            type: string
+                                          type: array
+                                        name:
+                                          description: The name of the ServiceAccount resource being referred to.
+                                          maxLength: 253
+                                          minLength: 1
+                                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                          type: string
+                                        namespace:
+                                          description: |-
+                                            Namespace of the resource being referred to.
+                                            Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                          maxLength: 63
+                                          minLength: 1
+                                          pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                          type: string
+                                      required:
+                                        - name
+                                      type: object
+                                    workloadIdentity:
+                                      description: Specify a service account with Workload Identity
+                                      properties:
+                                        clusterLocation:
+                                          description: |-
+                                            ClusterLocation is the location of the cluster
+                                            If not specified, it fetches information from the metadata server
+                                          type: string
+                                        clusterName:
+                                          description: |-
+                                            ClusterName is the name of the cluster
+                                            If not specified, it fetches information from the metadata server
+                                          type: string
+                                        clusterProjectID:
+                                          description: |-
+                                            ClusterProjectID is the project ID of the cluster
+                                            If not specified, it fetches information from the metadata server
+                                          type: string
+                                        serviceAccountRef:
+                                          description: ServiceAccountSelector is a reference to a ServiceAccount resource.
+                                          properties:
+                                            audiences:
+                                              description: |-
+                                                Audience specifies the `aud` claim for the service account token
+                                                If the service account uses a well-known annotation for e.g. IRSA or GCP Workload Identity
+                                                then this audiences will be appended to the list
+                                              items:
+                                                type: string
+                                              type: array
+                                            name:
+                                              description: The name of the ServiceAccount resource being referred to.
+                                              maxLength: 253
+                                              minLength: 1
+                                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                                              type: string
+                                            namespace:
+                                              description: |-
+                                                Namespace of the resource being referred to.
+                                                Ignored if referent is not cluster-scoped, otherwise defaults to the namespace of the referent.
+                                              maxLength: 63
+                                              minLength: 1
+                                              pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                                              type: string
+                                          required:
+                                            - name
+                                          type: object
+                                      required:
+                                        - serviceAccountRef
+                                      type: object
+                                  required:
+                                    - role
                                   type: object
                                 iam:
                                   description: |-
@@ -1409,6 +1572,7 @@ spec:
                                             Optional audiences field that will be used to request a temporary Kubernetes service
                                             account token for the service account referenced by `serviceAccountRef`.
                                             Defaults to a single audience `vault` it not specified.
+
                                             Deprecated: use serviceAccountRef.Audiences instead
                                           items:
                                             type: string
@@ -1418,6 +1582,7 @@ spec:
                                             Optional expiration time in seconds that will be used to request a temporary
                                             Kubernetes service account token for the service account referenced by
                                             `serviceAccountRef`.
+
                                             Deprecated: this will be removed in the future.
                                             Defaults to 10 minutes.
                                           format: int64
