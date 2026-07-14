@@ -46,7 +46,7 @@ spec:
             readOnlyRootFilesystem: true
             seccompProfile:
               type: RuntimeDefault
-          image: "ghcr.io/kedacore/keda:2.19.0"
+          image: "ghcr.io/kedacore/keda:2.20.1"
           command:
             - "/keda"
           args:
@@ -105,6 +105,12 @@ spec:
               value: "3000"
             - name: KEDA_HTTP_MIN_TLS_VERSION
               value: TLS12
+            - name: KEDA_HTTP_TLS_CIPHER_LIST
+              value: ""
+            - name: KEDA_SERVICE_MIN_TLS_VERSION
+              value: TLS13
+            - name: KEDA_SERVICE_TLS_CIPHER_LIST
+              value: ""
           volumeMounts:
             - mountPath: /certs
               name: certificates
