@@ -9,6 +9,7 @@ metadata:
     app.kubernetes.io/component: cleanup-controller
     app.kubernetes.io/instance: kyverno
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kyverno-cleanup-controller
     app.kubernetes.io/part-of: kyverno
 spec:
   replicas:
@@ -29,6 +30,7 @@ spec:
         app.kubernetes.io/component: cleanup-controller
         app.kubernetes.io/instance: kyverno
         app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/name: kyverno-cleanup-controller
         app.kubernetes.io/part-of: kyverno
     spec:
       nodeSelector:
@@ -51,7 +53,7 @@ spec:
       automountServiceAccountToken: true
       containers:
         - name: controller
-          image: "reg.kyverno.io/kyverno/cleanup-controller:v1.17.1"
+          image: "reg.kyverno.io/kyverno/cleanup-controller:v1.18.0"
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 9443
@@ -73,6 +75,7 @@ spec:
             - --enableDeferredLoading=true
             - --dumpPayload=false
             - --maxAPICallResponseLength=2000000
+            - --apiCallTimeout=30s
             - --loggingFormat=text
             - --v=2
             - --protectManagedResources=false
@@ -111,7 +114,9 @@ spec:
                 - ALL
             privileged: false
             readOnlyRootFilesystem: true
+            runAsGroup: 65534
             runAsNonRoot: true
+            runAsUser: 65534
             seccompProfile:
               type: RuntimeDefault
           startupProbe:
@@ -142,3 +147,16 @@ spec:
             periodSeconds: 10
             successThreshold: 1
             timeoutSeconds: 5
+          volumeMounts:
+            - name: apicall-token
+              mountPath: /var/run/secrets/kyverno/apicall
+              readOnly: true
+      volumes:
+        - name: apicall-token
+          projected:
+            defaultMode: 0444
+            sources:
+              - serviceAccountToken:
+                  path: token
+                  expirationSeconds: 3600
+                  audience: kyverno-svc.kyverno.io
