@@ -89,10 +89,10 @@ spec:
         enabled: true
     resources:
       limits:
-        memory: 512Mi
+        memory: 640Mi
       requests:
-        cpu: 150m
-        memory: 512Mi
+        cpu: 200m
+        memory: 640Mi
     service:
       enabled: true
       labels:
