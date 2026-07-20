@@ -34,3 +34,4 @@ spec:
       limits:
         memory: 128Mi
     vpcId: ${flux_vpc_id}
+    createIngressClassResource: false # we are not handling Ingress resources
