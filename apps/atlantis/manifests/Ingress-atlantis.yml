@@ -10,9 +10,8 @@ metadata:
     chart: atlantis-6.9.3
     release: atlantis
     heritage: Helm
-  annotations:
-    kubernetes.io/ingress.class: traefik
 spec:
+  ingressClassName: traefik
   rules:
     - host: "atlantis.${flux_eks_fqdn}"
       http:

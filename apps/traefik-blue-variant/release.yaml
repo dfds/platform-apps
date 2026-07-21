@@ -45,8 +45,7 @@ spec:
           namespacePolicy:
             from: All
     ingressClass:
-      enabled: true
-      isDefaultClass: false
+      enabled: false # ingressClass defined in apps/traefik-crds/ingressclass.yaml
     ingressRoute:
       dashboard:
         enabled: true
@@ -86,7 +85,7 @@ spec:
       kubernetesGateway:
         enabled: true
       kubernetesIngress:
-        enabled: true
+        enabled: true # requires ingressClass defined in apps/traefik-crds/ingressclass.yaml
     resources:
       limits:
         memory: 512Mi
