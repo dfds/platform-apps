@@ -289,8 +289,7 @@ spec:
     ingress:
       enabled: true
       path: /
-      annotations:
-        kubernetes.io/ingress.class: traefik
+      ingressClassName: traefik
       host: "atlantis.${flux_eks_fqdn}" # Post Build Substitution from Terraform
     logLevel: info
     orgAllowlist: ${flux_atlantis_org_allowlist} # Post Build Substitution from Terraform

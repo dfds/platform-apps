@@ -45,7 +45,7 @@ spec:
           namespacePolicy:
             from: All
     ingressClass:
-      enabled: true
+      enabled: false
       isDefaultClass: false
     ingressRoute:
       dashboard:
