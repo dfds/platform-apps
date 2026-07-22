@@ -146,18 +146,19 @@ spec:
                   values:
                   - observability
     alloy-logs:
+      alloy:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 384Mi
+          limits:
+            memory: 384Mi
       controller:
         priorityClassName: node-observability
-      updateStrategy:
-        type: RollingUpdate
-        rollingUpdate:
-          maxUnavailable: 25%
-      resources:
-        requests:
-          cpu: 50m
-          memory: 384Mi
-        limits:
-          memory: 384Mi
+        updateStrategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxUnavailable: 25%
     metrics:
       enabled: true
       scrapeInterval: 120s
