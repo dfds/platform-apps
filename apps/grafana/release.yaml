@@ -97,6 +97,7 @@ spec:
               name: agent-wal
         resources:
           requests:
+            cpu: 200m
             memory: ${flux_grafana_agent_resource_memory}
           limits:
             memory: ${flux_grafana_agent_resource_memory}
@@ -151,6 +152,12 @@ spec:
         type: RollingUpdate
         rollingUpdate:
           maxUnavailable: 25%
+      resources:
+        requests:
+          cpu: 50m
+          memory: 384Mi
+        limits:
+          memory: 384Mi
     metrics:
       enabled: true
       scrapeInterval: 120s
@@ -215,7 +222,9 @@ spec:
       resources:
         requests:
           cpu: 20m
-          memory: 100Mi
+          memory: 256Mi
+        limits:
+          memory: 256Mi
       priorityClassName: cluster-observability
       rbac:
         create: true
@@ -244,7 +253,9 @@ spec:
       resources:
         requests:
           cpu: 20m
-          memory: 50Mi
+          memory: 256Mi
+        limits:
+          memory: 256Mi
       priorityClassName: node-observability
       updateStrategy:
         type: RollingUpdate
