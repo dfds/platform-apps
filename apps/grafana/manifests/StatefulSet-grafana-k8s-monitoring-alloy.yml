@@ -92,6 +92,7 @@ spec:
             limits:
               memory: ${flux_grafana_agent_resource_memory}
             requests:
+              cpu: 200m
               memory: ${flux_grafana_agent_resource_memory}
           volumeMounts:
             - name: config

@@ -58,6 +58,12 @@ spec:
               scheme: HTTP
             initialDelaySeconds: 10
             timeoutSeconds: 1
+          resources:
+            limits:
+              memory: 384Mi
+            requests:
+              cpu: 50m
+              memory: 384Mi
           volumeMounts:
             - name: config
               mountPath: /etc/alloy
@@ -91,3 +97,7 @@ spec:
         - name: varlog
           hostPath:
             path: /var/log
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 25%
+    type: RollingUpdate
