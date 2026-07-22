@@ -223,9 +223,9 @@ spec:
       resources:
         requests:
           cpu: 20m
-          memory: 256Mi
+          memory: 1Gi
         limits:
-          memory: 256Mi
+          memory: 1Gi
       priorityClassName: cluster-observability
       rbac:
         create: true
