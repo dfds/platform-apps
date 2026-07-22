@@ -65,7 +65,7 @@ spec:
           storageSize: "1Gi"
           customConfig:
             - maxmemory-policy allkeys-lfu # evict the least frequently used (LFU) keys
-            - maxmemory 900mb # keep it below storageSize
+            - maxmemory 2024mb
           resources:
             requests:
               cpu: 250m
