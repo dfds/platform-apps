@@ -1,0 +1,25 @@
+---
+# Source: falco/charts/falcosidekick/templates/service-ui.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: falco-falcosidekick-ui
+  namespace: falco
+  labels:
+    app.kubernetes.io/name: falcosidekick
+    app.kubernetes.io/instance: falco
+    app.kubernetes.io/part-of: falcosidekick
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: ui
+  annotations:
+spec:
+  type: ClusterIP
+  ports:
+    - port: 2802
+      targetPort: 2802
+      protocol: TCP
+      name: http
+  selector:
+    app.kubernetes.io/name: falcosidekick
+    app.kubernetes.io/instance: falco
+    app.kubernetes.io/component: ui
