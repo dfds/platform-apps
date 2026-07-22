@@ -62,10 +62,10 @@ spec:
             memory: 64Mi
         redis:
           priorityClassName: cluster-observability
-          storageSize: "1Gi"
+          storageSize: "10Gi" # needs to 5x larger than maxmeory
           customConfig:
             - maxmemory-policy allkeys-lfu # evict the least frequently used (LFU) keys
-            - maxmemory 2024mb
+            - maxmemory 2048mb
           resources:
             requests:
               cpu: 250m
