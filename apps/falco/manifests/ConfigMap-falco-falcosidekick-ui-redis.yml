@@ -14,7 +14,7 @@ metadata:
 data:
   redis-stack.conf: |-
     maxmemory-policy allkeys-lfu
-    maxmemory 9216mb
+    maxmemory 900mb
   ping-redis.sh: |-
     #!/bin/bash
     for i in {1..10};
