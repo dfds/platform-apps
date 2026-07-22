@@ -64,4 +64,9 @@ spec:
             initialDelaySeconds: 30
             periodSeconds: 15
             timeoutSeconds: 5
-          resources: {}
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 5m
+              memory: 256Mi

@@ -25,7 +25,14 @@ spec:
       enabled: true
     collectors:
       kubernetes:
-        enabled: true # Experimental
+        enabled: true # experimental
+    k8s-metacollector: # enabled by collectors.kubernetes.enabled
+      resources:
+        requests:
+          cpu: 5m
+          memory: 256Mi
+        limits:
+          memory: 256Mi
     grafana:
       dashboards:
         enabled: true
@@ -47,15 +54,30 @@ spec:
       webui:
         enabled: true
         priorityClassName: cluster-observability
+        resources:
+          requests:
+            cpu: 5m
+            memory: 64Mi
+          limits:
+            memory: 64Mi
         redis:
           priorityClassName: cluster-observability
+          storageSize: "1Gi"
+          customConfig:
+            - maxmemory-policy allkeys-lfu # evict the least frequently used (LFU) keys
+            - maxmemory 900mb # keep it below storageSize
+          resources:
+            requests:
+              cpu: 250m
+              memory: 2560Mi
+            limits:
+              memory: 2560Mi
     resources:
       requests:
-        cpu: 25m
-        memory: 1024Mi
+        cpu: 50m
+        memory: 512Mi
       limits:
-        cpu: null
-        memory: 1024Mi
+        memory: 512Mi
     controller:
       daemonset:
         updateStrategy:

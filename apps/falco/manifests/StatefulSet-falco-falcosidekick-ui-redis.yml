@@ -58,7 +58,23 @@ spec:
           volumeMounts:
             - name: falco-falcosidekick-ui-redis-data
               mountPath: /data
-          resources: {}
+            - name: config
+              mountPath: /redis-stack.conf
+              subPath: redis-stack.conf
+          resources:
+            limits:
+              memory: 2560Mi
+            requests:
+              cpu: 250m
+              memory: 2560Mi
+      volumes:
+        - name: config
+          configMap:
+            name: falco-falcosidekick-ui-redis
+            defaultMode: 0444
+            items:
+              - key: redis-stack.conf
+                path: redis-stack.conf
   volumeClaimTemplates:
     - apiVersion: v1
       kind: PersistentVolumeClaim

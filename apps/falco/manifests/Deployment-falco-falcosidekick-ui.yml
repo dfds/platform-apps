@@ -75,7 +75,12 @@ spec:
               port: http
             initialDelaySeconds: 10
             periodSeconds: 5
-          resources: {}
+          resources:
+            limits:
+              memory: 64Mi
+            requests:
+              cpu: 5m
+              memory: 64Mi
       volumes:
         - name: scripts
           configMap:
