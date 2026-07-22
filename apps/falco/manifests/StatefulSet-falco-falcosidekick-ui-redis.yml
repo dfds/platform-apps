@@ -1,0 +1,71 @@
+---
+# Source: falco/charts/falcosidekick/templates/deployment-ui.yaml
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: falco-falcosidekick-ui-redis
+  namespace: falco
+  labels:
+    app.kubernetes.io/name: falcosidekick
+    app.kubernetes.io/instance: falco
+    app.kubernetes.io/part-of: falcosidekick
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: ui-redis
+spec:
+  replicas: 1
+  serviceName: falco-falcosidekick-ui-redis
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: falcosidekick
+      app.kubernetes.io/instance: falco
+      app.kubernetes.io/component: ui-redis
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: falcosidekick
+        app.kubernetes.io/instance: falco
+        app.kubernetes.io/part-of: falcosidekick
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: ui-redis
+    spec:
+      serviceAccountName: falco-falcosidekick-ui
+      priorityClassName: "cluster-observability"
+      containers:
+        - name: redis
+          image: "docker.io/redis/redis-stack:7.2.0-v11"
+          imagePullPolicy: IfNotPresent
+          args: []
+          ports:
+            - name: redis
+              containerPort: 6379
+              protocol: TCP
+          livenessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+          readinessProbe:
+            tcpSocket:
+              port: 6379
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 2
+            successThreshold: 1
+            failureThreshold: 3
+          volumeMounts:
+            - name: falco-falcosidekick-ui-redis-data
+              mountPath: /data
+          resources: {}
+  volumeClaimTemplates:
+    - apiVersion: v1
+      kind: PersistentVolumeClaim
+      metadata:
+        name: falco-falcosidekick-ui-redis-data
+      spec:
+        accessModes: ["ReadWriteOnce"]
+        resources:
+          requests:
+            storage: 1Gi

@@ -1,0 +1,86 @@
+---
+# Source: falco/charts/falcosidekick/templates/deployment-ui.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: falco-falcosidekick-ui
+  namespace: falco
+  labels:
+    app.kubernetes.io/name: falcosidekick
+    app.kubernetes.io/instance: falco
+    app.kubernetes.io/part-of: falcosidekick
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: ui
+  annotations:
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: falcosidekick
+      app.kubernetes.io/instance: falco
+      app.kubernetes.io/component: ui
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: falcosidekick
+        app.kubernetes.io/instance: falco
+        app.kubernetes.io/part-of: falcosidekick
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: ui
+    spec:
+      serviceAccountName: falco-falcosidekick-ui
+      priorityClassName: "cluster-observability"
+      securityContext:
+        fsGroup: 1234
+        runAsUser: 1234
+      initContainers:
+        - name: wait-redis
+          image: "docker.io/redis/redis-stack:7.2.0-v11"
+          command:
+            - sh
+            - -c
+            - /scripts/ping-redis.sh
+          volumeMounts:
+            - name: scripts
+              mountPath: /scripts/ping-redis.sh
+              subPath: ping-redis.sh
+          envFrom:
+            - secretRef:
+                name: falco-falcosidekick-ui
+      containers:
+        - name: falcosidekick-ui
+          image: "docker.io/falcosecurity/falcosidekick-ui:2.2.0"
+          imagePullPolicy: IfNotPresent
+          envFrom:
+            - secretRef:
+                name: falco-falcosidekick-ui
+          args:
+            - "-r"
+            - falco-falcosidekick-ui-redis:6379
+            - "-l"
+            - info
+          ports:
+            - name: http
+              containerPort: 2802
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /api/v1/healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /api/v1/healthz
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          resources: {}
+      volumes:
+        - name: scripts
+          configMap:
+            name: falco-falcosidekick-ui-redis
+            defaultMode: 0555
+            items:
+              - key: ping-redis.sh
+                path: ping-redis.sh

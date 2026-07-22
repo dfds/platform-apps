@@ -1,0 +1,89 @@
+---
+# Source: falco/charts/falcosidekick/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: falco-falcosidekick
+  namespace: falco
+  labels:
+    app.kubernetes.io/name: falcosidekick
+    app.kubernetes.io/instance: falco
+    app.kubernetes.io/part-of: falcosidekick
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: core
+  annotations:
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: falcosidekick
+      app.kubernetes.io/instance: falco
+      app.kubernetes.io/component: core
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: falcosidekick
+        app.kubernetes.io/instance: falco
+        app.kubernetes.io/part-of: falcosidekick
+        app.kubernetes.io/managed-by: Helm
+        app.kubernetes.io/component: core
+      annotations:
+        checksum/config: 3c35f72bea495cc8762104949d0307495cd682cd3df18cdc3842c7934412e7ab
+    spec:
+      serviceAccountName: falco-falcosidekick
+      priorityClassName: "cluster-observability"
+      securityContext:
+        fsGroup: 1234
+        runAsUser: 1234
+      containers:
+        - name: falcosidekick
+          image: "docker.io/falcosecurity/falcosidekick:2.32.0"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http
+              containerPort: 2801
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /ping
+              port: http
+            initialDelaySeconds: 10
+            periodSeconds: 5
+          envFrom:
+            - secretRef:
+                name: falco-falcosidekick
+          env:
+            - name: DEBUG
+              value: "false"
+            - name: CUSTOMFIELDS
+              value: ""
+            - name: TEMPLATEDFIELDS
+              value: ""
+            - name: CUSTOMTAGS
+              value: ""
+            - name: OUTPUTFIELDFORMAT
+              value: ""
+            - name: BRACKETREPLACER
+              value: ""
+            - name: MUTUALTLSFILESPATH
+              value: "/etc/certs"
+            - name: MUTUALTLSCLIENT_CERTFILE
+              value: ""
+            - name: MUTUALTLSCLIENT_KEYFILE
+              value: ""
+            - name: MUTUALTLSCLIENT_CACERTFILE
+              value: ""
+            - name: TLSCLIENT_CACERTFILE
+              value: ""
+          resources:
+            limits:
+              memory: 256Mi
+            requests:
+              cpu: 5m
+              memory: 256Mi
