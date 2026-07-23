@@ -63,10 +63,10 @@ spec:
               subPath: redis-stack.conf
           resources:
             limits:
-              memory: 2560Mi
+              memory: 3Gi
             requests:
               cpu: 250m
-              memory: 2560Mi
+              memory: 3Gi
       volumes:
         - name: config
           configMap:
