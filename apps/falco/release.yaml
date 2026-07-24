@@ -52,26 +52,7 @@ spec:
         limits:
           memory: 256Mi
       webui:
-        enabled: true
-        priorityClassName: cluster-observability
-        resources:
-          requests:
-            cpu: 5m
-            memory: 64Mi
-          limits:
-            memory: 64Mi
-        redis:
-          priorityClassName: cluster-observability
-          storageSize: "10Gi" # needs to 5x larger than maxmeory
-          customConfig:
-            - maxmemory-policy allkeys-lfu # evict the least frequently used (LFU) keys
-            - maxmemory 2048mb
-          resources:
-            requests:
-              cpu: 250m
-              memory: 3Gi
-            limits:
-              memory: 3Gi
+        enabled: false # disabled because it has problems with Redis being used as a backend
     resources:
       requests:
         cpu: 50m
