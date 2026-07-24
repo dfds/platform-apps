@@ -170,7 +170,7 @@ spec:
         enabled: true
         metricsTuning:
           useDefaultAllowList: true
-          excludeMetrics:
+          includeMetrics:
             - node_sockstat_sockets_used
       serviceMonitors:
         enabled: true
