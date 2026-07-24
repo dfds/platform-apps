@@ -28,7 +28,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: core
       annotations:
-        checksum/config: 3c35f72bea495cc8762104949d0307495cd682cd3df18cdc3842c7934412e7ab
+        checksum/config: 63210598d1370971443c5c86560284aa69767e10e700d801c893377bc6b9564b
     spec:
       serviceAccountName: falco-falcosidekick
       priorityClassName: "cluster-observability"
