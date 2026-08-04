@@ -8,7 +8,7 @@ spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
-    name: vpa-recommender
+    name: vpa-vpa-vertical-pod-autoscaler-recommender
   updatePolicy:
     updateMode: "Off"
 
@@ -16,13 +16,13 @@ spec:
 apiVersion: autoscaling.k8s.io/v1
 kind: VerticalPodAutoscaler
 metadata:
-  name: vpa-admission-controller
+  name: vpa-vpa-vertical-pod-autoscaler-admission-controller
   namespace: vpa
 spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
-    name: vpa-admission-controller
+    name: vpa-vpa-vertical-pod-autoscaler-admission-controller
   updatePolicy:
     updateMode: "Off"
 
@@ -36,6 +36,6 @@ spec:
   targetRef:
     apiVersion: "apps/v1"
     kind: Deployment
-    name: vpa-updater
+    name: vpa-vpa-vertical-pod-autoscaler-updater
   updatePolicy:
     updateMode: "Off"
