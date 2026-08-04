@@ -1,0 +1,8 @@
+apiVersion: source.toolkit.fluxcd.io/v1
+kind: HelmRepository
+metadata:
+  name: vertical-pod-autoscaler
+  namespace: vertical-pod-autoscaler
+spec:
+  interval: 1h0m0s
+  url: https://kubernetes.github.io/autoscaler

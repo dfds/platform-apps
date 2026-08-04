@@ -1,0 +1,23 @@
+---
+# Source: vertical-pod-autoscaler/templates/admission-controller-service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: vpa-webhook
+  namespace: vertical-pod-autoscaler
+  labels:
+    app.kubernetes.io/name: vertical-pod-autoscaler
+    app.kubernetes.io/instance: vertical-pod-autoscaler
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-controller
+    app.kubernetes.io/component-instance: vertical-pod-autoscaler-admission-controller
+spec:
+  type: ClusterIP
+  ports:
+    - port: 443
+      protocol: TCP
+      targetPort: 8000
+  selector:
+    app.kubernetes.io/name: vertical-pod-autoscaler
+    app.kubernetes.io/instance: vertical-pod-autoscaler
+    app.kubernetes.io/component: admission-controller

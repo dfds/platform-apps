@@ -1,0 +1,15 @@
+---
+# Source: vertical-pod-autoscaler/templates/updater-clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vertical-pod-autoscaler-updater-status-reader
+rules:
+  - apiGroups:
+      - "coordination.k8s.io"
+    resources:
+      - leases
+    verbs:
+      - get
+      - list
+      - watch

@@ -1,0 +1,20 @@
+---
+# Source: vertical-pod-autoscaler/templates/updater-clusterrole.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: vertical-pod-autoscaler-updater-in-place
+  labels:
+    app.kubernetes.io/name: vertical-pod-autoscaler
+    app.kubernetes.io/instance: vertical-pod-autoscaler
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: updater
+    app.kubernetes.io/component-instance: vertical-pod-autoscaler-updater
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods/resize
+      - pods
+    verbs:
+      - patch

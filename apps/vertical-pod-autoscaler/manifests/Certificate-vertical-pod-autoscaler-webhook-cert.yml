@@ -1,0 +1,33 @@
+---
+# Source: vertical-pod-autoscaler/templates/admission-controller-certmanager.yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vertical-pod-autoscaler-webhook-cert
+  namespace: vertical-pod-autoscaler
+  labels:
+    app.kubernetes.io/name: vertical-pod-autoscaler
+    app.kubernetes.io/instance: vertical-pod-autoscaler
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-controller
+    app.kubernetes.io/component-instance: vertical-pod-autoscaler-admission-controller
+spec:
+  secretName: vpa-tls-certs
+  dnsNames:
+    - vpa-webhook
+    - vpa-webhook.vertical-pod-autoscaler
+    - vpa-webhook.vertical-pod-autoscaler.svc
+    - vpa-webhook.vertical-pod-autoscaler.svc.cluster.local
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  usages:
+    - digital signature
+    - key encipherment
+    - server auth
+  issuerRef:
+    name: vertical-pod-autoscaler-ca
+    kind: Issuer
+    group: cert-manager.io
+  duration: 168h
+  renewBefore: 24h
