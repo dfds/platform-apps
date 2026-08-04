@@ -18,6 +18,7 @@ spec:
   install:
     crds: Skip
   values:
+    fullnameOverride: vpa
     admissionController:
       replicas: 3
       resources:
