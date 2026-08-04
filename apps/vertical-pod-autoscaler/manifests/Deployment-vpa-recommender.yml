@@ -46,6 +46,8 @@ spec:
             - --humanize-memory=true
             - --memory-saver
             - --round-memory-bytes=1
+            - --pod-recommendation-min-cpu-millicores=10
+            - --pod-recommendation-min-memory-mb=16
           ports:
             - name: prometheus
               containerPort: 8942

@@ -50,8 +50,8 @@ spec:
         - --humanize-memory=true
         - --memory-saver
         - --round-memory-bytes=1
-        - --min-recommended-cpu-millicores=10
-        - --min-recommended-memory-mb=64
+        - --pod-recommendation-min-cpu-millicores=10
+        - --pod-recommendation-min-memory-mb=16
     updater:
       replicas: 1
       resources:
