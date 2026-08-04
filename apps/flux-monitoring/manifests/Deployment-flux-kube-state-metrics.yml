@@ -3,19 +3,19 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: kube-state-metrics
+  name: flux-kube-state-metrics
   namespace: flux-system
   labels:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
-    app.kubernetes.io/part-of: kube-state-metrics
-    app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: kube-state-metrics
+    app.kubernetes.io/part-of: flux-kube-state-metrics
+    app.kubernetes.io/name: flux-kube-state-metrics
+    app.kubernetes.io/instance: flux-kube-state-metrics
 spec:
   selector:
     matchLabels:
-      app.kubernetes.io/name: kube-state-metrics
-      app.kubernetes.io/instance: kube-state-metrics
+      app.kubernetes.io/name: flux-kube-state-metrics
+      app.kubernetes.io/instance: flux-kube-state-metrics
   replicas: 1
   strategy:
     type: RollingUpdate
@@ -25,13 +25,13 @@ spec:
       labels:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: metrics
-        app.kubernetes.io/part-of: kube-state-metrics
-        app.kubernetes.io/name: kube-state-metrics
-        app.kubernetes.io/instance: kube-state-metrics
+        app.kubernetes.io/part-of: flux-kube-state-metrics
+        app.kubernetes.io/name: flux-kube-state-metrics
+        app.kubernetes.io/instance: flux-kube-state-metrics
     spec:
       automountServiceAccountToken: true
       hostNetwork: false
-      serviceAccountName: kube-state-metrics
+      serviceAccountName: flux-kube-state-metrics
       securityContext:
         fsGroup: 65534
         runAsGroup: 65534
@@ -42,7 +42,7 @@ spec:
       priorityClassName: cluster-observability
       dnsPolicy: ClusterFirst
       containers:
-        - name: kube-state-metrics
+        - name: flux-kube-state-metrics
           args:
             - --custom-resource-state-only=true
             - --port=8080
@@ -80,10 +80,11 @@ spec:
             timeoutSeconds: 5
           resources:
             limits:
+              cpu: 10m
               memory: 128Mi
             requests:
               cpu: 10m
-              memory: 64Mi
+              memory: 128Mi
           securityContext:
             allowPrivilegeEscalation: false
             capabilities:
@@ -107,4 +108,4 @@ spec:
       volumes:
         - name: customresourcestate-config
           configMap:
-            name: kube-state-metrics-customresourcestate-config
+            name: flux-kube-state-metrics-customresourcestate-config

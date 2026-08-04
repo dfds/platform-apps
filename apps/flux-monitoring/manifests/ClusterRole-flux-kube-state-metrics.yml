@@ -6,10 +6,10 @@ metadata:
   labels:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
-    app.kubernetes.io/part-of: kube-state-metrics
-    app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: kube-state-metrics
-  name: kube-state-metrics
+    app.kubernetes.io/part-of: flux-kube-state-metrics
+    app.kubernetes.io/name: flux-kube-state-metrics
+    app.kubernetes.io/instance: flux-kube-state-metrics
+  name: flux-kube-state-metrics
 rules:
   - apiGroups: ["apiextensions.k8s.io"]
     resources:

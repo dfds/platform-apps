@@ -1,11 +1,11 @@
 apiVersion: helm.toolkit.fluxcd.io/v2
 kind: HelmRelease
 metadata:
-  name: kube-state-metrics
+  name: flux-kube-state-metrics
   namespace: flux-system
 spec:
   serviceAccountName: helm-controller
-  releaseName: kube-state-metrics
+  releaseName: flux-kube-state-metrics
   chart:
     spec:
       chart: kube-state-metrics
@@ -19,6 +19,9 @@ spec:
     remediation:
       retries: 3
   values:
+    # nameOverride ensures resources and the app.kubernetes.io/name label (used as the
+    # ServiceMonitor job label by default) are unique from the kube-state-metrics instance in apps/grafana.
+    nameOverride: flux-kube-state-metrics
     # For kube-prometheus-stacks that are already installed and configured with
     # custom collectors, commenting out the collectors and extraArgs below will
     # retain any existing kube-state-metrics configuration.

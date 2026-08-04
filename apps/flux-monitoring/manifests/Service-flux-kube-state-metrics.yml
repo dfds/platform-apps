@@ -3,14 +3,14 @@
 apiVersion: v1
 kind: Service
 metadata:
-  name: kube-state-metrics
+  name: flux-kube-state-metrics
   namespace: flux-system
   labels:
     app.kubernetes.io/managed-by: Helm
     app.kubernetes.io/component: metrics
-    app.kubernetes.io/part-of: kube-state-metrics
-    app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: kube-state-metrics
+    app.kubernetes.io/part-of: flux-kube-state-metrics
+    app.kubernetes.io/name: flux-kube-state-metrics
+    app.kubernetes.io/instance: flux-kube-state-metrics
   annotations:
     prometheus.io/scrape: 'true'
 spec:
@@ -21,5 +21,5 @@ spec:
       port: 8080
       targetPort: http
   selector:
-    app.kubernetes.io/name: kube-state-metrics
-    app.kubernetes.io/instance: kube-state-metrics
+    app.kubernetes.io/name: flux-kube-state-metrics
+    app.kubernetes.io/instance: flux-kube-state-metrics
