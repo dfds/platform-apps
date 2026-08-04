@@ -47,6 +47,8 @@ spec:
       priorityClassName: system-cluster-critical
       extraArgs:
         - --humanize-memory=true
+        - --memory-saver
+        - --round-memory-bytes=1
     updater:
       replicas: 1
       resources:
@@ -56,7 +58,3 @@ spec:
             cpu: 50m
             memory: 500Mi
       priorityClassName: system-cluster-critical
-      extraArgs:
-        - --in-place-skip-disruption-budget=true
-        - --memory-saver
-        - --round-memory-bytes=1

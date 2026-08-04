@@ -44,6 +44,8 @@ spec:
             - --v=4
             - --stderrthreshold=info
             - --humanize-memory=true
+            - --memory-saver
+            - --round-memory-bytes=1
           ports:
             - name: prometheus
               containerPort: 8942

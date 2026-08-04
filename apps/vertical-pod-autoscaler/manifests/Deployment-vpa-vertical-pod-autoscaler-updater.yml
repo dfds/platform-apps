@@ -56,8 +56,6 @@ spec:
             - --v=4
             - --stderrthreshold=info
             - --in-place-skip-disruption-budget=true
-            - --memory-saver
-            - --round-memory-bytes=1
           ports:
             - name: prometheus
               containerPort: 8943
