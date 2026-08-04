@@ -1,0 +1,16 @@
+---
+# Source: vertical-pod-autoscaler/templates/admission-controller-certmanager.yaml
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: vpa-vertical-pod-autoscaler-ca
+  namespace: vpa
+  labels:
+    app.kubernetes.io/name: vertical-pod-autoscaler
+    app.kubernetes.io/instance: vpa
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-controller
+    app.kubernetes.io/component-instance: vpa-admission-controller
+spec:
+  ca:
+    secretName: vpa-vertical-pod-autoscaler-webhook-ca
