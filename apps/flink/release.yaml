@@ -5,7 +5,7 @@ metadata:
   namespace: flink
 spec:
   serviceAccountName: helm-controller
-  targetNamespace: flink
+  relseleaseName: flink-kubernetes-operator
   chart:
     spec:
       chart: flink-kubernetes-operator
