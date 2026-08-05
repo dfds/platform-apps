@@ -1,0 +1,29 @@
+---
+# Source: flink-kubernetes-operator/templates/webhook/validating_webhook_configuration.yaml
+apiVersion: admissionregistration.k8s.io/v1
+kind: ValidatingWebhookConfiguration
+metadata:
+  annotations:
+    cert-manager.io/inject-ca-from: flink/flink-operator-serving-cert
+  name: flink-operator-flink-webhook-configuration
+webhooks:
+  - name: validationwebhook.flink.apache.org
+    admissionReviewVersions: ["v1"]
+    clientConfig:
+      service:
+        name: flink-operator-webhook-service
+        namespace: flink
+        path: /validate
+    failurePolicy: Fail
+    rules:
+      - apiGroups: ["flink.apache.org"]
+        apiVersions: ["*"]
+        scope: "Namespaced"
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - flinkdeployments
+          - flinksessionjobs
+          - flinkstatesnapshots
+    sideEffects: None

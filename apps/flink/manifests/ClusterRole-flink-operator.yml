@@ -1,0 +1,117 @@
+---
+# Source: flink-kubernetes-operator/templates/rbac/cluster_role.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: flink-operator
+  namespace: flink
+  labels:
+    app.kubernetes.io/name: flink-kubernetes-operator
+    app.kubernetes.io/managed-by: Helm
+rules:
+  - apiGroups:
+      - ""
+    resources:
+      - pods
+      - services
+      - events
+      - configmaps
+      - secrets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+      - deletecollection
+  - apiGroups:
+      - apps
+    resources:
+      - deployments
+      - deployments/finalizers
+      - replicasets
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - apps
+    resources:
+      - deployments/scale
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - extensions
+    resources:
+      - deployments
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - flink.apache.org
+    resources:
+      - flinkbluegreendeployments
+      - flinkbluegreendeployments/finalizers
+      - flinkdeployments
+      - flinkdeployments/finalizers
+      - flinksessionjobs
+      - flinksessionjobs/finalizers
+      - flinkstatesnapshots
+      - flinkstatesnapshots/finalizers
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - flink.apache.org
+    resources:
+      - flinkbluegreendeployments/status
+      - flinkdeployments/status
+      - flinksessionjobs/status
+      - flinkstatesnapshots/status
+    verbs:
+      - get
+      - update
+      - patch
+  - apiGroups:
+      - networking.k8s.io
+    resources:
+      - ingresses
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
+  - apiGroups:
+      - coordination.k8s.io
+    resources:
+      - leases
+    verbs:
+      - get
+      - list
+      - watch
+      - create
+      - update
+      - patch
+      - delete
