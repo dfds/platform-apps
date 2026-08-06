@@ -12,4 +12,5 @@ jobs:
     - uses: alexellis/arkade-get@master
       with:
         kubeconform: latest
+        kyverno: latest
     - uses: pre-commit/action@v3.0.1
