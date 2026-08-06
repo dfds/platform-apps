@@ -5,3 +5,5 @@ namespace: flux-system
 resources:
   - podmonitor.yaml
   - service.yaml
+  - sources.yaml
+  - release.yaml
