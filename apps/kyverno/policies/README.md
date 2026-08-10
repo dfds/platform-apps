@@ -1,6 +1,6 @@
 # Testing Kyverno policies
 
-We have a lot of policies in place and it is important that validate them. In many cases this can be done via the Kyverno cli using the test command. In some cases local testing is not yet possible because we are calling internal services to check comliance, that are not availabel.
+We have a lot of policies in place and it is important that validate them. In many cases this can be done via the Kyverno cli using the test command. In some cases local testing is not yet possible because we are calling internal services to check compliance, that are not available.
 
 ## Requirement
 
@@ -25,16 +25,16 @@ results:
   - policy: example
     rule: example-rule
     resources:
-      - default/example # namspace/name of resource
+      - default/example # namspeace/name of resource
     kind: Deployment
     result: pass
 ...
 ```
 
-This is a really simplified example, but hopefully it gets the point accross. But for a more real world example see `apps/kyverno/policies/operational/kyverno-test.yaml`
+This is a really simplified example, but hopefully it gets the point across. But for a more real world example see `apps/kyverno/policies/operational/kyverno-test.yaml`
 
 All tests can be run locally by running `kyverno test .` in the root of the project.
 
 ## Automation
 
-We have added kyverno test to pre-commit hooks, which we also running on PR creation see Github Action `.github/workflows/pre-commit.yaml`.
+We have added Kyverno test command to pre-commit hooks, which we also running on PR creation see Github Action `.github/workflows/pre-commit.yaml`.
