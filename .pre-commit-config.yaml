@@ -8,23 +8,34 @@ repos:
   - repo: local
     hooks:
       - id: kustomize
-        name: Validate Kustomizations
+        name: Validate Kustomizations (requires kustomize installed)
         language: system
         entry: bash -c 'dirname $@ | xargs -I {} kustomize build {} > /dev/null' --
         files: kustomization.yaml
   - repo: local
     hooks:
       - id: kubeconform
-        name: Validate Kubernetes manifests schemas
+        name: Validate Kubernetes manifests schemas (requires kubeconform installed)
         language: system
         entry: kubeconform
         args:
           - -strict
           - -skip
-          - CustomResourceDefinition,Kustomization,EC2NodeClass # EC2NodeClass fails due to postBuildSubstitutions ${flux_karpenter_node_volume_size}
+          - CustomResourceDefinition,Kustomization,Test,EC2NodeClass # EC2NodeClass fails due to postBuildSubstitutions ${flux_karpenter_node_volume_size}
           - -schema-location
           - default
           - -schema-location
           - "https://raw.githubusercontent.com/datreeio/CRDs-catalog/main/{{.Group}}/{{.ResourceKind}}_{{.ResourceAPIVersion}}.json"
         files: ^apps/.*
         exclude: ^apps/.*/manifests/.*
+  - repo: local
+    hooks:
+      - id: kyverno
+        name: Test Kyverno policies (requires kyverno cli installed)
+        language: system
+        entry: kyverno
+        args:
+          - test
+          - apps/kyverno/policies/
+        pass_filenames: false
+        always_run: true

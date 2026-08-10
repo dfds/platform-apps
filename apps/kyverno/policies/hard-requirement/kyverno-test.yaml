@@ -1,0 +1,13 @@
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: hard-requirement
+policies:
+  - ecr-pull-policy.yaml
+  - require-external-secret-label.yaml
+  - require-hpa.yaml
+  - require-probes.yaml
+  - restrict-ecr-images.yaml
+resources:
+  - tests/
+results: []

@@ -1,0 +1,10 @@
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: baseline
+policies:
+  - disallow-privileged-containers.yaml
+  - disallow-host-path.yaml
+resources:
+  - tests/
+results: []
