@@ -24,6 +24,12 @@ spec:
         karpenter.sh/discovery: "${flux_cluster_name}"
   detailedMonitoring: true
   associatePublicIPAddress: true
+  kubelet:
+    maxPods: 110
+    kubeReserved:
+      memory: 1465Mi # 255Mi + (11Mi * maxPods)
+    systemReserved:
+      memory: 200Mi
   userData: |
     MIME-Version: 1.0
     Content-Type: multipart/mixed; boundary="BOUNDARY"
@@ -33,9 +39,6 @@ spec:
 
     #!/bin/sh
     set -o xtrace
-
-    echo fs.inotify.max_user_watches=131072 | sudo tee -a /etc/sysctl.conf
-    sudo sysctl -p
 
     DOCKER_HUB_CREDS=$(aws ssm get-parameter --name /eks/${flux_cluster_name}/dockerhub --with-decrypt --query 'Parameter.Value' --output text)
     DOCKER_HUB_USER=$(echo "$DOCKER_HUB_CREDS" | jq .username)
@@ -57,14 +60,7 @@ spec:
     spec:
       kubelet:
         config:
-          maxPods: 110
-          registryPullQPS: 0
-          kubeReserved:
-            cpu: 700m
-            memory: 1024Mi
-          systemReserved:
-            cpu: 700m
-            memory: 1024Mi
+          registryPullQPS: 0 # since not available in the spec
 
     --BOUNDARY--
 
@@ -94,6 +90,12 @@ spec:
         karpenter.sh/discovery: "${flux_cluster_name}"
   detailedMonitoring: true
   associatePublicIPAddress: true
+  kubelet:
+    maxPods: 110
+    kubeReserved:
+      memory: 1465Mi # 255Mi + (11Mi * maxPods)
+    systemReserved:
+      memory: 200Mi
   userData: |
     MIME-Version: 1.0
     Content-Type: multipart/mixed; boundary="BOUNDARY"
@@ -103,9 +105,6 @@ spec:
 
     #!/bin/sh
     set -o xtrace
-
-    echo fs.inotify.max_user_watches=131072 | sudo tee -a /etc/sysctl.conf
-    sudo sysctl -p
 
     DOCKER_HUB_CREDS=$(aws ssm get-parameter --name /eks/${flux_cluster_name}/dockerhub --with-decrypt --query 'Parameter.Value' --output text)
     DOCKER_HUB_USER=$(echo "$DOCKER_HUB_CREDS" | jq .username)
@@ -127,13 +126,6 @@ spec:
     spec:
       kubelet:
         config:
-          maxPods: 110
-          registryPullQPS: 0
-          kubeReserved:
-            cpu: 700m
-            memory: 1024Mi
-          systemReserved:
-            cpu: 700m
-            memory: 1024Mi
+          registryPullQPS: 0 # since not available in the spec
 
     --BOUNDARY--
