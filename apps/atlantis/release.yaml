@@ -16,7 +16,7 @@ spec:
   chart:
     spec:
       chart: atlantis
-      version: 6.10.0
+      version: 6.10.1
       sourceRef:
         kind: HelmRepository
         name: atlantis
