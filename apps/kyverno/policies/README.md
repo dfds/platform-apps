@@ -25,7 +25,7 @@ results:
   - policy: example
     rule: example-rule
     resources:
-      - default/example # namspeace/name of resource
+      - default/example # namespace/name of resource
     kind: Deployment
     result: pass
 ...
