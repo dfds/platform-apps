@@ -44,7 +44,7 @@ spec:
             allowPrivilegeEscalation: false
             readOnlyRootFilesystem: true
             runAsNonRoot: true
-          image: "public.ecr.aws/eks/aws-load-balancer-controller:v2.14.1"
+          image: "public.ecr.aws/eks/aws-load-balancer-controller:v2.17.1"
           imagePullPolicy: IfNotPresent
           volumeMounts:
             - mountPath: /tmp/k8s-webhook-server/serving-certs
