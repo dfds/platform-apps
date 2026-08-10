@@ -31,6 +31,7 @@ data:
       modern_ebpf:
         buf_size_preset: 4
         cpus_for_each_buffer: 2
+        disable_iterators: false
         drop_failed_exit: false
     falco_libs:
       snaplen: 80
@@ -41,12 +42,6 @@ data:
       enabled: false
       filename: ./events.txt
       keep_alive: false
-    grpc:
-      bind_address: unix:///run/falco/falco.sock
-      enabled: false
-      threadiness: 0
-    grpc_output:
-      enabled: false
     http_output:
       ca_bundle: ""
       ca_cert: ""
@@ -84,6 +79,7 @@ data:
       jemalloc_stats_enabled: false
       kernel_event_counters_enabled: true
       kernel_event_counters_per_cpu_enabled: false
+      kernel_iter_event_counters_enabled: true
       libbpf_stats_enabled: true
       output_rule: false
       plugins_metrics_enabled: true
