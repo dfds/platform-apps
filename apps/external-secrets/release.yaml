@@ -16,9 +16,9 @@ spec:
         namespace: external-secrets
   interval: 1m
   install:
-    crds: CreateReplace
+    crds: Skip
   upgrade:
-    crds: CreateReplace
+    crds: Skip
   values:
     installCRDS: true
     priorityClassName: cluster-infrastructure
