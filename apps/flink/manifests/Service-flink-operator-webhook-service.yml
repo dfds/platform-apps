@@ -1,0 +1,13 @@
+---
+# Source: flink-kubernetes-operator/templates/webhook/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: flink-operator-webhook-service
+  namespace: flink
+spec:
+  ports:
+    - port: 443
+      targetPort: 9443
+  selector:
+    app.kubernetes.io/name: flink-kubernetes-operator
