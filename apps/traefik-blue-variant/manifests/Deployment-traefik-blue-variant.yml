@@ -35,7 +35,7 @@ spec:
     spec:
       serviceAccountName: traefik-blue-variant
       automountServiceAccountToken: true
-      terminationGracePeriodSeconds: 60
+      terminationGracePeriodSeconds: 320
       hostNetwork: false
       containers:
         - image: docker.io/traefik:v3.6.2
@@ -68,6 +68,9 @@ spec:
             successThreshold: 1
             timeoutSeconds: 2
           lifecycle:
+            preStop:
+              sleep:
+                seconds: 300
           ports:
             - name: metrics
               containerPort: 9100
@@ -141,3 +144,10 @@ spec:
         runAsGroup: 65532
         runAsNonRoot: true
         runAsUser: 65532
+      topologySpreadConstraints:
+        - labelSelector:
+            matchLabels:
+              app.kubernetes.io/instance: traefik-blue-variant-traefik-blue-variant
+          maxSkew: 1
+          topologyKey: kubernetes.io/hostname
+          whenUnsatisfiable: ScheduleAnyway

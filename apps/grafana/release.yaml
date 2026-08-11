@@ -16,6 +16,9 @@ spec:
         namespace: grafana
   interval: 1m0s
   install:
+    crds: Skip
+  upgrade:
+    crds: Skip
     remediation:
       retries: 3
   values:
@@ -94,6 +97,7 @@ spec:
               name: agent-wal
         resources:
           requests:
+            cpu: 200m
             memory: ${flux_grafana_agent_resource_memory}
           limits:
             memory: ${flux_grafana_agent_resource_memory}
@@ -142,12 +146,19 @@ spec:
                   values:
                   - observability
     alloy-logs:
+      alloy:
+        resources:
+          requests:
+            cpu: 50m
+            memory: 384Mi
+          limits:
+            memory: 384Mi
       controller:
         priorityClassName: node-observability
-      updateStrategy:
-        type: RollingUpdate
-        rollingUpdate:
-          maxUnavailable: 25%
+        updateStrategy:
+          type: RollingUpdate
+          rollingUpdate:
+            maxUnavailable: 25%
     metrics:
       enabled: true
       scrapeInterval: 120s
@@ -159,6 +170,8 @@ spec:
         enabled: true
         metricsTuning:
           useDefaultAllowList: true
+          includeMetrics:
+            - node_sockstat_sockets_used
       serviceMonitors:
         enabled: true
         selector:
@@ -212,7 +225,9 @@ spec:
       resources:
         requests:
           cpu: 20m
-          memory: 100Mi
+          memory: 1Gi
+        limits:
+          memory: 1Gi
       priorityClassName: cluster-observability
       rbac:
         create: true
@@ -241,7 +256,9 @@ spec:
       resources:
         requests:
           cpu: 20m
-          memory: 50Mi
+          memory: 256Mi
+        limits:
+          memory: 256Mi
       priorityClassName: node-observability
       updateStrategy:
         type: RollingUpdate
@@ -249,25 +266,4 @@ spec:
           maxUnavailable: 25%
 
     prometheus-operator-crds:
-      enabled: true
-    extraObjects:
-      - apiVersion: monitoring.coreos.com/v1
-        kind: ServiceMonitor
-        metadata:
-          labels:
-            app: prometheus-service-metrics-scraper
-          name: prometheus-service-metrics-scraper
-        spec:
-          endpoints:
-            - path: /metrics
-              port: metrics
-              scrapeTimeout: 120s
-            - path: /metrics
-              port: admin
-            - path: /metrics
-              port: http
-          namespaceSelector:
-            any: true
-          selector:
-            matchLabels:
-              scrape-service-metrics: "true"
+      enabled: false

@@ -1,0 +1,30 @@
+---
+# Source: falco/charts/k8s-metacollector/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: falco-k8s-metacollector
+  namespace: falco
+  labels:
+    app.kubernetes.io/name: k8s-metacollector
+    app.kubernetes.io/instance: falco
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: "metadata-collector"
+spec:
+  type: ClusterIP
+  ports:
+    - name: broker-grpc
+      port: 45000
+      protocol: TCP
+      targetPort: broker-grpc
+    - name: health-probe
+      port: 8081
+      protocol: TCP
+      targetPort: health-probe
+    - name: metrics
+      port: 8080
+      protocol: TCP
+      targetPort: metrics
+  selector:
+    app.kubernetes.io/name: k8s-metacollector
+    app.kubernetes.io/instance: falco

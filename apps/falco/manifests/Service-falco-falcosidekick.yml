@@ -1,0 +1,30 @@
+---
+# Source: falco/charts/falcosidekick/templates/service.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: falco-falcosidekick
+  namespace: falco
+  labels:
+    app.kubernetes.io/name: falcosidekick
+    app.kubernetes.io/instance: falco
+    app.kubernetes.io/part-of: falcosidekick
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: core
+  annotations:
+    prometheus.io/scrape: "true"
+spec:
+  type: ClusterIP
+  ports:
+    - port: 2801
+      targetPort: http
+      protocol: TCP
+      name: http
+    - port: 2810
+      targetPort: http-notls
+      protocol: TCP
+      name: http-notls
+  selector:
+    app.kubernetes.io/name: falcosidekick
+    app.kubernetes.io/instance: falco
+    app.kubernetes.io/component: core

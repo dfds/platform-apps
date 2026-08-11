@@ -1,0 +1,29 @@
+---
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: alb-anon
+  namespace: traefik-green-variant
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: enabled
+spec:
+  serviceRef:
+    name: traefik-green-variant
+    port: web
+  targetGroupARN: ${flux_alb_target_group_arn}
+  targetType: ip
+
+---
+apiVersion: elbv2.k8s.aws/v1beta1
+kind: TargetGroupBinding
+metadata:
+  name: alb-auth
+  namespace: traefik-green-variant
+  annotations:
+    kustomize.toolkit.fluxcd.io/force: enabled
+spec:
+  serviceRef:
+    name: traefik-green-variant
+    port: web
+  targetGroupARN: ${flux_alb_auth_target_group_arn}
+  targetType: ip

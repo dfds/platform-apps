@@ -9,7 +9,7 @@ spec:
   chart:
     spec:
       chart: falco
-      version: 8.0.3
+      version: 8.0.5
       sourceRef:
         kind: HelmRepository
         name: falcosecurity
@@ -25,7 +25,14 @@ spec:
       enabled: true
     collectors:
       kubernetes:
-        enabled: true # Experimental
+        enabled: true # experimental
+    k8s-metacollector: # enabled by collectors.kubernetes.enabled
+      resources:
+        requests:
+          cpu: 5m
+          memory: 256Mi
+        limits:
+          memory: 256Mi
     grafana:
       dashboards:
         enabled: true
@@ -45,17 +52,13 @@ spec:
         limits:
           memory: 256Mi
       webui:
-        enabled: true
-        priorityClassName: cluster-observability
-        redis:
-          priorityClassName: cluster-observability
+        enabled: false # disabled because it has problems with Redis being used as a backend
     resources:
       requests:
-        cpu: 25m
-        memory: 1024Mi
+        cpu: 50m
+        memory: 512Mi
       limits:
-        cpu: null
-        memory: 1024Mi
+        memory: 512Mi
     controller:
       daemonset:
         updateStrategy:

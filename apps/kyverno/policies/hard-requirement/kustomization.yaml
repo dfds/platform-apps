@@ -4,3 +4,4 @@ resources:
   - require-external-secret-label.yaml
   - require-probes.yaml
   - require-hpa.yaml
+  - ecr-pull-policy.yaml

@@ -523,7 +523,7 @@ data:
       max_cache_size = 100000
       rule {
         source_labels = ["__name__"]
-        regex = "up|node_cpu.*|node_exporter_build_info|node_filesystem.*|node_memory.*|node_network_receive_bytes_total|node_network_receive_drop_total|node_network_transmit_bytes_total|node_network_transmit_drop_total|process_cpu_seconds_total|process_resident_memory_bytes"
+        regex = "up|node_cpu.*|node_exporter_build_info|node_filesystem.*|node_memory.*|node_network_receive_bytes_total|node_network_receive_drop_total|node_network_transmit_bytes_total|node_network_transmit_drop_total|process_cpu_seconds_total|process_resident_memory_bytes|node_sockstat_sockets_used"
         action = "keep"
       }
       // Drop metrics for certain file systems
@@ -731,4 +731,4 @@ data:
   k8s-monitoring-build-info-metric.prom: |
     # HELP grafana_kubernetes_monitoring_build_info A metric to report the version of the Kubernetes Monitoring Helm chart as well as a summary of enabled features
     # TYPE grafana_kubernetes_monitoring_build_info gauge
-    grafana_kubernetes_monitoring_build_info{version="1.6.52", namespace="grafana", metrics="enabled,alloy,kube-state-metrics,node-exporter,kubelet,kubeletResource,cadvisor", logs="enabled,events,pod_logs,journal,extraConfig", traces="enabled", deployments="kube-state-metrics,prometheus-node-exporter,prometheus-operator-crds"} 1
+    grafana_kubernetes_monitoring_build_info{version="1.6.52", namespace="grafana", metrics="enabled,alloy,kube-state-metrics,node-exporter,kubelet,kubeletResource,cadvisor", logs="enabled,events,pod_logs,journal,extraConfig", traces="enabled", deployments="kube-state-metrics,prometheus-node-exporter"} 1

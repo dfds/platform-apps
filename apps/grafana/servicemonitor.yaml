@@ -1,11 +1,10 @@
----
-# Source: k8s-monitoring/templates/extra-manifests.yaml
 apiVersion: monitoring.coreos.com/v1
 kind: ServiceMonitor
 metadata:
   labels:
     app: prometheus-service-metrics-scraper
   name: prometheus-service-metrics-scraper
+  namespace: grafana
 spec:
   endpoints:
     - path: /metrics

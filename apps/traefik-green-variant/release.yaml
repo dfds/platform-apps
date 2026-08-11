@@ -19,6 +19,7 @@ spec:
         name: traefik
         namespace: traefik-green-variant
   interval: 1m0s
+  timeout: 10m
   install:
     crds: Skip
     remediation:
@@ -26,14 +27,25 @@ spec:
   values:
     deployment:
       replicas: 3
+      terminationGracePeriodSeconds: 320 # needs to be higher than lifecycle.prestop period
+      lifecycle:
+        preStop:
+          sleep:
+            seconds: 300 # has be on the order of targetgroup derigstration delay 300s and needs to be lower than terminationGracePeriodSeconds
+    topologySpreadConstraints:
+     - labelSelector:
+         matchLabels:
+           app.kubernetes.io/instance: traefik-green-variant-traefik-green-variant
+       maxSkew: 1
+       topologyKey: kubernetes.io/hostname
+       whenUnsatisfiable: ScheduleAnyway
     gateway:
       listeners:
         web:
           namespacePolicy:
             from: All
     ingressClass:
-      enabled: true
-      isDefaultClass: false
+      enabled: false # ingressClass defined centrally in apps/traefik-crds/ingressclass.yaml
     ingressRoute:
       dashboard:
         enabled: true
@@ -60,11 +72,9 @@ spec:
       traefik:
         expose:
           default: true
-        nodePort: ${flux_traefik_green_target_admin_port}
       web:
         forwardedHeaders:
           insecure: true
-        nodePort: ${flux_traefik_green_target_http_port}
       websecure:
         expose:
           default: false
@@ -75,7 +85,7 @@ spec:
       kubernetesGateway:
         enabled: true
       kubernetesIngress:
-        enabled: true
+        enabled: true # requires ingressClass defined in apps/traefik-crds/ingressclass.yaml
     resources:
       limits:
         memory: 512Mi
@@ -86,6 +96,4 @@ spec:
       enabled: true
       labels:
         scrape-service-metrics: "true"
-      spec:
-        externalTrafficPolicy: Cluster
-      type: NodePort
+      type: ClusterIP
