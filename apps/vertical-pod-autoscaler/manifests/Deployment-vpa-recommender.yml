@@ -1,0 +1,87 @@
+---
+# Source: vertical-pod-autoscaler/templates/recommender-deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vpa-recommender
+  namespace: vpa
+  labels:
+    app.kubernetes.io/name: vertical-pod-autoscaler
+    app.kubernetes.io/instance: vpa
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: recommender
+    app.kubernetes.io/component-instance: vpa-recommender
+spec:
+  replicas: 1
+  revisionHistoryLimit: 10
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: vertical-pod-autoscaler
+      app.kubernetes.io/instance: vpa
+      app.kubernetes.io/component: recommender
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: vertical-pod-autoscaler
+        app.kubernetes.io/instance: vpa
+        app.kubernetes.io/component: recommender
+    spec:
+      serviceAccountName: vpa-recommender
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 65534
+      priorityClassName: system-cluster-critical
+      containers:
+        - name: recommender
+          image: registry.k8s.io/autoscaling/vpa-recommender:1.7.1
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          args:
+            - --v=4
+            - --stderrthreshold=info
+            - --humanize-memory=true
+            - --memory-saver
+            - --round-memory-bytes=1
+            - --pod-recommendation-min-cpu-millicores=10
+            - --pod-recommendation-min-memory-mb=16
+          ports:
+            - name: prometheus
+              containerPort: 8942
+              protocol: TCP
+          livenessProbe:
+            httpGet:
+              path: /health-check
+              port: prometheus
+              scheme: HTTP
+            initialDelaySeconds: 5
+            periodSeconds: 10
+            failureThreshold: 3
+          readinessProbe:
+            httpGet:
+              path: /health-check
+              port: prometheus
+              scheme: HTTP
+            periodSeconds: 10
+            failureThreshold: 3
+          resources:
+            limits:
+              memory: 500Mi
+            requests:
+              cpu: 50m
+              memory: 500Mi
+      affinity:
+        podAntiAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+            - podAffinityTerm:
+                labelSelector:
+                  matchExpressions:
+                    - key: app.kubernetes.io/component
+                      operator: In
+                      values:
+                        - recommender
+                topologyKey: kubernetes.io/hostname
+              weight: 100
