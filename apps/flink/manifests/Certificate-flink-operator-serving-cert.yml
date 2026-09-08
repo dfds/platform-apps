@@ -1,0 +1,22 @@
+---
+# Source: flink-kubernetes-operator/templates/cert-manager/certificate.yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: flink-operator-serving-cert
+  namespace: flink
+spec:
+  dnsNames:
+    - flink-operator-webhook-service.flink.svc
+    - flink-operator-webhook-service.flink.svc.cluster.local
+  keystores:
+    pkcs12:
+      create: true
+      passwordSecretRef:
+        name: flink-operator-webhook-secret
+        key: password
+  issuerRef:
+    kind: Issuer
+    name: flink-operator-selfsigned-issuer
+  commonName: FlinkDeployment Validator
+  secretName: webhook-server-cert

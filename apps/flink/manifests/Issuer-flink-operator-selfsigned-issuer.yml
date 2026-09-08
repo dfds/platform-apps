@@ -1,0 +1,9 @@
+---
+# Source: flink-kubernetes-operator/templates/cert-manager/issuer.yaml
+apiVersion: cert-manager.io/v1
+kind: Issuer
+metadata:
+  name: flink-operator-selfsigned-issuer
+  namespace: flink
+spec:
+  selfSigned: {}

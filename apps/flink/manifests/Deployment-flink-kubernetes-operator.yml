@@ -1,0 +1,142 @@
+---
+# Source: flink-kubernetes-operator/templates/controller/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: flink-kubernetes-operator
+  namespace: flink
+  labels:
+    app.kubernetes.io/name: flink-kubernetes-operator
+    app.kubernetes.io/managed-by: Helm
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: flink-kubernetes-operator
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: flink-kubernetes-operator
+      annotations:
+        kubectl.kubernetes.io/default-container: flink-kubernetes-operator
+    spec:
+      securityContext:
+        runAsGroup: 9999
+        runAsUser: 9999
+      serviceAccountName: flink-operator
+      containers:
+        - name: flink-kubernetes-operator
+          image: ghcr.io/apache/flink-kubernetes-operator:79d730b
+          imagePullPolicy: IfNotPresent
+          command: ["/docker-entrypoint.sh", "operator"]
+          ports:
+            - containerPort: 8085
+              name: health-port
+              protocol: TCP
+          env:
+            - name: OPERATOR_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: HOST_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.hostIP
+            - name: POD_IP
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name
+            - name: OPERATOR_NAME
+              value: flink-kubernetes-operator
+            - name: FLINK_CONF_DIR
+              value: /opt/flink/conf
+            - name: FLINK_PLUGINS_DIR
+              value: /opt/flink/plugins
+            - name: LOGGING_FRAMEWORK
+              value: log4j2
+            - name: LOG_CONFIG
+              value: -Dlog4j.configurationFile=/opt/flink/conf/log4j-operator.properties
+            - name: JVM_ARGS
+              value:
+          resources: {}
+          securityContext: {}
+          volumeMounts:
+            - name: flink-operator-config-volume
+              mountPath: /opt/flink/conf
+            - name: flink-artifacts-volume
+              mountPath: /opt/flink/artifacts
+          livenessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            httpGet:
+              path: /
+              port: health-port
+          startupProbe:
+            failureThreshold: 30
+            periodSeconds: 10
+            httpGet:
+              path: /
+              port: health-port
+        - name: flink-webhook
+          image: ghcr.io/apache/flink-kubernetes-operator:79d730b
+          imagePullPolicy: IfNotPresent
+          command: ["/docker-entrypoint.sh", "webhook"]
+          env:
+            - name: WEBHOOK_KEYSTORE_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: flink-operator-webhook-secret
+                  key: password
+            - name: WEBHOOK_KEYSTORE_FILE
+              value: "/certs/keystore.p12"
+            - name: WEBHOOK_KEYSTORE_TYPE
+              value: "pkcs12"
+            - name: WEBHOOK_SERVER_PORT
+              value: "9443"
+            - name: LOG_CONFIG
+              value: -Dlog4j.configurationFile=/opt/flink/conf/log4j-operator.properties
+            - name: JVM_ARGS
+              value:
+            - name: FLINK_CONF_DIR
+              value: /opt/flink/conf
+            - name: FLINK_PLUGINS_DIR
+              value: /opt/flink/plugins
+            - name: LOGGING_FRAMEWORK
+              value: log4j2
+            - name: OPERATOR_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+          resources: {}
+          securityContext: {}
+          volumeMounts:
+            - name: keystore
+              mountPath: "/certs"
+              readOnly: true
+            - name: flink-operator-config-volume
+              mountPath: /opt/flink/conf
+      volumes:
+        - name: flink-operator-config-volume
+          configMap:
+            name: flink-operator-config
+            items:
+              - key: flink-conf.yaml
+                path: flink-conf.yaml
+              - key: log4j-operator.properties
+                path: log4j-operator.properties
+              - key: log4j-console.properties
+                path: log4j-console.properties
+        - name: flink-artifacts-volume
+          emptyDir: {}
+        - name: keystore
+          secret:
+            secretName: webhook-server-cert
+            items:
+              - key: keystore.p12
+                path: keystore.p12
