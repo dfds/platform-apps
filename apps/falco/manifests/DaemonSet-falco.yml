@@ -28,10 +28,7 @@ spec:
       serviceAccountName: falco
       priorityClassName: node-observability
       tolerations:
-        - effect: NoSchedule
-          key: node-role.kubernetes.io/master
-        - effect: NoSchedule
-          key: node-role.kubernetes.io/control-plane
+        - operator: Exists
       containers:
         - name: falco
           image: docker.io/falcosecurity/falco:0.44.1

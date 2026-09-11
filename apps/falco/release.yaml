@@ -65,3 +65,5 @@ spec:
           rollingUpdate:
             maxUnavailable: 25%
     podPriorityClassName: node-observability
+    tolerations:
+      - operator: Exists
