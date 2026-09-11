@@ -1,0 +1,19 @@
+---
+# Source: velero/templates/backupstoragelocation.yaml
+apiVersion: velero.io/v1
+kind: BackupStorageLocation
+metadata:
+  name: default
+  namespace: velero
+  labels:
+    app.kubernetes.io/name: velero
+    app.kubernetes.io/instance: velero
+    app.kubernetes.io/managed-by: Helm
+spec:
+  provider: aws
+  accessMode: ${flux_velero_access_mode}
+  default: true
+  objectStorage:
+    bucket: "${flux_velero_aws_bucket_name}"
+  config:
+    region: "${flux_aws_region}"

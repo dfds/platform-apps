@@ -1,0 +1,23 @@
+---
+# Source: velero/templates/backupstoragelocation.yaml
+apiVersion: velero.io/v1
+kind: BackupStorageLocation
+metadata:
+  name: azure
+  namespace: velero
+  labels:
+    app.kubernetes.io/name: velero
+    app.kubernetes.io/instance: velero
+    app.kubernetes.io/managed-by: Helm
+spec:
+  credential:
+    name: velero-credentials
+    key: cloud
+  provider: azure
+  accessMode: ${flux_velero_access_mode}
+  objectStorage:
+    bucket: "${flux_velero_azure_bucket_name}"
+  config:
+    resourceGroup: "${flux_velero_azure_resource_group}"
+    storageAccount: "${flux_velero_azure_storage_account}"
+    subscriptionId: "${flux_velero_azure_subscription_id}"

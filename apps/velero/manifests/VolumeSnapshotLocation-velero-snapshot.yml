@@ -1,0 +1,15 @@
+---
+# Source: velero/templates/volumesnapshotlocation.yaml
+apiVersion: velero.io/v1
+kind: VolumeSnapshotLocation
+metadata:
+  name: velero-snapshot
+  namespace: velero
+  labels:
+    app.kubernetes.io/name: velero
+    app.kubernetes.io/instance: velero
+    app.kubernetes.io/managed-by: Helm
+spec:
+  provider: aws
+  config:
+    region: "${flux_aws_region}"
