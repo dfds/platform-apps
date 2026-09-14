@@ -6,3 +6,4 @@ resources:
 - observability.yaml
 - cargoallocation.yaml
 - dataplatform.yaml
+- arbo.yaml
