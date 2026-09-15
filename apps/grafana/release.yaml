@@ -82,6 +82,15 @@ spec:
         }
 
         loki.process "worker_nodes_logs" {
+          // Move filename into the log payload and remove it as a label to reduce stream cardinality.
+          stage.pack {
+            labels = ["filename"]
+          }
+
+          stage.label_drop {
+            values = ["filename"]
+          }
+
           forward_to = [
             loki.process.logs_service.receiver,
           ]
