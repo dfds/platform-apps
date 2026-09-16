@@ -83,7 +83,6 @@ spec:
         }
 
         loki.process "worker_nodes_logs" {
-
           stage.label_drop {
             values = ["filename"]
           }
