@@ -959,6 +959,10 @@ data:
     }
 
     loki.process "worker_nodes_logs" {
+      stage.label_drop {
+        values = ["filename"]
+      }
+
       forward_to = [
         loki.process.logs_service.receiver,
       ]
