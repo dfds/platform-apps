@@ -65,19 +65,7 @@ spec:
       journal:
         enabled: true
         units: []
-        extraLogProcessingStages: |-
-          stage.template {
-            source = "message"
-            template = "{{ if .unit }}unit={{ .unit }} {{ end }}{{ .Entry }}"
-          }
 
-          stage.output {
-            source = "message"
-          }
-
-          stage.label_drop {
-            values = ["unit"]
-          }
       extraConfig: |
         local.file_match "worker_nodes_logs" {
           path_targets = [{
@@ -95,14 +83,6 @@ spec:
         }
 
         loki.process "worker_nodes_logs" {
-          stage.template {
-            source = "message"
-            template = "{{ if .filename }}filename={{ .filename }} {{ end }}{{ .Entry }}"
-          }
-
-          stage.output {
-            source = "message"
-          }
 
           stage.label_drop {
             values = ["filename"]
