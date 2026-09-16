@@ -60,10 +60,10 @@ spec:
             timeoutSeconds: 1
           resources:
             limits:
-              memory: 384Mi
+              memory: 512Mi
             requests:
               cpu: 50m
-              memory: 384Mi
+              memory: 512Mi
           volumeMounts:
             - name: config
               mountPath: /etc/alloy
