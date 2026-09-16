@@ -65,7 +65,6 @@ spec:
       journal:
         enabled: true
         units: []
-
       extraConfig: |
         local.file_match "worker_nodes_logs" {
           path_targets = [{
