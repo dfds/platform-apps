@@ -33,7 +33,7 @@ spec:
           args:
             - run
             - /etc/alloy/config.alloy
-            - --storage.path=/tmp/alloy
+            - --storage.path=/srv/alloy/data
             - --server.http.listen-addr=0.0.0.0:12345
             - --server.http.ui-path-prefix=/
             - --stability.level=generally-available
@@ -60,16 +60,18 @@ spec:
             timeoutSeconds: 1
           resources:
             limits:
-              memory: 384Mi
+              memory: 512Mi
             requests:
               cpu: 50m
-              memory: 384Mi
+              memory: 512Mi
           volumeMounts:
             - name: config
               mountPath: /etc/alloy
             - name: varlog
               mountPath: /var/log
               readOnly: true
+            - mountPath: /srv/alloy/data
+              name: alloy-storage-logs
         - name: config-reloader
           image: quay.io/prometheus-operator/prometheus-config-reloader:v0.81.0
           imagePullPolicy: IfNotPresent
@@ -97,6 +99,10 @@ spec:
         - name: varlog
           hostPath:
             path: /var/log
+        - hostPath:
+            path: /srv/alloy/data
+            type: DirectoryOrCreate
+          name: alloy-storage-logs
   updateStrategy:
     rollingUpdate:
       maxUnavailable: 25%
