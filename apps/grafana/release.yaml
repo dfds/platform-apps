@@ -153,22 +153,19 @@ spec:
             memory: 512Mi
           limits:
             memory: 512Mi
-        storagePath: /var/lib/alloy
+        storagePath: /srv/alloy/data
         mounts:
           extra:
             - name: alloy-storage-logs
-              mountPath: /var/lib/alloy
+              mountPath: /srv/alloy/data
       controller:
         priorityClassName: node-observability
-        volumeClaimTemplates:
-          - metadata:
-              name: alloy-storage-logs
-            spec:
-              accessModes: [ "ReadWriteOnce" ]
-              storageClassName: csi-gp3
-              resources:
-                requests:
-                  storage: ${flux_grafana_agent_storage_size}
+        volumes:
+          extra:
+            - name: alloy-storage-logs
+              hostPath:
+                path: /srv/alloy/data
+                type: DirectoryOrCreate
         updateStrategy:
           type: RollingUpdate
           rollingUpdate:
