@@ -157,8 +157,19 @@ spec:
             memory: 512Mi
           limits:
             memory: 512Mi
+        storagePath: /srv/alloy/data
+        mounts:
+          extra:
+            - name: alloy-storage-logs
+              mountPath: /srv/alloy/data
       controller:
         priorityClassName: node-observability
+        volumes:
+          extra:
+            - name: alloy-storage-logs
+              hostPath:
+                path: /srv/alloy/data
+                type: DirectoryOrCreate
         updateStrategy:
           type: RollingUpdate
           rollingUpdate:
