@@ -5,6 +5,7 @@ on:
       - "**/sources.yaml"
       - "**/release.yaml"
       - "**/Makefile"
+      - ".github/workflows/update-crds-and-manifests.yaml"
 jobs:
   update-crds-and-manifests:
     runs-on: ubuntu-latest
