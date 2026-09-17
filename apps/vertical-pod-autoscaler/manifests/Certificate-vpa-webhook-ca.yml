@@ -1,0 +1,26 @@
+---
+# Source: vertical-pod-autoscaler/templates/admission-controller-certmanager.yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: vpa-webhook-ca
+  namespace: vpa
+  labels:
+    app.kubernetes.io/name: vertical-pod-autoscaler
+    app.kubernetes.io/instance: vpa
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: admission-controller
+    app.kubernetes.io/component-instance: vpa-admission-controller
+spec:
+  isCA: true
+  secretName: vpa-webhook-ca
+  commonName: vpa-webhook-ca
+  privateKey:
+    algorithm: RSA
+    size: 2048
+  issuerRef:
+    name: vpa-selfsigned
+    kind: Issuer
+    group: cert-manager.io
+  duration: 8760h
+  renewBefore: 720h
