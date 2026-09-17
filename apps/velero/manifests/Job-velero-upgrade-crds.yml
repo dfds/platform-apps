@@ -1,0 +1,34 @@
+---
+# Source: velero/templates/upgrade-crds/upgrade-crds.yaml
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: velero-upgrade-crds
+  namespace: velero
+  annotations:
+    "helm.sh/hook": pre-install,pre-upgrade,pre-rollback
+    "helm.sh/hook-weight": "5"
+    "helm.sh/hook-delete-policy": before-hook-creation,hook-succeeded
+  labels:
+    app.kubernetes.io/name: velero
+    app.kubernetes.io/instance: velero
+    app.kubernetes.io/managed-by: Helm
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      name: velero-upgrade-crds
+    spec:
+      serviceAccountName: velero-server-upgrade-crds
+      automountServiceAccountToken: true
+      containers:
+        - name: velero
+          image: "docker.io/velero/velero:v1.18.1"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /velero
+          args:
+            - install
+            - --crds-only
+            - --apply
+      restartPolicy: OnFailure

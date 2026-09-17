@@ -1,0 +1,81 @@
+---
+# Source: velero/templates/cleanup-crds.yaml
+# This job is meant primarily for cleaning up on CI systems.
+# Using this on production systems, especially those that have multiple releases of Velero, will be destructive.
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: velero-cleanup-crds
+  namespace: velero
+  annotations:
+    "helm.sh/hook": pre-delete
+    "helm.sh/hook-delete-policy": hook-succeeded
+  labels:
+    app.kubernetes.io/name: velero
+    app.kubernetes.io/instance: velero
+    app.kubernetes.io/managed-by: Helm
+spec:
+  backoffLimit: 3
+  template:
+    metadata:
+      name: velero-cleanup-crds
+    spec:
+      serviceAccountName: velero-server
+      initContainers:
+        - name: delete-restore
+          image: "registry.k8s.io/kubectl:v1.36.0"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/kubectl
+          args:
+            - delete
+            - restore
+            - --all
+        - name: delete-backup
+          image: "registry.k8s.io/kubectl:v1.36.0"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/kubectl
+          args:
+            - delete
+            - backup
+            - --all
+        - name: delete-backupstoragelocation
+          image: "registry.k8s.io/kubectl:v1.36.0"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/kubectl
+          args:
+            - delete
+            - backupstoragelocation
+            - --all
+        - name: delete-volumesnapshotlocation
+          image: "registry.k8s.io/kubectl:v1.36.0"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/kubectl
+          args:
+            - delete
+            - volumesnapshotlocation
+            - --all
+        - name: delete-podvolumerestore
+          image: "registry.k8s.io/kubectl:v1.36.0"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/kubectl
+          args:
+            - delete
+            - podvolumerestore
+            - --all
+      containers:
+        - name: kubectl
+          image: "registry.k8s.io/kubectl:v1.36.0"
+          imagePullPolicy: IfNotPresent
+          command:
+            - /bin/kubectl
+          args:
+            - delete
+            - crd
+            - -l
+            - component=velero
+      restartPolicy: OnFailure

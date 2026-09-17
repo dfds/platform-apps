@@ -68,6 +68,8 @@ spec:
           memory: ${flux_velero_node_agent_pod_memory}
         limits:
           memory: ${flux_velero_node_agent_pod_memory}
+      tolerations:
+        - operator: Exists
     initContainers:
     - image: velero/velero-plugin-for-aws:v1.14.2
       name: velero-plugin-for-aws

@@ -1,0 +1,86 @@
+---
+# Source: velero/templates/node-agent-daemonset.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: node-agent
+  namespace: velero
+  labels:
+    app.kubernetes.io/name: velero
+    app.kubernetes.io/instance: velero
+    app.kubernetes.io/managed-by: Helm
+spec:
+  selector:
+    matchLabels:
+      name: node-agent
+  template:
+    metadata:
+      labels:
+        name: node-agent
+        role: node-agent
+        app.kubernetes.io/name: velero
+        app.kubernetes.io/instance: velero
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+        prometheus.io/path: /metrics
+        prometheus.io/port: "8085"
+        prometheus.io/scrape: "true"
+    spec:
+      serviceAccountName: velero-server
+      automountServiceAccountToken: true
+      securityContext:
+        runAsUser: 0
+      terminationGracePeriodSeconds: 3600
+      volumes:
+        - name: host-pods
+          hostPath:
+            path: /var/lib/kubelet/pods
+        - name: host-plugins
+          hostPath:
+            path: /var/lib/kubelet/plugins
+        - name: scratch
+          emptyDir: {}
+      dnsPolicy: ClusterFirst
+      containers:
+        - name: node-agent
+          image: "docker.io/velero/velero:v1.18.1"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http-monitoring
+              containerPort: 8085
+          command:
+            - /velero
+          args:
+            - node-agent
+            - server
+            - --features=EnableCSI
+            - --log-format=json
+          volumeMounts:
+            - name: host-pods
+              mountPath: /host_pods
+              mountPropagation: HostToContainer
+            - name: host-plugins
+              mountPath: /host_plugins
+              mountPropagation: HostToContainer
+            - name: scratch
+              mountPath: /scratch
+          env:
+            - name: VELERO_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: spec.nodeName
+            - name: VELERO_SCRATCH_DIR
+              value: /scratch
+          securityContext:
+          resources:
+            limits:
+              memory: ${flux_velero_node_agent_pod_memory}
+            requests:
+              cpu: 5m
+              memory: ${flux_velero_node_agent_pod_memory}
+      tolerations:
+        - operator: Exists

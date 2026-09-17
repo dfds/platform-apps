@@ -1,0 +1,109 @@
+---
+# Source: velero/templates/deployment.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: velero
+  namespace: velero
+  labels:
+    app.kubernetes.io/name: velero
+    app.kubernetes.io/instance: velero
+    app.kubernetes.io/managed-by: Helm
+    component: velero
+spec:
+  replicas: 1
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      app.kubernetes.io/instance: velero
+      app.kubernetes.io/name: velero
+  template:
+    metadata:
+      labels:
+        name: velero
+        app.kubernetes.io/name: velero
+        app.kubernetes.io/instance: velero
+        app.kubernetes.io/managed-by: Helm
+      annotations:
+    spec:
+      restartPolicy: Always
+      serviceAccountName: velero-server
+      automountServiceAccountToken: true
+      priorityClassName: cluster-infrastructure
+      terminationGracePeriodSeconds: 3600
+      containers:
+        - name: velero
+          image: "docker.io/velero/velero:v1.18.1"
+          imagePullPolicy: IfNotPresent
+          ports:
+            - name: http-monitoring
+              containerPort: 8085
+          command:
+            - /velero
+          args:
+            - server
+            ### Flags
+            - --uploader-type=kopia
+            - --log-format=json
+            ### Global Flags
+            - --features=EnableCSI
+            - --repo-maintenance-job-configmap=velero-repo-maintenance
+          resources:
+            limits:
+              memory: ${flux_velero_server_pod_memory}
+            requests:
+              cpu: 100m
+              memory: ${flux_velero_server_pod_memory}
+          livenessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /metrics
+              port: http-monitoring
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 5
+          readinessProbe:
+            failureThreshold: 5
+            httpGet:
+              path: /metrics
+              port: http-monitoring
+              scheme: HTTP
+            initialDelaySeconds: 10
+            periodSeconds: 30
+            successThreshold: 1
+            timeoutSeconds: 5
+          volumeMounts:
+            - name: plugins
+              mountPath: /plugins
+            - name: scratch
+              mountPath: /scratch
+          env:
+            - name: VELERO_SCRATCH_DIR
+              value: /scratch
+            - name: VELERO_NAMESPACE
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: metadata.namespace
+            - name: LD_LIBRARY_PATH
+              value: /plugins
+      dnsPolicy: ClusterFirst
+      initContainers:
+        - image: velero/velero-plugin-for-aws:v1.14.2
+          name: velero-plugin-for-aws
+          volumeMounts:
+            - mountPath: /target
+              name: plugins
+        - image: velero/velero-plugin-for-microsoft-azure:v1.14.2
+          name: velero-plugin-for-microsoft-azure
+          volumeMounts:
+            - mountPath: /target
+              name: plugins
+      volumes:
+        - name: plugins
+          emptyDir: {}
+        - name: scratch
+          emptyDir: {}
