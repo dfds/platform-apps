@@ -70,7 +70,7 @@ spec:
           path_targets = [{
             __address__ = "localhost",
             __path__    = "/var/log/**",
-             __path_exclude__ = "/var/log/{pods,containers,journal}/**",
+             __path_exclude__ = "/var/log/{pods/**,containers/**,journal/**,README}",
             instance = env("HOSTNAME"),
             job         = "integrations/kubernetes/worker-node",
           }]
