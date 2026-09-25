@@ -46,6 +46,7 @@ spec:
             ### Flags
             - --uploader-type=kopia
             - --log-format=json
+            - --log-level=warning
             ### Global Flags
             - --features=EnableCSI
             - --repo-maintenance-job-configmap=velero-repo-maintenance
