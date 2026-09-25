@@ -60,6 +60,14 @@ spec:
       enabled: true
       pod_logs:
         enabled: true
+        extraRelabelingRules: |-
+          rule {
+            action        = "replace"
+            source_labels = ["__meta_kubernetes_pod_name"]
+            regex         = "velero-.+-cluster-backup-offsite-.*"
+            target_label  = "job"
+            replacement   = "velero/velero-cluster-backup-offsite"
+          }
       cluster_events:
         enabled: true
       journal:
@@ -90,6 +98,7 @@ spec:
             loki.process.logs_service.receiver,
           ]
         }
+
     alloy:
       alloy:
         clustering:

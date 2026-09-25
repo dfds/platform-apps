@@ -69,6 +69,13 @@ data:
         replacement = "$1"
         target_label = "tmp_container_runtime"
       }
+      rule {
+        action        = "replace"
+        source_labels = ["__meta_kubernetes_pod_name"]
+        regex         = "velero-.+-cluster-backup-offsite-.*"
+        target_label  = "job"
+        replacement   = "velero/velero-cluster-backup-offsite"
+      }
     }
 
     discovery.relabel "filtered_pod_logs" {
