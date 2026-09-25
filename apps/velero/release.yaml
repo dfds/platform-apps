@@ -44,6 +44,7 @@ spec:
         accessMode: ${flux_velero_access_mode}
       features: EnableCSI
       logFormat: json
+      logLevel: warning
       volumeSnapshotLocation:
       - config:
           region: ${flux_aws_region}
