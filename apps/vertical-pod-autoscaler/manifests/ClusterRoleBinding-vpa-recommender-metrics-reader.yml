@@ -1,0 +1,20 @@
+---
+# Source: vertical-pod-autoscaler/templates/recommender-clusterrolebindings.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: vpa-recommender-metrics-reader
+  labels:
+    app.kubernetes.io/name: vertical-pod-autoscaler
+    app.kubernetes.io/instance: vpa
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: recommender
+    app.kubernetes.io/component-instance: vpa-recommender
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: vpa-recommender-metrics-reader
+subjects:
+  - kind: ServiceAccount
+    name: vpa-recommender
+    namespace: vpa
