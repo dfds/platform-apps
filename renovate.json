@@ -33,5 +33,14 @@
         "release:major"
       ]
     }
+  ],
+  "customManagers": [
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["^\\.github/workflows/.*\\.ya?ml$"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[^\\s]+) depName=(?<depName>[^\\s]+)(?: versioning=(?<versioning>[^\\s]+))?\\s+[^\\s#]+:\\s*(?<currentValue>v?[^\\s\\n]+)"
+      ]
+    }
   ]
 }
