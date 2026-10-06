@@ -680,8 +680,8 @@ data:
       stage.truncate {
         rule {
           source_type = "line"
-          limit = "256KiB" # Grafana Cloud Loki hard limit
-          suffix = " [truncated]" # will show log message [truncated]
+          limit = "256KiB"
+          suffix = " [truncated]"
         }
       }
 
@@ -924,8 +924,8 @@ data:
       stage.truncate {
         rule {
           source_type = "line"
-          limit = "256KiB" # Grafana Cloud Loki hard limit
-          suffix = " [truncated]" # will show log message [truncated]
+          limit = "256KiB"
+          suffix = " [truncated]"
         }
       }
 
@@ -997,8 +997,8 @@ data:
       stage.truncate {
         rule {
           source_type = "line"
-          limit = "256KiB" # Grafana Cloud Loki hard limit
-          suffix = " [truncated]" # will show log message [truncated]
+          limit = "256KiB"
+          suffix = " [truncated]"
         }
       }
     }
