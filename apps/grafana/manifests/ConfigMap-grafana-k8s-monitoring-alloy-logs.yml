@@ -184,7 +184,7 @@ data:
       path_targets = [{
         __address__ = "localhost",
         __path__    = "/var/log/**",
-         __path_exclude__ = "/var/log/{pods/**,containers/**,journal/**,README}",
+         __path_exclude__ = "/var/log/{pods/**,containers/**,journal/**,README,chrony/statistics.log}",
         instance = env("HOSTNAME"),
         job         = "integrations/kubernetes/worker-node",
       }]
