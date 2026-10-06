@@ -670,6 +670,14 @@ data:
           "tmp_container_runtime",
         ]
       }
+      stage.truncate {
+        rule {
+          source_type = "line"
+          limit = "256KiB" # Grafana Cloud Loki hard limit
+          suffix = " [truncated]" # will show log message [truncated]
+        }
+      }
+
       forward_to = [loki.process.logs_service.receiver]
     }
 

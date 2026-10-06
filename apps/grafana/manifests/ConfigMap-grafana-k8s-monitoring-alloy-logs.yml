@@ -135,6 +135,14 @@ data:
           "tmp_container_runtime",
         ]
       }
+      stage.truncate {
+        rule {
+          source_type = "line"
+          limit = "256KiB" # Grafana Cloud Loki hard limit
+          suffix = " [truncated]" # will show log message [truncated]
+        }
+      }
+
       forward_to = [loki.process.logs_service.receiver]
     }
 
@@ -193,8 +201,20 @@ data:
       }
 
       forward_to = [
-        loki.process.logs_service.receiver,
+        loki.process.size_guard.receiver,
       ]
+    }
+
+    loki.process "size_guard" {
+      forward_to = [loki.write.logs_service.receiver]
+
+      stage.truncate {
+        rule {
+          source_type = "line"
+          limit = "256KiB" # Grafana Cloud Loki hard limit
+          suffix = " [truncated]" # will show log message [truncated]
+        }
+      }
     }
     // Journal Logs
     loki.relabel "journal" {
@@ -222,5 +242,13 @@ data:
       forward_to = [loki.process.journal_logs.receiver]
     }
     loki.process "journal_logs" {
+      stage.truncate {
+        rule {
+          source_type = "line"
+          limit = "256KiB" # Grafana Cloud Loki hard limit
+          suffix = " [truncated]" # will show log message [truncated]
+        }
+      }
+
       forward_to = [loki.process.logs_service.receiver]
     }
