@@ -68,11 +68,27 @@ spec:
             target_label  = "job"
             replacement   = "velero/velero-cluster-backup-offsite"
           }
+        extraStageBlocks: |-
+          stage.truncate {
+            rule {
+              source_type = "line"
+              limit = "256KiB" # Grafana Cloud Loki hard limit
+              suffix = " [truncated]" # will show log message [truncated]
+            }
+          }
       cluster_events:
         enabled: true
       journal:
         enabled: true
         units: []
+        extraStageBlocks: |-
+          stage.truncate {
+            rule {
+              source_type = "line"
+              limit = "256KiB" # Grafana Cloud Loki hard limit
+              suffix = " [truncated]" # will show log message [truncated]
+            }
+          }
       extraConfig: |
         local.file_match "worker_nodes_logs" {
           path_targets = [{
