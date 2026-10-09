@@ -20,17 +20,11 @@
     {
       "matchUpdateTypes": [
         "minor"
-      ],
-      "addLabels": [
-        "release:minor"
       ]
     },
     {
       "matchUpdateTypes": [
         "major"
-      ],
-      "addLabels": [
-        "release:major"
       ]
     }
   ]
