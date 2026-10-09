@@ -670,6 +670,14 @@ data:
           "tmp_container_runtime",
         ]
       }
+      stage.truncate {
+        rule {
+          source_type = "line"
+          limit = "256KiB"
+          suffix = " [truncated]"
+        }
+      }
+
       forward_to = [loki.process.logs_service.receiver]
     }
 

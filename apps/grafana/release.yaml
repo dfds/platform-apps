@@ -68,17 +68,33 @@ spec:
             target_label  = "job"
             replacement   = "velero/velero-cluster-backup-offsite"
           }
+        extraStageBlocks: |-
+          stage.truncate {
+            rule {
+              source_type = "line"
+              limit = "256KiB"
+              suffix = " [truncated]"
+            }
+          }
       cluster_events:
         enabled: true
       journal:
         enabled: true
         units: []
+        extraStageBlocks: |-
+          stage.truncate {
+            rule {
+              source_type = "line"
+              limit = "256KiB"
+              suffix = " [truncated]"
+            }
+          }
       extraConfig: |
         local.file_match "worker_nodes_logs" {
           path_targets = [{
             __address__ = "localhost",
             __path__    = "/var/log/**",
-             __path_exclude__ = "/var/log/{pods/**,containers/**,journal/**,README}",
+             __path_exclude__ = "/var/log/{pods/**,containers/**,journal/**,README,chrony/statistics.log}",
             instance = env("HOSTNAME"),
             job         = "integrations/kubernetes/worker-node",
           }]
@@ -95,8 +111,20 @@ spec:
           }
 
           forward_to = [
-            loki.process.logs_service.receiver,
+            loki.process.size_guard.receiver,
           ]
+        }
+
+        loki.process "size_guard" {
+          forward_to = [loki.write.logs_service.receiver]
+
+          stage.truncate {
+            rule {
+              source_type = "line"
+              limit = "256KiB"
+              suffix = " [truncated]"
+            }
+          }
         }
 
     alloy:

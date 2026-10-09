@@ -21,7 +21,7 @@ repos:
         args:
           - -strict
           - -skip
-          - CustomResourceDefinition,Kustomization,Test,EC2NodeClass # EC2NodeClass fails due to postBuildSubstitutions ${flux_karpenter_node_volume_size}
+          - CustomResourceDefinition,Kustomization,Test,EC2NodeClass,SecretStore # EC2NodeClass fails due to postBuildSubstitutions ${flux_karpenter_node_volume_size}, SecretStore has a bug see issue https://github.com/datreeio/CRDs-catalog/issues/991
           - -schema-location
           - default
           - -schema-location
