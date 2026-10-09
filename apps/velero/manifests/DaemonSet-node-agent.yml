@@ -54,6 +54,7 @@ spec:
             - node-agent
             - server
             - --features=EnableCSI
+            - --log-level=warning
             - --log-format=json
           volumeMounts:
             - name: host-pods
