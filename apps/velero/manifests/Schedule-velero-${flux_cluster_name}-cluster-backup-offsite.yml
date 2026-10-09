@@ -10,7 +10,7 @@ metadata:
     app.kubernetes.io/instance: velero
     app.kubernetes.io/managed-by: Helm
 spec:
-  schedule: "0 * * * *"
+  schedule: "0 0 * * *"
   template:
     excludedClusterScopedResources:
       - clustercleanuppolicies.kyverno.io
