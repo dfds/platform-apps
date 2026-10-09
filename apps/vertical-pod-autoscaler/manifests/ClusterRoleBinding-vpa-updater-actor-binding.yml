@@ -1,0 +1,20 @@
+---
+# Source: vertical-pod-autoscaler/templates/updater-clusterrolebinding.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRoleBinding
+metadata:
+  name: vpa-updater-actor-binding
+  labels:
+    app.kubernetes.io/name: vertical-pod-autoscaler
+    app.kubernetes.io/instance: vpa
+    app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/component: updater
+    app.kubernetes.io/component-instance: vpa-updater
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: vpa-updater-actor
+subjects:
+  - kind: ServiceAccount
+    name: vpa-updater
+    namespace: vpa
