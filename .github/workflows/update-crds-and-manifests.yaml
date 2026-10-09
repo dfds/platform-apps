@@ -31,6 +31,12 @@ jobs:
           touch ${file}
         done
 
+    - name: Install helm and yq
+      uses: alexellis/arkade-get@master
+      with:
+        helm: v4.3.0
+        yq: v4.53.3
+
     - name: Update CRDs and render helm templates
       run: make
 
