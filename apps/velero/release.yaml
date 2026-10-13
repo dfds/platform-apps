@@ -63,6 +63,7 @@ spec:
       useSecret: false
     deployNodeAgent: true
     nodeAgent:
+      priorityClassName: node-infrastructure
       updateStrategy:
         type: RollingUpdate
         rollingUpdate:
