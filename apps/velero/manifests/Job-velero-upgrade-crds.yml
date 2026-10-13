@@ -23,7 +23,7 @@ spec:
       automountServiceAccountToken: true
       containers:
         - name: velero
-          image: "docker.io/velero/velero:v1.18.1"
+          image: "docker.io/velero/velero:v1.18.2"
           imagePullPolicy: IfNotPresent
           command:
             - /velero
