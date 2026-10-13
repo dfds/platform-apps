@@ -30,6 +30,7 @@ spec:
       automountServiceAccountToken: true
       securityContext:
         runAsUser: 0
+      priorityClassName: node-infrastructure
       terminationGracePeriodSeconds: 3600
       volumes:
         - name: host-pods
