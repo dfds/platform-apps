@@ -63,6 +63,10 @@ spec:
       useSecret: false
     deployNodeAgent: true
     nodeAgent:
+      updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 25%
       resources:
         requests:
           cpu: 5m

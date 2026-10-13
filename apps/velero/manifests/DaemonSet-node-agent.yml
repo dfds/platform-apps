@@ -85,3 +85,7 @@ spec:
               memory: ${flux_velero_node_agent_pod_memory}
       tolerations:
         - operator: Exists
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 25%
+    type: RollingUpdate
