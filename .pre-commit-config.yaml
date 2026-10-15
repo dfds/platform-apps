@@ -21,7 +21,7 @@ repos:
         args:
           - -strict
           - -skip
-          - CustomResourceDefinition,Kustomization,Test,EC2NodeClass # EC2NodeClass fails due to postBuildSubstitutions ${flux_karpenter_node_volume_size}
+          - CustomResourceDefinition,Kustomization,Test,EC2NodeClass,SecretStore # EC2NodeClass fails due to postBuildSubstitutions ${flux_karpenter_node_volume_size}, SecretStore has a bug see issue https://github.com/datreeio/CRDs-catalog/issues/991
           - -schema-location
           - default
           - -schema-location
@@ -39,3 +39,8 @@ repos:
           - apps/kyverno/policies/
         pass_filenames: false
         always_run: true
+  - repo: https://github.com/renovatebot/pre-commit-hooks
+    rev: 42.95.1
+    hooks:
+      - id: renovate-config-validator
+        args: [--strict]

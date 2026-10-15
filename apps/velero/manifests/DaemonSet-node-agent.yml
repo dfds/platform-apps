@@ -30,6 +30,7 @@ spec:
       automountServiceAccountToken: true
       securityContext:
         runAsUser: 0
+      priorityClassName: node-infrastructure
       terminationGracePeriodSeconds: 3600
       volumes:
         - name: host-pods
@@ -54,6 +55,7 @@ spec:
             - node-agent
             - server
             - --features=EnableCSI
+            - --log-level=warning
             - --log-format=json
           volumeMounts:
             - name: host-pods
@@ -84,3 +86,7 @@ spec:
               memory: ${flux_velero_node_agent_pod_memory}
       tolerations:
         - operator: Exists
+  updateStrategy:
+    rollingUpdate:
+      maxUnavailable: 25%
+    type: RollingUpdate

@@ -135,6 +135,14 @@ data:
           "tmp_container_runtime",
         ]
       }
+      stage.truncate {
+        rule {
+          source_type = "line"
+          limit = "256KiB"
+          suffix = " [truncated]"
+        }
+      }
+
       forward_to = [loki.process.logs_service.receiver]
     }
 
@@ -176,7 +184,7 @@ data:
       path_targets = [{
         __address__ = "localhost",
         __path__    = "/var/log/**",
-         __path_exclude__ = "/var/log/{pods/**,containers/**,journal/**,README}",
+         __path_exclude__ = "/var/log/{pods/**,containers/**,journal/**,README,chrony/statistics.log}",
         instance = env("HOSTNAME"),
         job         = "integrations/kubernetes/worker-node",
       }]
@@ -193,8 +201,20 @@ data:
       }
 
       forward_to = [
-        loki.process.logs_service.receiver,
+        loki.process.size_guard.receiver,
       ]
+    }
+
+    loki.process "size_guard" {
+      forward_to = [loki.write.logs_service.receiver]
+
+      stage.truncate {
+        rule {
+          source_type = "line"
+          limit = "256KiB"
+          suffix = " [truncated]"
+        }
+      }
     }
     // Journal Logs
     loki.relabel "journal" {
@@ -222,5 +242,13 @@ data:
       forward_to = [loki.process.journal_logs.receiver]
     }
     loki.process "journal_logs" {
+      stage.truncate {
+        rule {
+          source_type = "line"
+          limit = "256KiB"
+          suffix = " [truncated]"
+        }
+      }
+
       forward_to = [loki.process.logs_service.receiver]
     }
