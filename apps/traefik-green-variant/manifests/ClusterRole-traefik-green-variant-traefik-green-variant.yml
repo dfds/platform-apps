@@ -58,6 +58,13 @@ rules:
     verbs:
       - update
   - apiGroups:
+      - ""
+    resources:
+      - namespaces
+    verbs:
+      - list
+      - watch
+  - apiGroups:
       - traefik.io
     resources:
       - ingressroutes
@@ -78,10 +85,7 @@ rules:
       - ""
     resources:
       - namespaces
-      - secrets
-      - configmaps
     verbs:
-      - get
       - list
       - watch
   - apiGroups:
