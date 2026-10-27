@@ -7,11 +7,11 @@ metadata:
 spec:
   serviceAccountName: helm-controller
   releaseName: arc-runner-set
-  # dependsOn:
-  #   - name: arc
-  #     namespace: arc-systems
-  #   - name: external-secrets
-  #     namespace: external-secrets
+  dependsOn:
+    - name: arc
+      namespace: arc-systems
+    - name: external-secrets
+      namespace: external-secrets
   chartRef:
     kind: OCIRepository
     name: arc
