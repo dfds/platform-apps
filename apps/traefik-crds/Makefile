@@ -1,22 +1,16 @@
 SHELL = /usr/bin/env bash
 
-# Find HelmRelease and Source files
-release := $(shell yq '. | select(.kind=="HelmRelease") | filename' *.yaml)
-source := $(shell yq '. | select(.kind=="HelmRepository") | filename' *.yaml)
+traefik_chart_repo := https://traefik.github.io/charts
+traefik_chart_version := 42.2.0
+gateway_api_version := v1.6.3
 
-# Fetch data from HelmRepository and HelmRelease
-name := $(shell yq '.metadata.name' $(release))
-namespace := $(shell yq '.metadata.namespace' $(release))
-version := $(shell yq '.spec.chart.spec.version' $(release))
-chart := $(shell yq '.spec.chart.spec.chart' $(release))
-values := yq '.spec.values' $(release)
-url := $(shell yq '.spec.url' $(source))
-
-# Run all tasks
 all: crds.yaml
 
-# Generate CRDs with helm
-crds.yaml: $(release) $(source)
-	helm template $(name) $(chart) --repo $(url) --version $(version) --include-crds | yq '. | select(.kind == "CustomResourceDefinition")' --exit-status > $@
+crds.yaml:
+	{ \
+	  helm show crds traefik --repo $(traefik_chart_repo) --version $(traefik_chart_version) | yq 'select(.spec.group == "traefik.io")' --exit-status; \
+	  echo '---'; \
+	  curl -fsSL https://github.com/kubernetes-sigs/gateway-api/releases/download/$(gateway_api_version)/standard-install.yaml; \
+	} > $@
 
-.PHONY: all
+.PHONY: all crds.yaml
