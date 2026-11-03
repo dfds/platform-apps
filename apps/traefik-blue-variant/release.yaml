@@ -10,7 +10,7 @@ spec:
   chart:
     spec:
       chart: traefik
-      version: 37.4.0
+      version: 37.4.0 # Make sure this version is compatible with Traefik CRDs. Use ../traefik-crds/Makefile to set a matching version
       sourceRef:
         kind: HelmRepository
         name: traefik
