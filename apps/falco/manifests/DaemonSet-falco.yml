@@ -21,7 +21,7 @@ spec:
         app.kubernetes.io/name: falco
         app.kubernetes.io/instance: falco
       annotations:
-        checksum/config: dd7666534784a41890942b934b5ebae5b0427801dfd7bef9340ad7a5f4f2414e
+        checksum/config: ff2b12780e5fbe8f53355b58e20ff34670b1fa03c9a413a057681973cfec6444
         checksum/rules: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
         checksum/certs: e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
     spec:
@@ -31,7 +31,7 @@ spec:
         - operator: Exists
       containers:
         - name: falco
-          image: docker.io/falcosecurity/falco:0.44.1
+          image: docker.io/falcosecurity/falco:0.45.2
           imagePullPolicy: IfNotPresent
           resources:
             limits:
@@ -85,26 +85,29 @@ spec:
               path: /healthz
               port: 8765
           volumeMounts:
-            - mountPath: /host/var/run/docker.sock
+            - mountPath: /host/var/run
               name: container-engine-socket-0
-            - mountPath: /host/run/podman/podman.sock
+            - mountPath: /host/run/podman
               name: container-engine-socket-1
-            - mountPath: /host/run/host-containerd/containerd.sock
+            - mountPath: /host/run/host-containerd
               name: container-engine-socket-2
-            - mountPath: /host/run/containerd/containerd.sock
+            - mountPath: /host/run/containerd
               name: container-engine-socket-3
-            - mountPath: /host/run/crio/crio.sock
+            - mountPath: /host/run/crio
               name: container-engine-socket-4
-            - mountPath: /host/run/k3s/containerd/containerd.sock
+            - mountPath: /host/run/k3s/containerd
               name: container-engine-socket-5
             - mountPath: /etc/falco
               name: rulesfiles-install-dir
             - mountPath: /usr/share/falco/plugins
               name: plugins-install-dir
+            - mountPath: /etc/falco/config.d
+              name: specialized-falco-configs
             - mountPath: /root/.falco
               name: root-falco-fs
             - mountPath: /host/proc
               name: proc-fs
+              readOnly: true
             - mountPath: /host/etc
               name: etc-fs
               readOnly: true
@@ -115,7 +118,7 @@ spec:
               name: falco-yaml
               subPath: falco.yaml
         - name: falcoctl-artifact-follow
-          image: docker.io/falcosecurity/falcoctl:0.13.0
+          image: docker.io/falcosecurity/falcoctl:0.14.3
           imagePullPolicy: IfNotPresent
           args:
             - artifact
@@ -133,7 +136,7 @@ spec:
               name: artifact-state-dir
       initContainers:
         - name: falcoctl-artifact-install
-          image: docker.io/falcosecurity/falcoctl:0.13.0
+          image: docker.io/falcosecurity/falcoctl:0.14.3
           imagePullPolicy: IfNotPresent
           args:
             - artifact
@@ -151,23 +154,25 @@ spec:
               name: artifact-state-dir
       volumes:
         - hostPath:
-            path: /var/run/docker.sock
+            path: /var/run
           name: container-engine-socket-0
         - hostPath:
-            path: /run/podman/podman.sock
+            path: /run/podman
           name: container-engine-socket-1
         - hostPath:
-            path: /run/host-containerd/containerd.sock
+            path: /run/host-containerd
           name: container-engine-socket-2
         - hostPath:
-            path: /run/containerd/containerd.sock
+            path: /run/containerd
           name: container-engine-socket-3
         - hostPath:
-            path: /run/crio/crio.sock
+            path: /run/crio
           name: container-engine-socket-4
         - hostPath:
-            path: /run/k3s/containerd/containerd.sock
+            path: /run/k3s/containerd
           name: container-engine-socket-5
+        - name: specialized-falco-configs
+          emptyDir: {}
         - name: plugins-install-dir
           emptyDir: {}
         - name: rulesfiles-install-dir
