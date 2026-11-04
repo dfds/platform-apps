@@ -27,8 +27,8 @@ data:
         pluginsDir: /plugins
         refs:
         - falco-rules:5
-        - ghcr.io/falcosecurity/plugins/plugin/k8smeta:0.4.1
-        - ghcr.io/falcosecurity/plugins/plugin/container:0.7.1
+        - ghcr.io/falcosecurity/plugins/plugin/k8smeta:0.4.2
+        - ghcr.io/falcosecurity/plugins/plugin/container:0.7.6
         resolveDeps: true
         rulesfilesDir: /rulesfiles
         stateDir: /artifactstate
