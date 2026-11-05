@@ -1,8 +1,8 @@
 SHELL = /usr/bin/env bash
 
 traefik_chart_repo := https://traefik.github.io/charts
-traefik_chart_version := 37.4.0
-gateway_api_version := v1.4.0
+traefik_chart_version := 42.3.0
+gateway_api_version := v1.6.3
 
 all: crds.yaml
 
