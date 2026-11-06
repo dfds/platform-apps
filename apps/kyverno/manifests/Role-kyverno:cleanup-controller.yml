@@ -8,6 +8,7 @@ metadata:
     app.kubernetes.io/component: cleanup-controller
     app.kubernetes.io/instance: kyverno
     app.kubernetes.io/managed-by: Helm
+    app.kubernetes.io/name: kyverno-cleanup-controller
     app.kubernetes.io/part-of: kyverno
   namespace: kyverno
 rules:
@@ -30,6 +31,8 @@ rules:
     resourceNames:
       - kyverno-cleanup-controller.kyverno.svc.kyverno-tls-ca
       - kyverno-cleanup-controller.kyverno.svc.kyverno-tls-pair
+      - kyverno-cleanup-controller.kyverno.metering.kyverno-tls-ca
+      - kyverno-cleanup-controller.kyverno.metering.kyverno-tls-pair
   - apiGroups:
       - ''
     resources:
