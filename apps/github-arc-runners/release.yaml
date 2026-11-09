@@ -20,6 +20,9 @@ spec:
     remediation:
       retries: 3
   values:
+    controllerServiceAccount:
+      name: arc-gha-rs-controller # controlled by the github-arc-ss-controller chart and required for the chart to render due to Helm lookup functionality in the chart
+      namespace: arc-systems # controlled by the github-arc-ss-controller chart and required for the chart to render due to Helm lookup functionality in the chart
     githubConfigUrl: https://github.com/dfds
     githubConfigSecret: github-arc-dfds
     runnerScaleSetName: ${flux_github_arc_runners_scale_set_name}
