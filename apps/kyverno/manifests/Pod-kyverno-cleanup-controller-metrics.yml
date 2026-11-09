@@ -17,7 +17,7 @@ spec:
   restartPolicy: Never
   containers:
     - name: test
-      image: ghcr.io/kyverno/readiness-checker:v0.1.0
+      image: ghcr.io/kyverno/readiness-checker:latest
       imagePullPolicy: IfNotPresent
       resources:
         limits:
@@ -44,3 +44,5 @@ spec:
         - --namespace=kyverno
         - --port=8000
         - --path=metrics
+  nodeSelector:
+    kubernetes.io/os: linux
