@@ -7,13 +7,10 @@ metadata:
 spec:
   serviceAccountName: helm-controller
   releaseName: traefik-blue-variant
-  dependsOn:
-    - name: traefik-crds
-      namespace: flux-system
   chart:
     spec:
       chart: traefik
-      version: 37.4.0
+      version: 42.3.0 # Make sure this version is compatible with Traefik CRDs. Use ../traefik-crds/Makefile to set a matching version
       sourceRef:
         kind: HelmRepository
         name: traefik
@@ -53,14 +50,13 @@ spec:
         - traefik
         - web
         matchRule: Host(`traefik-blue-variant.${flux_eks_fqdn}`) && (PathPrefix(`/api`) || PathPrefix(`/dashboard`))
-    logs:
-      access:
-        enabled: true
-        filters:
-          statuscodes: 300-399,400-499,500-599
-      general:
-        format: json
-        level: ERROR
+    log:
+      format: json
+      level: ERROR
+    accessLog:
+      enabled: true
+      filters:
+        statusCodes: 300-399,400-499,500-599
     metrics:
       prometheus:
         service:
@@ -88,12 +84,13 @@ spec:
         enabled: true # requires ingressClass defined in apps/traefik-crds/ingressclass.yaml
     resources:
       limits:
-        memory: 512Mi
+        memory: 640Mi
       requests:
-        cpu: 150m
-        memory: 512Mi
+        cpu: 200m
+        memory: 640Mi
     service:
       enabled: true
       labels:
         scrape-service-metrics: "true"
-      type: ClusterIP
+      spec:
+        type: ClusterIP

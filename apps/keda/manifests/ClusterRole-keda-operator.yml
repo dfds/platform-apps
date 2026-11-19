@@ -25,6 +25,7 @@ rules:
       - list
       - watch
   - apiGroups:
+      - events.k8s.io
       - ""
     resources:
       - events
@@ -77,6 +78,7 @@ rules:
       - apps
     resources:
       - deployments
+      - replicasets
       - statefulsets
     verbs:
       - get

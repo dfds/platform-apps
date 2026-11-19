@@ -1,0 +1,46 @@
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: operational
+policies:
+  - require-resources.yaml
+  - restrict-service-types.yaml
+resources:
+  - tests/
+results:
+  - policy: restrict-service-types
+    rule: service-types-loadbalancer-nodeport-disallowed
+    resources:
+    - default/clusterip
+    kind: Service
+    result: pass
+  - policy: restrict-service-types
+    rule: service-types-loadbalancer-nodeport-disallowed
+    resources:
+    - default/externalname
+    kind: Service
+    result: pass
+  - policy: restrict-service-types
+    rule: service-types-loadbalancer-nodeport-disallowed
+    resources:
+    - default/nodeport
+    kind: Service
+    result: fail
+  - policy: restrict-service-types
+    rule: service-types-loadbalancer-nodeport-disallowed
+    resources:
+    - traefik-green-variant/nodeport-traefik-green
+    kind: Service
+    result: pass
+  - policy: restrict-service-types
+    rule: service-types-loadbalancer-nodeport-disallowed
+    resources:
+    - default/loadbalancer
+    kind: Service
+    result: fail
+  - policy: restrict-service-types
+    rule: service-types-loadbalancer-nodeport-disallowed
+    resources:
+    - traefik-blue-variant/loadbalancer-traefik-blue
+    kind: Service
+    result: pass

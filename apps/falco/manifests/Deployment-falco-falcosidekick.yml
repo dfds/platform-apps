@@ -28,7 +28,7 @@ spec:
         app.kubernetes.io/managed-by: Helm
         app.kubernetes.io/component: core
       annotations:
-        checksum/config: 63210598d1370971443c5c86560284aa69767e10e700d801c893377bc6b9564b
+        checksum/config: 42f33027b0349f69645e7e4a1e4d9fffcc5d4383081d408d149a1edd6866e3ad
     spec:
       serviceAccountName: falco-falcosidekick
       priorityClassName: "cluster-observability"
@@ -37,7 +37,7 @@ spec:
         runAsUser: 1234
       containers:
         - name: falcosidekick
-          image: "docker.io/falcosecurity/falcosidekick:2.32.0"
+          image: "docker.io/falcosecurity/falcosidekick:2.35.1"
           imagePullPolicy: IfNotPresent
           ports:
             - name: http

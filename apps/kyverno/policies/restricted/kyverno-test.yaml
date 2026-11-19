@@ -1,0 +1,11 @@
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: restricted
+policies:
+  - disallow-privilege-escalation.yaml
+  - require-run-as-nonroot.yaml
+  - restrict-capabilities.yaml
+resources:
+  - tests/
+results: []

@@ -1,6 +1,0 @@
-apiVersion: v1
-kind: Namespace
-metadata:
-  name: trivy-system
-  labels:
-    pod-security.kubernetes.io/enforce: privileged # Needed to run job/node-collector

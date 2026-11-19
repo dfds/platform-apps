@@ -8,8 +8,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - uses: actions/checkout@v7
-    - uses: actions/setup-python@v6
+    - uses: actions/setup-python@v7
     - uses: alexellis/arkade-get@master
       with:
-        kubeconform: latest
+        # renovate: datasource=github-tags depName=yannh/kubeconform versioning=semver
+        kubeconform: v0.8.0
+        # renovate: datasource=github-tags depName=kyverno/kyverno versioning=semver
+        kyverno: v1.19.2
     - uses: pre-commit/action@v3.0.1

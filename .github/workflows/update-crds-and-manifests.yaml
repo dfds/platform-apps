@@ -5,6 +5,7 @@ on:
       - "**/sources.yaml"
       - "**/release.yaml"
       - "**/Makefile"
+      - ".github/workflows/update-crds-and-manifests.yaml"
 jobs:
   update-crds-and-manifests:
     runs-on: ubuntu-latest
@@ -30,10 +31,18 @@ jobs:
           touch ${file}
         done
 
+    - name: Install helm and yq
+      uses: alexellis/arkade-get@master
+      with:
+        # renovate: datasource=github-tags depName=helm/helm versioning=semver
+        helm: v4.3.0
+        # renovate: datasource=github-tags depName=mikefarah/yq versioning=semver
+        yq: v4.53.3
+
     - name: Update CRDs and render helm templates
       run: make
 
-    - uses: EndBug/add-and-commit@v10
+    - uses: EndBug/add-and-commit@v11
       with:
         add: '["**/crds.yaml", "**/manifests/*"]'
         message: "Update CRDs and render helm templates"

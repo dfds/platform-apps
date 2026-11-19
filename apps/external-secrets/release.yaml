@@ -9,16 +9,16 @@ spec:
   chart:
     spec:
       chart: external-secrets
-      version: 0.20.4
+      version: 2.10.0
       sourceRef:
         kind: HelmRepository
         name: external-secrets
         namespace: external-secrets
   interval: 1m
   install:
-    crds: CreateReplace
+    crds: Skip
   upgrade:
-    crds: CreateReplace
+    crds: Skip
   values:
     installCRDS: true
     priorityClassName: cluster-infrastructure

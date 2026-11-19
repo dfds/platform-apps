@@ -14,7 +14,7 @@ metadata:
 spec:
   containers:
     - name: curl
-      image: appropriate/curl
+      image: curlimages/curl
       command: ['curl']
-      args: ["-X", "POST", 'falco-falcosidekick:2801/ping']
+      args: ["-X", "POST", 'falco-falcosidekick:2801/healthz']
   restartPolicy: Never

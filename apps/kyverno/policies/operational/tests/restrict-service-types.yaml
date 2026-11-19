@@ -1,0 +1,88 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: clusterip
+spec:
+  ports:
+  - name: http
+    port: 80
+    protocol: TCP
+    targetPort: 80
+  selector:
+    app: default
+  type: ClusterIP
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: externalname
+spec:
+  externalName: example.com
+  selector:
+    app: default
+  type: ExternalName
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodeport
+spec:
+  ports:
+  - name: http
+    port: 1234
+    protocol: TCP
+    targetPort: 1234
+  selector:
+    app: default
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: nodeport-traefik-green
+  namespace: traefik-green-variant
+spec:
+  ports:
+  - name: http
+    port: 1234
+    protocol: TCP
+    targetPort: 1234
+  selector:
+    app: default
+  type: NodePort
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadbalancer
+spec:
+  ports:
+  - name: http
+    port: 1234
+    protocol: TCP
+    targetPort: 1234
+  selector:
+    app: default
+  type: LoadBalancer
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: loadbalancer-traefik-blue
+  namespace: traefik-blue-variant
+spec:
+  ports:
+  - name: http
+    port: 1234
+    protocol: TCP
+    targetPort: 1234
+  selector:
+    app: default
+  type: LoadBalancer
+

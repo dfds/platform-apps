@@ -44,6 +44,7 @@ spec:
         accessMode: ${flux_velero_access_mode}
       features: EnableCSI
       logFormat: json
+      logLevel: warning
       volumeSnapshotLocation:
       - config:
           region: ${flux_aws_region}
@@ -62,19 +63,26 @@ spec:
       useSecret: false
     deployNodeAgent: true
     nodeAgent:
+      priorityClassName: node-infrastructure
+      updateStrategy:
+        type: RollingUpdate
+        rollingUpdate:
+          maxUnavailable: 25%
       resources:
         requests:
           cpu: 5m
           memory: ${flux_velero_node_agent_pod_memory}
         limits:
           memory: ${flux_velero_node_agent_pod_memory}
+      tolerations:
+        - operator: Exists
     initContainers:
-    - image: velero/velero-plugin-for-aws:v1.14.2
+    - image: velero/velero-plugin-for-aws:v1.14.3
       name: velero-plugin-for-aws
       volumeMounts:
       - mountPath: /target
         name: plugins
-    - image: velero/velero-plugin-for-microsoft-azure:v1.14.2
+    - image: velero/velero-plugin-for-microsoft-azure:v1.14.3
       name: velero-plugin-for-microsoft-azure
       volumeMounts:
       - mountPath: /target
@@ -97,7 +105,7 @@ spec:
         memory: ${flux_velero_server_pod_memory}
     schedules:
       ${flux_cluster_name}-cluster-backup:
-        schedule: 0 0 * * *
+        schedule: 0 * * * *
         template:
           excludedClusterScopedResources:
           - clustercleanuppolicies.kyverno.io
@@ -144,7 +152,7 @@ spec:
           storageLocation: default
           ttl: 730h
       ${flux_cluster_name}-cluster-backup-offsite:
-        schedule: 0 * * * *
+        schedule: 0 0 * * *
         template:
           excludedClusterScopedResources:
           - clustercleanuppolicies.kyverno.io
