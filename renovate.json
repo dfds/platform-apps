@@ -35,6 +35,13 @@
       "matchStrings": [
         "# renovate: datasource=(?<datasource>[^\\s]+) depName=(?<depName>[^\\s]+)(?: versioning=(?<versioning>[^\\s]+))?\\s+[^\\s#]+:\\s*(?<currentValue>v?[^\\s\\n]+)"
       ]
+    },
+    {
+      "customType": "regex",
+      "managerFilePatterns": ["^apps/karpenter-nodes/classes/.*\\.ya?ml$"],
+      "matchStrings": [
+        "# renovate: datasource=(?<datasource>[^\\s]+) depName=(?<depName>[^\\s]+)\\s+- alias:\\s*\"al2023@(?<currentValue>v[0-9]+)\""
+      ]
     }
   ]
 }

@@ -15,6 +15,7 @@ spec:
   role: "karpenter-${flux_cluster_name}"
   amiFamily: AL2023
   amiSelectorTerms:
+    # renovate: datasource=github-tags depName=awslabs/amazon-eks-ami
     - alias: "al2023@v20261112"
   subnetSelectorTerms:
     - tags:
