@@ -16,8 +16,7 @@ spec:
   ports:
     - protocol: TCP
       port: 9402
-      name: tcp-prometheus-servicemonitor
-      targetPort: http-metrics
+      name: http-metrics
   selector:
     app.kubernetes.io/name: cert-manager
     app.kubernetes.io/instance: cert-manager
