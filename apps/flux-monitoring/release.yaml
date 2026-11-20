@@ -304,9 +304,9 @@ spec:
     resources:
       requests:
         cpu: 10m
-        memory: 128Mi
+        memory: 256Mi
       limits:
-        memory: 128Mi
+        memory: 256Mi
     priorityClassName: cluster-observability
     tolerations:
       - key: observability.dfds

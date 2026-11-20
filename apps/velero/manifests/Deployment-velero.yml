@@ -46,6 +46,7 @@ spec:
             ### Flags
             - --uploader-type=kopia
             - --log-format=json
+            - --log-level=warning
             ### Global Flags
             - --features=EnableCSI
             - --repo-maintenance-job-configmap=velero-repo-maintenance
@@ -97,7 +98,7 @@ spec:
           volumeMounts:
             - mountPath: /target
               name: plugins
-        - image: velero/velero-plugin-for-microsoft-azure:v1.14.2
+        - image: velero/velero-plugin-for-microsoft-azure:v1.14.3
           name: velero-plugin-for-microsoft-azure
           volumeMounts:
             - mountPath: /target

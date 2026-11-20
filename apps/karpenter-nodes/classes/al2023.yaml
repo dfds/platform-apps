@@ -15,7 +15,8 @@ spec:
   role: "karpenter-${flux_cluster_name}"
   amiFamily: AL2023
   amiSelectorTerms:
-    - alias: "al2023@v20260810"
+    # renovate: datasource=github-tags depName=awslabs/amazon-eks-ami
+    - alias: "al2023@v20261112"
   subnetSelectorTerms:
     - tags:
         karpenter.sh/discovery: "${flux_cluster_name}"
@@ -29,7 +30,7 @@ spec:
     kubeReserved:
       memory: 1465Mi # 255Mi + (11Mi * maxPods)
     systemReserved:
-      memory: 200Mi
+      memory: 400Mi
   userData: |
     MIME-Version: 1.0
     Content-Type: multipart/mixed; boundary="BOUNDARY"
@@ -95,7 +96,7 @@ spec:
     kubeReserved:
       memory: 1465Mi # 255Mi + (11Mi * maxPods)
     systemReserved:
-      memory: 200Mi
+      memory: 400Mi
   userData: |
     MIME-Version: 1.0
     Content-Type: multipart/mixed; boundary="BOUNDARY"
