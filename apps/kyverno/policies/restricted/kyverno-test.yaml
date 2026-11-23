@@ -3,9 +3,264 @@ kind: Test
 metadata:
   name: restricted
 policies:
-  - disallow-privilege-escalation.yaml
-  - require-run-as-nonroot.yaml
-  - restrict-capabilities.yaml
+- disallow-privilege-escalation.yaml
+- require-run-as-nonroot.yaml
+- restrict-capabilities.yaml
 resources:
-  - tests/
-results: []
+- tests/
+results:
+- policy: disallow-privilege-escalation
+  resources:
+  - default/compliant
+  kind: Pod
+  result: pass
+- policy: disallow-privilege-escalation
+  resources:
+  - default/container-level-nonroot
+  kind: Pod
+  result: pass
+- policy: disallow-privilege-escalation
+  resources:
+  - default/drop-all-not-first
+  kind: Pod
+  result: pass
+- policy: disallow-privilege-escalation
+  resources:
+  - default/ape-true
+  kind: Pod
+  result: fail
+- policy: disallow-privilege-escalation
+  resources:
+  - default/ape-missing
+  kind: Pod
+  result: fail
+- policy: disallow-privilege-escalation
+  resources:
+  - default/init-ape-missing
+  kind: Pod
+  result: fail
+- policy: disallow-privilege-escalation
+  resources:
+  - default/ephemeral-ape-true
+  kind: Pod
+  result: fail
+- policy: disallow-privilege-escalation
+  resources:
+  - default/nonroot-missing
+  kind: Pod
+  result: pass
+- policy: disallow-privilege-escalation
+  resources:
+  - default/pod-nonroot-false
+  kind: Pod
+  result: pass
+- policy: disallow-privilege-escalation
+  resources:
+  - default/container-nonroot-false
+  kind: Pod
+  result: pass
+- policy: disallow-privilege-escalation
+  resources:
+  - default/init-nonroot-missing
+  kind: Pod
+  result: pass
+- policy: disallow-privilege-escalation
+  resources:
+  - default/caps-missing
+  kind: Pod
+  result: pass
+- policy: disallow-privilege-escalation
+  resources:
+  - default/caps-drop-net-raw
+  kind: Pod
+  result: pass
+- policy: disallow-privilege-escalation
+  resources:
+  - default/caps-add-sys-admin
+  kind: Pod
+  result: pass
+- policy: disallow-privilege-escalation
+  resources:
+  - default/caps-add-extra
+  kind: Pod
+  result: pass
+- policy: disallow-privilege-escalation
+  resources:
+  - kube-system/excluded-kube-system
+  kind: Pod
+  result: skip
+- policy: disallow-privilege-escalation
+  resources:
+  - kyverno/excluded-kyverno
+  kind: Pod
+  result: skip
+- policy: require-run-as-nonroot
+  resources:
+  - default/compliant
+  kind: Pod
+  result: pass
+- policy: require-run-as-nonroot
+  resources:
+  - default/container-level-nonroot
+  kind: Pod
+  result: pass
+- policy: require-run-as-nonroot
+  resources:
+  - default/drop-all-not-first
+  kind: Pod
+  result: pass
+- policy: require-run-as-nonroot
+  resources:
+  - default/ape-true
+  kind: Pod
+  result: pass
+- policy: require-run-as-nonroot
+  resources:
+  - default/ape-missing
+  kind: Pod
+  result: pass
+- policy: require-run-as-nonroot
+  resources:
+  - default/init-ape-missing
+  kind: Pod
+  result: pass
+- policy: require-run-as-nonroot
+  resources:
+  - default/ephemeral-ape-true
+  kind: Pod
+  result: pass
+- policy: require-run-as-nonroot
+  resources:
+  - default/nonroot-missing
+  kind: Pod
+  result: fail
+- policy: require-run-as-nonroot
+  resources:
+  - default/pod-nonroot-false
+  kind: Pod
+  result: fail
+- policy: require-run-as-nonroot
+  resources:
+  - default/container-nonroot-false
+  kind: Pod
+  result: fail
+- policy: require-run-as-nonroot
+  resources:
+  - default/init-nonroot-missing
+  kind: Pod
+  result: fail
+- policy: require-run-as-nonroot
+  resources:
+  - default/caps-missing
+  kind: Pod
+  result: pass
+- policy: require-run-as-nonroot
+  resources:
+  - default/caps-drop-net-raw
+  kind: Pod
+  result: pass
+- policy: require-run-as-nonroot
+  resources:
+  - default/caps-add-sys-admin
+  kind: Pod
+  result: pass
+- policy: require-run-as-nonroot
+  resources:
+  - default/caps-add-extra
+  kind: Pod
+  result: pass
+- policy: require-run-as-nonroot
+  resources:
+  - kube-system/excluded-kube-system
+  kind: Pod
+  result: skip
+- policy: require-run-as-nonroot
+  resources:
+  - kyverno/excluded-kyverno
+  kind: Pod
+  result: skip
+- policy: restrict-capabilities
+  resources:
+  - default/compliant
+  kind: Pod
+  result: pass
+- policy: restrict-capabilities
+  resources:
+  - default/container-level-nonroot
+  kind: Pod
+  result: pass
+- policy: restrict-capabilities
+  resources:
+  - default/drop-all-not-first
+  kind: Pod
+  result: pass
+- policy: restrict-capabilities
+  resources:
+  - default/ape-true
+  kind: Pod
+  result: pass
+- policy: restrict-capabilities
+  resources:
+  - default/ape-missing
+  kind: Pod
+  result: pass
+- policy: restrict-capabilities
+  resources:
+  - default/init-ape-missing
+  kind: Pod
+  result: pass
+- policy: restrict-capabilities
+  resources:
+  - default/ephemeral-ape-true
+  kind: Pod
+  result: pass
+- policy: restrict-capabilities
+  resources:
+  - default/nonroot-missing
+  kind: Pod
+  result: pass
+- policy: restrict-capabilities
+  resources:
+  - default/pod-nonroot-false
+  kind: Pod
+  result: pass
+- policy: restrict-capabilities
+  resources:
+  - default/container-nonroot-false
+  kind: Pod
+  result: pass
+- policy: restrict-capabilities
+  resources:
+  - default/init-nonroot-missing
+  kind: Pod
+  result: pass
+- policy: restrict-capabilities
+  resources:
+  - default/caps-missing
+  kind: Pod
+  result: fail
+- policy: restrict-capabilities
+  resources:
+  - default/caps-drop-net-raw
+  kind: Pod
+  result: fail
+- policy: restrict-capabilities
+  resources:
+  - default/caps-add-sys-admin
+  kind: Pod
+  result: fail
+- policy: restrict-capabilities
+  resources:
+  - default/caps-add-extra
+  kind: Pod
+  result: fail
+- policy: restrict-capabilities
+  resources:
+  - kube-system/excluded-kube-system
+  kind: Pod
+  result: skip
+- policy: restrict-capabilities
+  resources:
+  - kyverno/excluded-kyverno
+  kind: Pod
+  result: skip

@@ -1,5 +1,5 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: require-run-as-nonroot
   annotations:
@@ -11,42 +11,51 @@ metadata:
       Containers must be required to run as non-root users. This policy ensures
       runAsNonRoot is set to true in the pod or container securityContext.
 spec:
-  validationFailureAction: Audit
-  emitWarning: false
-  background: true
-  rules:
-    - name: require-run-as-nonroot
-      match:
-        any:
-        - resources:
-            kinds:
-              - Pod
-            operations:
-              - CREATE
-              - UPDATE
-      exclude:
-        any:
-        - resources:
-            namespaces:
-              - kube-system
-              - kyverno
-      validate:
-        message: >-
-          Running as root is not allowed. Either the field spec.securityContext.runAsNonRoot
-          must be set to `true`, or the fields spec.containers[*].securityContext.runAsNonRoot,
-          spec.initContainers[*].securityContext.runAsNonRoot, and 
-          spec.ephemeralContainers[*].securityContext.runAsNonRoot must be set to `true`.
-          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-non-root-containers for more information.
-        pattern:
-          spec:
-            =(securityContext):
-              =(runAsNonRoot): "true"
-            =(initContainers):
-              - =(securityContext):
-                  =(runAsNonRoot): "true"
-            containers:
-              - =(securityContext):
-                  =(runAsNonRoot): "true"
-            =(ephemeralContainers):
-              - =(securityContext):
-                  =(runAsNonRoot): "true"
+  evaluation:
+    background:
+      enabled: true
+
+  validationActions:
+    - Audit
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: ['v1']
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - pods
+
+  # Equivalent of the ClusterPolicy exclude on namespaces.
+  matchConditions:
+    - name: exclude-system-namespaces
+      expression: "!(object.metadata.namespace in ['kube-system', 'kyverno'])"
+
+  variables:
+    # Combine standard, init, and ephemeral containers into a single list.
+    - name: allContainers
+      expression: >-
+        object.spec.containers
+        + object.spec.?initContainers.orValue([])
+        + object.spec.?ephemeralContainers.orValue([])
+
+    - name: podRunAsNonRoot
+      expression: >-
+        object.spec.?securityContext.?runAsNonRoot.orValue(false)
+
+  validations:
+    # A container-level value overrides the pod-level value, so every container's
+    # effective runAsNonRoot must resolve to true.
+    - expression: >-
+        variables.allContainers.all(container,
+          container.?securityContext.?runAsNonRoot.orValue(variables.podRunAsNonRoot) == true
+        )
+      message: >-
+        Running as root is not allowed. Either the field spec.securityContext.runAsNonRoot
+        must be set to `true`, or the fields spec.containers[*].securityContext.runAsNonRoot,
+        spec.initContainers[*].securityContext.runAsNonRoot, and
+        spec.ephemeralContainers[*].securityContext.runAsNonRoot must be set to `true`.
+        No container may set runAsNonRoot to `false`.
+        Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-non-root-containers for more information.
