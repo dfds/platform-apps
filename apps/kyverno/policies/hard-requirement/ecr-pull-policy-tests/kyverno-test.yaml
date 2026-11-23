@@ -1,0 +1,22 @@
+# ecr-pull-compliance calls an in-cluster compliance service via http.Post, so
+# pass/fail cannot be evaluated offline. Only namespace exclusions are tested here;
+# fixtures in evaluated namespaces would trigger HTTP calls and time out.
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Test
+metadata:
+  name: ecr-pull-compliance
+policies:
+- ../ecr-pull-policy.yaml
+resources:
+- tests/
+results:
+- policy: ecr-pull-compliance
+  resources:
+  - kube-system/ecr-excluded-kube-system
+  kind: Deployment
+  result: skip
+- policy: ecr-pull-compliance
+  resources:
+  - kyverno/ecr-excluded-kyverno
+  kind: CronJob
+  result: skip

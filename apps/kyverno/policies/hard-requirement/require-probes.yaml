@@ -1,5 +1,5 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: require-probes
   annotations:
@@ -12,30 +12,35 @@ metadata:
       This policy audits Deployments where containers are missing livenessProbe or readinessProbe
       and warns users to configure them.
 spec:
-  validationFailureAction: Audit
-  emitWarning: true
-  background: true
-  rules:
-    - name: require-probes
-      match:
-        any:
-        - resources:
-            kinds:
-              - Deployment
-            operations:
-              - CREATE
-              - UPDATE
-      exclude:
-        any:
-        - resources:
-            namespaces:
-              - kube-system
-              - kyverno
-      validate:
-        cel:
-          expressions:
-          - expression: "object.spec.template.spec.containers.all(c, has(c.livenessProbe) && has(c.readinessProbe))"
-            message: >-
-              Liveness and readiness probes are required. All containers must specify
-              livenessProbe and readinessProbe.
-              Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-liveness-and-readiness-probes for more information.
+  evaluation:
+    background:
+      enabled: true
+
+  validationActions:
+    - Audit
+    - Warn
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['apps']
+        apiVersions: ['v1']
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - deployments
+
+  # Equivalent of the ClusterPolicy exclude on namespaces.
+  matchConditions:
+    - name: exclude-system-namespaces
+      expression: "!(object.metadata.namespace in ['kube-system', 'kyverno'])"
+
+  validations:
+    - expression: >-
+        object.spec.template.spec.containers.all(container,
+          has(container.livenessProbe) && has(container.readinessProbe)
+        )
+      message: >-
+        Liveness and readiness probes are required. All containers must specify
+        livenessProbe and readinessProbe.
+        Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-liveness-and-readiness-probes for more information.

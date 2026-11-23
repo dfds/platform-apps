@@ -1,0 +1,34 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ecr-excluded-kube-system
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: ecr-excluded-kube-system
+  template:
+    metadata:
+      labels:
+        app: ecr-excluded-kube-system
+    spec:
+      containers:
+      - name: app
+        image: 123456789012.dkr.ecr.eu-west-1.amazonaws.com/app:1.0.0
+---
+apiVersion: batch/v1
+kind: CronJob
+metadata:
+  name: ecr-excluded-kyverno
+  namespace: kyverno
+spec:
+  schedule: "0 * * * *"
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: OnFailure
+          containers:
+          - name: job
+            image: 123456789012.dkr.ecr.eu-west-1.amazonaws.com/job:1.0.0
