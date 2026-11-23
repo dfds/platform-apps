@@ -1,5 +1,5 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: disallow-host-path
   annotations:
@@ -12,30 +12,31 @@ metadata:
       access sensitive host data or escalate privileges. This policy ensures that
       hostPath volumes are not used.
 spec:
-  validationFailureAction: Audit
-  emitWarning: false
-  background: true
-  rules:
-    - name: disallow-host-path
-      match:
-        any:
-        - resources:
-            kinds:
-              - Pod
-            operations:
-              - CREATE
-              - UPDATE
-      exclude:
-        any:
-        - resources:
-            namespaces:
-              - kube-system
-              - kyverno
-      validate:
-        message: >-
-          HostPath volumes are not allowed. The field spec.volumes[*].hostPath must not be set.
-          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#disallow-hostpath-volumes for more information.
-        pattern:
-          spec:
-            =(volumes):
-              - X(hostPath): "null"
+  evaluation:
+    background:
+      enabled: true
+
+  validationActions:
+    - Audit
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: ['v1']
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - pods
+
+  # Equivalent of the ClusterPolicy exclude on namespaces.
+  matchConditions:
+    - name: exclude-system-namespaces
+      expression: "!(object.metadata.namespace in ['kube-system', 'kyverno'])"
+
+  validations:
+    - expression: >-
+        object.spec.?volumes.orValue([]).all(volume, !has(volume.hostPath))
+      message: >-
+        HostPath volumes are not allowed. The field spec.volumes[*].hostPath must not be set.
+        Visit https://wiki.dfds.cloud/en/playbooks/kyverno#disallow-hostpath-volumes for more information.

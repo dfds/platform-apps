@@ -3,8 +3,108 @@ kind: Test
 metadata:
   name: baseline
 policies:
-  - disallow-privileged-containers.yaml
-  - disallow-host-path.yaml
+- disallow-privileged-containers.yaml
+- disallow-host-path.yaml
 resources:
-  - tests/
-results: []
+- tests/
+results:
+- policy: disallow-host-path
+  resources:
+  - default/compliant
+  kind: Pod
+  result: pass
+- policy: disallow-host-path
+  resources:
+  - default/safe-volumes
+  kind: Pod
+  result: pass
+- policy: disallow-host-path
+  resources:
+  - default/host-path
+  kind: Pod
+  result: fail
+- policy: disallow-host-path
+  resources:
+  - default/host-path-mixed
+  kind: Pod
+  result: fail
+- policy: disallow-host-path
+  resources:
+  - default/privileged-false
+  kind: Pod
+  result: pass
+- policy: disallow-host-path
+  resources:
+  - default/privileged-container
+  kind: Pod
+  result: pass
+- policy: disallow-host-path
+  resources:
+  - default/privileged-init
+  kind: Pod
+  result: pass
+- policy: disallow-host-path
+  resources:
+  - default/privileged-ephemeral
+  kind: Pod
+  result: pass
+- policy: disallow-host-path
+  resources:
+  - kube-system/excluded-kube-system
+  kind: Pod
+  result: skip
+- policy: disallow-host-path
+  resources:
+  - kyverno/excluded-kyverno
+  kind: Pod
+  result: skip
+- policy: disallow-privileged-containers
+  resources:
+  - default/compliant
+  kind: Pod
+  result: pass
+- policy: disallow-privileged-containers
+  resources:
+  - default/safe-volumes
+  kind: Pod
+  result: pass
+- policy: disallow-privileged-containers
+  resources:
+  - default/host-path
+  kind: Pod
+  result: pass
+- policy: disallow-privileged-containers
+  resources:
+  - default/host-path-mixed
+  kind: Pod
+  result: pass
+- policy: disallow-privileged-containers
+  resources:
+  - default/privileged-false
+  kind: Pod
+  result: pass
+- policy: disallow-privileged-containers
+  resources:
+  - default/privileged-container
+  kind: Pod
+  result: fail
+- policy: disallow-privileged-containers
+  resources:
+  - default/privileged-init
+  kind: Pod
+  result: fail
+- policy: disallow-privileged-containers
+  resources:
+  - default/privileged-ephemeral
+  kind: Pod
+  result: fail
+- policy: disallow-privileged-containers
+  resources:
+  - kube-system/excluded-kube-system
+  kind: Pod
+  result: skip
+- policy: disallow-privileged-containers
+  resources:
+  - kyverno/excluded-kyverno
+  kind: Pod
+  result: skip

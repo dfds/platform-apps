@@ -1,5 +1,5 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: disallow-privileged-containers
   annotations:
@@ -11,39 +11,43 @@ metadata:
       Privileged mode disables most security mechanisms and must not be allowed.
       This policy ensures the `privileged` field is set to `false` or is undefined.
 spec:
-  validationFailureAction: Audit
-  emitWarning: false
-  background: true
-  rules:
-    - name: disallow-privileged-containers
-      match:
-        any:
-        - resources:
-            kinds:
-              - Pod
-            operations:
-              - CREATE
-              - UPDATE
-      exclude:
-        any:
-        - resources:
-            namespaces:
-              - kube-system
-              - kyverno
-      validate:
-        message: >-
-          Privileged mode is not allowed. The fields spec.containers[*].securityContext.privileged,
-          spec.initContainers[*].securityContext.privileged, and 
-          spec.ephemeralContainers[*].securityContext.privileged must be set to `false` or be undefined.
-          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#disallow-privileged-containers for more information.
-        pattern:
-          spec:
-            =(initContainers):
-              - =(securityContext):
-                  =(privileged): "false"
-            containers:
-              - =(securityContext):
-                  =(privileged): "false"
-            =(ephemeralContainers):
-              - =(securityContext):
-                  =(privileged): "false"
+  evaluation:
+    background:
+      enabled: true
+
+  validationActions:
+    - Audit
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: ['v1']
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - pods
+
+  # Equivalent of the ClusterPolicy exclude on namespaces.
+  matchConditions:
+    - name: exclude-system-namespaces
+      expression: "!(object.metadata.namespace in ['kube-system', 'kyverno'])"
+
+  variables:
+    # Combine standard, init, and ephemeral containers into a single list.
+    - name: allContainers
+      expression: >-
+        object.spec.containers
+        + object.spec.?initContainers.orValue([])
+        + object.spec.?ephemeralContainers.orValue([])
+
+  validations:
+    - expression: >-
+        variables.allContainers.all(container,
+          container.?securityContext.?privileged.orValue(false) == false
+        )
+      message: >-
+        Privileged mode is not allowed. The fields spec.containers[*].securityContext.privileged,
+        spec.initContainers[*].securityContext.privileged, and
+        spec.ephemeralContainers[*].securityContext.privileged must be set to `false` or be undefined.
+        Visit https://wiki.dfds.cloud/en/playbooks/kyverno#disallow-privileged-containers for more information.
