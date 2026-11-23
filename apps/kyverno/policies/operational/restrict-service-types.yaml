@@ -1,5 +1,5 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: restrict-service-types
   annotations:
@@ -10,32 +10,29 @@ metadata:
     policies.kyverno.io/description: >-
       Services of type LoadBalancer and NodePort are not allowed. This prevents the creation of LoadBalancer and NodePort Services which can lead to unintended exposure and costs.
 spec:
-  validationFailureAction: Enforce
-  emitWarning: true
-  background: true
-  rules:
-    - name: service-types-loadbalancer-nodeport-disallowed
-      match:
-        any:
-        - resources:
-            kinds:
-              - Service
-            operations:
-              - CREATE
-              - UPDATE
-      exclude:
-        any:
-        - resources:
-            namespaces:
-              - traefik-blue-variant
-              - traefik-green-variant
-      validate:
-        message: "Services of type LoadBalancer and NodePort are not allowed."
-        deny:
-          conditions:
-            any:
-              - key: "{{ request.object.spec.type }}"
-                operator: AnyIn
-                value:
-                  - LoadBalancer
-                  - NodePort
+  evaluation:
+    background:
+      enabled: true
+
+  validationActions:
+    - Deny
+    - Warn
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: ['v1']
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - services
+
+  matchConditions:
+    - name: exclude-traefik-variant-namespaces
+      expression: "!(object.metadata.namespace in ['traefik-blue-variant', 'traefik-green-variant'])"
+
+  validations:
+    - expression: >-
+        !(object.spec.type in ['LoadBalancer', 'NodePort'])
+      message: "Services of type LoadBalancer and NodePort are not allowed."

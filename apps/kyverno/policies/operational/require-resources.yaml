@@ -1,5 +1,5 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: require-resources
   annotations:
@@ -13,124 +13,65 @@ metadata:
       This prevents resource exhaustion and ensures fair resource allocation.
       Note: This is a best practice but not part of the Pod Security Standards.
 spec:
-  validationFailureAction: Audit
-  emitWarning: false
-  background: true
-  rules:
-    - name: require-cpu-requests
-      match:
-        any:
-        - resources:
-            kinds:
-              - Pod
-            operations:
-              - CREATE
-              - UPDATE
-      exclude:
-        any:
-        - resources:
-            namespaces:
-              - kube-system
-              - kyverno
-      validate:
-        message: >-
-          All containers must specify spec.containers[*].resources.requests.cpu.
-          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
-        pattern:
-          spec:
-            containers:
-            - resources:
-                requests:
-                  cpu: "?*"
-    - name: deny-cpu-limits
-      match:
-        any:
-        - resources:
-            kinds:
-              - Pod
-            operations:
-              - CREATE
-              - UPDATE
-      exclude:
-        any:
-        - resources:
-            namespaces:
-              - kube-system
-              - kyverno
-      validate:
-        message: >-
-          Containers must NOT set spec.containers[*].resources.limits.cpu (to avoid CPU throttling).
-          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
-        foreach:
-        - list: "request.object.spec.containers"
-          deny:
-            conditions:
-              any:
-              - key: "{{ to_string(element.resources.limits.cpu || '') }}"
-                operator: NotEquals
-                value: ""
-    - name: require-memory-resources
-      match:
-        any:
-        - resources:
-            kinds:
-              - Pod
-            operations:
-              - CREATE
-              - UPDATE
-      exclude:
-        any:
-        - resources:
-            namespaces:
-              - kube-system
-              - kyverno
-      validate:
-        message: >-
-          All containers must specify both spec.containers[*].resources.requests.memory
-          and spec.containers[*].resources.limits.memory.
-          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
-        pattern:
-          spec:
-            containers:
-            - resources:
-                requests:
-                  memory: "?*"
-                limits:
-                  memory: "?*"
-    - name: require-equal-memory-resources
-      match:
-        any:
-        - resources:
-            kinds:
-              - Pod
-            operations:
-              - CREATE
-              - UPDATE
-      exclude:
-        any:
-        - resources:
-            namespaces:
-              - kube-system
-              - kyverno
-      validate:
-        message: >-
-          Memory requests and limits must be equal:
-          spec.containers[*].resources.requests.memory must equal
-          spec.containers[*].resources.limits.memory.
-          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
-        foreach:
-        - list: "request.object.spec.containers"
-          preconditions:
-            all:
-            - key: "{{ to_string(element.resources.requests.memory || '') }}"
-              operator: NotEquals
-              value: ""
-            - key: "{{ to_string(element.resources.limits.memory || '') }}"
-              operator: NotEquals
-              value: ""
-          deny:
-            conditions:
-              any:
-              - key: "{{ to_string(element.resources.requests.memory) }}"
-                operator: NotEquals
-                value: "{{ to_string(element.resources.limits.memory) }}"
+  evaluation:
+    background:
+      enabled: true
+
+  validationActions:
+    - Audit
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['']
+        apiVersions: ['v1']
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - pods
+
+  matchConditions:
+    - name: exclude-system-namespaces
+      expression: "!(object.metadata.namespace in ['kube-system', 'kyverno'])"
+
+  validations:
+    - expression: >-
+        object.spec.containers.all(container,
+          container.?resources.orValue({}).?requests.orValue({}).?cpu.orValue('') != ''
+        )
+      message: >-
+        All containers must specify spec.containers[*].resources.requests.cpu.
+        Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
+
+    - expression: >-
+        object.spec.containers.all(container,
+          container.?resources.orValue({}).?limits.orValue({}).?cpu.orValue('') == ''
+        )
+      message: >-
+        Containers must NOT set spec.containers[*].resources.limits.cpu (to avoid CPU throttling).
+        Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
+
+    - expression: >-
+        object.spec.containers.all(container,
+          container.?resources.orValue({}).?requests.orValue({}).?memory.orValue('') != ''
+          &&
+          container.?resources.orValue({}).?limits.orValue({}).?memory.orValue('') != ''
+        )
+      message: >-
+        All containers must specify both spec.containers[*].resources.requests.memory
+        and spec.containers[*].resources.limits.memory.
+        Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
+
+    - expression: >-
+        object.spec.containers.all(container,
+          container.?resources.orValue({}).?requests.orValue({}).?memory.orValue('') == ''
+          ||
+          container.?resources.orValue({}).?limits.orValue({}).?memory.orValue('') == ''
+          ||
+          container.resources.requests.memory == container.resources.limits.memory
+        )
+      message: >-
+        Memory requests and limits must be equal:
+        spec.containers[*].resources.requests.memory must equal
+        spec.containers[*].resources.limits.memory.
+        Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-resource-limits-and-requests for more information.
