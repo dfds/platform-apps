@@ -1,7 +1,9 @@
 ---
 name: Renovate PR reviewer
 description: Reviews open dependency update PRs created by the Renovate bot (devex-sa), assesses risk, applies minimal required fixes, and labels each PR with its expected semver impact
-engine: copilot
+engine:
+  id: copilot
+  model: claude-haiku-5.5
 on:
   schedule: daily
   workflow_dispatch:
