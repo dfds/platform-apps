@@ -6,9 +6,17 @@ on:
   schedule: daily
   workflow_dispatch:
 permissions:
-  contents: write
-  issues: write
-  pull-requests: write
+  contents: read
+  issues: read
+  pull-requests: read
+safe-outputs:
+  push-to-pull-request-branch:
+  add-comment:
+    max: 1
+  add-labels:
+    allowed: ["release:major", "release:minor", "release:patch", "norelease"]
+    max: 1
+strict: false
 ---
 
 # Renovate PR reviewer
