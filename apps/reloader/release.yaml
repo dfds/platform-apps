@@ -21,6 +21,8 @@ spec:
     crds: Skip
   values:
     reloader:
+      autoReloadAll: true
       watchGlobally: false
-      namespaces: ["default"]
+      namespaces: 
+        - default
       logFormat: "json"
