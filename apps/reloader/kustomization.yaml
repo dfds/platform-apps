@@ -4,4 +4,4 @@ namespace: reloader
 resources:
   - namespace.yaml
   - sources.yaml
-#  - release.yaml
+  - release.yaml
