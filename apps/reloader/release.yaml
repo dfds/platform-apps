@@ -22,7 +22,7 @@ spec:
   values:
     reloader:
 #      autoReloadAll: true
-      watchGlobally: false
-      namespaces: 
-        - default
+      watchGlobally: true
+      # namespaces: 
+      #   - default
       logFormat: "json"
