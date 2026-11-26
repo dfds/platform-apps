@@ -21,7 +21,7 @@ spec:
     crds: Skip
   values:
     reloader:
-      autoReloadAll: true
+#      autoReloadAll: true
       watchGlobally: false
       namespaces: 
         - default
