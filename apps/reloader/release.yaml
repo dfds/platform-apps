@@ -21,8 +21,6 @@ spec:
     crds: Skip
   values:
     reloader:
-#      autoReloadAll: true
       watchGlobally: true
-      # namespaces: 
-      #   - default
       logFormat: "json"
+      ignoreJobs: true
