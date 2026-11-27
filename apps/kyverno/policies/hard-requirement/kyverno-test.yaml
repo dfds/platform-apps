@@ -3,11 +3,105 @@ kind: Test
 metadata:
   name: hard-requirement
 policies:
-  - ecr-pull-policy.yaml
-  - require-external-secret-label.yaml
-  - require-hpa.yaml
-  - require-probes.yaml
-  - restrict-ecr-images.yaml
+- require-external-secret-label.yaml
+- require-hpa.yaml
+- require-probes.yaml
 resources:
-  - tests/
-results: []
+- tests/
+context: context.yaml
+results:
+- policy: require-external-secret-label
+  resources:
+  - default/external-secret
+  kind: Secret
+  result: pass
+- policy: require-external-secret-label
+  resources:
+  - default/no-labels
+  kind: Secret
+  result: fail
+- policy: require-external-secret-label
+  resources:
+  - default/other-labels
+  kind: Secret
+  result: fail
+- policy: require-external-secret-label
+  resources:
+  - default/empty-label
+  kind: Secret
+  result: fail
+- policy: require-external-secret-label
+  resources:
+  - kube-system/excluded-kube-system
+  kind: Secret
+  result: skip
+- policy: require-external-secret-label
+  resources:
+  - kyverno/excluded-kyverno
+  kind: Secret
+  result: skip
+- policy: require-probes
+  resources:
+  - default/probes-ok
+  kind: Deployment
+  result: pass
+- policy: require-probes
+  resources:
+  - default/missing-liveness
+  kind: Deployment
+  result: fail
+- policy: require-probes
+  resources:
+  - default/missing-readiness
+  kind: Deployment
+  result: fail
+- policy: require-probes
+  resources:
+  - default/sidecar-missing-probes
+  kind: Deployment
+  result: fail
+- policy: require-probes
+  resources:
+  - kube-system/probes-excluded
+  kind: Deployment
+  result: skip
+- policy: require-hpa
+  resources:
+  - default/default-replicas
+  kind: Deployment
+  result: skip
+- policy: require-hpa
+  resources:
+  - default/two-replicas
+  kind: Deployment
+  result: skip
+- policy: require-hpa
+  resources:
+  - default/three-replicas-with-hpa
+  kind: Deployment
+  result: pass
+- policy: require-hpa
+  resources:
+  - default/three-replicas-without-hpa
+  kind: Deployment
+  result: fail
+- policy: require-hpa
+  resources:
+  - default/hpa-wrong-kind
+  kind: Deployment
+  result: fail
+- policy: require-hpa
+  resources:
+  - kyverno/hpa-excluded
+  kind: Deployment
+  result: skip
+- policy: require-hpa
+  resources:
+  - default/sts-with-hpa
+  kind: StatefulSet
+  result: pass
+- policy: require-hpa
+  resources:
+  - default/sts-without-hpa
+  kind: StatefulSet
+  result: fail

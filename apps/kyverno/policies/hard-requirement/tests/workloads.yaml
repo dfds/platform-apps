@@ -1,0 +1,308 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: probes-ok
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: probes-ok
+  template:
+    metadata:
+      labels:
+        app: probes-ok
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        livenessProbe: &id001
+          httpGet:
+            path: /healthz
+            port: 8080
+        readinessProbe: *id001
+  replicas: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: missing-liveness
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: missing-liveness
+  template:
+    metadata:
+      labels:
+        app: missing-liveness
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        readinessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+  replicas: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: missing-readiness
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: missing-readiness
+  template:
+    metadata:
+      labels:
+        app: missing-readiness
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        livenessProbe:
+          httpGet:
+            path: /healthz
+            port: 8080
+  replicas: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: sidecar-missing-probes
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: sidecar-missing-probes
+  template:
+    metadata:
+      labels:
+        app: sidecar-missing-probes
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        livenessProbe: &id001
+          httpGet:
+            path: /healthz
+            port: 8080
+        readinessProbe: *id001
+      - name: sidecar
+        image: nginx
+  replicas: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: probes-excluded
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      app: probes-excluded
+  template:
+    metadata:
+      labels:
+        app: probes-excluded
+    spec:
+      containers:
+      - name: app
+        image: nginx
+  replicas: 1
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: default-replicas
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: default-replicas
+  template:
+    metadata:
+      labels:
+        app: default-replicas
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        livenessProbe: &id001
+          httpGet:
+            path: /healthz
+            port: 8080
+        readinessProbe: *id001
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: two-replicas
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: two-replicas
+  template:
+    metadata:
+      labels:
+        app: two-replicas
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        livenessProbe: &id001
+          httpGet:
+            path: /healthz
+            port: 8080
+        readinessProbe: *id001
+  replicas: 2
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: three-replicas-with-hpa
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: three-replicas-with-hpa
+  template:
+    metadata:
+      labels:
+        app: three-replicas-with-hpa
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        livenessProbe: &id001
+          httpGet:
+            path: /healthz
+            port: 8080
+        readinessProbe: *id001
+  replicas: 3
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: three-replicas-without-hpa
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: three-replicas-without-hpa
+  template:
+    metadata:
+      labels:
+        app: three-replicas-without-hpa
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        livenessProbe: &id001
+          httpGet:
+            path: /healthz
+            port: 8080
+        readinessProbe: *id001
+  replicas: 3
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hpa-wrong-kind
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: hpa-wrong-kind
+  template:
+    metadata:
+      labels:
+        app: hpa-wrong-kind
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        livenessProbe: &id001
+          httpGet:
+            path: /healthz
+            port: 8080
+        readinessProbe: *id001
+  replicas: 3
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sts-with-hpa
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: sts-with-hpa
+  template:
+    metadata:
+      labels:
+        app: sts-with-hpa
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        livenessProbe: &id001
+          httpGet:
+            path: /healthz
+            port: 8080
+        readinessProbe: *id001
+  replicas: 3
+  serviceName: sts-with-hpa
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: sts-without-hpa
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: sts-without-hpa
+  template:
+    metadata:
+      labels:
+        app: sts-without-hpa
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        livenessProbe: &id001
+          httpGet:
+            path: /healthz
+            port: 8080
+        readinessProbe: *id001
+  replicas: 3
+  serviceName: sts-without-hpa
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: hpa-excluded
+  namespace: kyverno
+spec:
+  selector:
+    matchLabels:
+      app: hpa-excluded
+  template:
+    metadata:
+      labels:
+        app: hpa-excluded
+    spec:
+      containers:
+      - name: app
+        image: nginx
+        livenessProbe: &id001
+          httpGet:
+            path: /healthz
+            port: 8080
+        readinessProbe: *id001
+  replicas: 3

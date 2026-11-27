@@ -9,38 +9,82 @@ resources:
   - tests/
 results:
   - policy: restrict-service-types
-    rule: service-types-loadbalancer-nodeport-disallowed
     resources:
     - default/clusterip
     kind: Service
     result: pass
   - policy: restrict-service-types
-    rule: service-types-loadbalancer-nodeport-disallowed
     resources:
     - default/externalname
     kind: Service
     result: pass
   - policy: restrict-service-types
-    rule: service-types-loadbalancer-nodeport-disallowed
     resources:
     - default/nodeport
     kind: Service
     result: fail
   - policy: restrict-service-types
-    rule: service-types-loadbalancer-nodeport-disallowed
     resources:
     - traefik-green-variant/nodeport-traefik-green
     kind: Service
-    result: pass
+    result: skip
   - policy: restrict-service-types
-    rule: service-types-loadbalancer-nodeport-disallowed
     resources:
     - default/loadbalancer
     kind: Service
     result: fail
   - policy: restrict-service-types
-    rule: service-types-loadbalancer-nodeport-disallowed
     resources:
     - traefik-blue-variant/loadbalancer-traefik-blue
     kind: Service
+    result: skip
+  - policy: require-resources
+    resources:
+    - default/resources-ok
+    kind: Pod
     result: pass
+  - policy: require-resources
+    resources:
+    - default/resources-missing
+    kind: Pod
+    result: fail
+  - policy: require-resources
+    resources:
+    - default/cpu-request-missing
+    kind: Pod
+    result: fail
+  - policy: require-resources
+    resources:
+    - default/cpu-limit-set
+    kind: Pod
+    result: fail
+  - policy: require-resources
+    resources:
+    - default/memory-limit-missing
+    kind: Pod
+    result: fail
+  - policy: require-resources
+    resources:
+    - default/memory-request-missing
+    kind: Pod
+    result: fail
+  - policy: require-resources
+    resources:
+    - default/memory-mismatch
+    kind: Pod
+    result: fail
+  - policy: require-resources
+    resources:
+    - default/sidecar-missing-resources
+    kind: Pod
+    result: fail
+  - policy: require-resources
+    resources:
+    - kube-system/resources-excluded-kube-system
+    kind: Pod
+    result: skip
+  - policy: require-resources
+    resources:
+    - kyverno/resources-excluded-kyverno
+    kind: Pod
+    result: skip

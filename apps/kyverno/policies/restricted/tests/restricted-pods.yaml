@@ -1,0 +1,311 @@
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: compliant
+  namespace: default
+spec:
+  securityContext:
+    runAsNonRoot: true
+  initContainers:
+  - name: init
+    image: busybox
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+        add:
+        - NET_BIND_SERVICE
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: container-level-nonroot
+  namespace: default
+spec:
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      runAsNonRoot: true
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: drop-all-not-first
+  namespace: default
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - NET_RAW
+        - ALL
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ape-true
+  namespace: default
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        drop:
+        - ALL
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ape-missing
+  namespace: default
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-ape-missing
+  namespace: default
+spec:
+  securityContext:
+    runAsNonRoot: true
+  initContainers:
+  - name: init
+    image: busybox
+    securityContext:
+      capabilities:
+        drop:
+        - ALL
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: ephemeral-ape-true
+  namespace: default
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+  ephemeralContainers:
+  - name: debug
+    image: busybox
+    securityContext:
+      allowPrivilegeEscalation: true
+      capabilities:
+        drop:
+        - ALL
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: nonroot-missing
+  namespace: default
+spec:
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: pod-nonroot-false
+  namespace: default
+spec:
+  securityContext:
+    runAsNonRoot: false
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: container-nonroot-false
+  namespace: default
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      runAsNonRoot: false
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: init-nonroot-missing
+  namespace: default
+spec:
+  initContainers:
+  - name: init
+    image: busybox
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+      runAsNonRoot: true
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: caps-missing
+  namespace: default
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: caps-drop-net-raw
+  namespace: default
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - NET_RAW
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: caps-add-sys-admin
+  namespace: default
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+        add:
+        - SYS_ADMIN
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: caps-add-extra
+  namespace: default
+spec:
+  securityContext:
+    runAsNonRoot: true
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: false
+      capabilities:
+        drop:
+        - ALL
+        add:
+        - NET_BIND_SERVICE
+        - SYS_ADMIN
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: excluded-kube-system
+  namespace: kube-system
+spec:
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: true
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: excluded-kyverno
+  namespace: kyverno
+spec:
+  containers:
+  - name: app
+    image: nginx
+    securityContext:
+      allowPrivilegeEscalation: true

@@ -1,0 +1,54 @@
+apiVersion: cli.kyverno.io/v1alpha1
+kind: Context
+metadata:
+  name: hard-requirement
+spec:
+  resources:
+  - apiVersion: autoscaling/v2
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: three-replicas-with-hpa
+      namespace: default
+    spec:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: three-replicas-with-hpa
+      minReplicas: 3
+      maxReplicas: 6
+  - apiVersion: autoscaling/v2
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: hpa-wrong-kind
+      namespace: default
+    spec:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: StatefulSet
+        name: hpa-wrong-kind
+      minReplicas: 3
+      maxReplicas: 6
+  - apiVersion: autoscaling/v2
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: sts-with-hpa
+      namespace: default
+    spec:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: StatefulSet
+        name: sts-with-hpa
+      minReplicas: 3
+      maxReplicas: 6
+  - apiVersion: autoscaling/v2
+    kind: HorizontalPodAutoscaler
+    metadata:
+      name: other-namespace
+      namespace: other
+    spec:
+      scaleTargetRef:
+        apiVersion: apps/v1
+        kind: Deployment
+        name: three-replicas-without-hpa
+      minReplicas: 3
+      maxReplicas: 6

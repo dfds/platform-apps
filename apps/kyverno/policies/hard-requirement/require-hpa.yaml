@@ -1,5 +1,5 @@
-apiVersion: kyverno.io/v1
-kind: ClusterPolicy
+apiVersion: policies.kyverno.io/v1
+kind: ValidatingPolicy
 metadata:
   name: require-hpa
   annotations:
@@ -10,43 +10,46 @@ metadata:
     policies.kyverno.io/description: >-
       Deployments and StatefulSets must have a corresponding Horizontal Pod Autoscaler (HPA) defined if the replica count is > 2.
 spec:
-  validationFailureAction: Audit # due to Kyverno cross resource validation limitations, setting this to Enforce won't work as expected
-  emitWarning: false # due to Kyverno cross resource validation limitations, setting this to true can give a false positive warning on first apply
-  background: true
-  rules:
-    - name: require-hpa
-      match:
-        any:
-          - resources:
-              kinds:
-                - Deployment
-                - StatefulSet
-              operations:
-                - CREATE
-                - UPDATE
-      exclude:
-        any:
-        - resources:
-            namespaces:
-              - kube-system
-              - kyverno
-      context:
-        - name: hpas
-          apiCall:
-            urlPath: "/apis/autoscaling/v2/namespaces/{{request.namespace}}/horizontalpodautoscalers"
-            jmesPath: "items[?spec.scaleTargetRef.name == '{{request.object.metadata.name}}' && (spec.scaleTargetRef.kind == 'Deployment' || spec.scaleTargetRef.kind == 'StatefulSet')]"
-      preconditions:
-        all:
-          - key: "{{ request.object.spec.replicas || `1` }}"
-            operator: GreaterThan
-            value: 2
-      validate:
-        message: >-
-          For Deployments or StatefulSets with replicas > 2, a matching HorizontalPodAutoscaler resource is required.
-          Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-hpa-for-deploymentsstatefulsets-with-replicas-2 for more information.
-        deny:
-          conditions:
-            any:
-              - key: "{{ length(hpas) }}"
-                operator: Equals
-                value: 0
+  evaluation:
+    background:
+      enabled: true
+
+  # Due to cross resource validation limitations (the HPA is often created after the
+  # workload), Deny won't work as expected and Warn can give a false positive on first apply.
+  validationActions:
+    - Audit
+
+  matchConstraints:
+    resourceRules:
+      - apiGroups: ['apps']
+        apiVersions: ['v1']
+        operations:
+          - CREATE
+          - UPDATE
+        resources:
+          - deployments
+          - statefulsets
+
+  matchConditions:
+    # Equivalent of the ClusterPolicy exclude on namespaces.
+    - name: exclude-system-namespaces
+      expression: "!(object.metadata.namespace in ['kube-system', 'kyverno'])"
+    # Equivalent of the ClusterPolicy precondition.
+    - name: replicas-greater-than-two
+      expression: "object.spec.?replicas.orValue(1) > 2"
+
+  variables:
+    - name: matchingHpas
+      expression: >-
+        dyn(resource.List("autoscaling/v2", "horizontalpodautoscalers", object.metadata.namespace).items)
+          .filter(hpa,
+            hpa.spec.scaleTargetRef.name == object.metadata.name
+            && hpa.spec.scaleTargetRef.kind == object.kind
+          )
+
+  validations:
+    - expression: >-
+        size(variables.matchingHpas) > 0
+      message: >-
+        For Deployments or StatefulSets with replicas > 2, a matching HorizontalPodAutoscaler resource is required.
+        Visit https://wiki.dfds.cloud/en/playbooks/kyverno#require-hpa-for-deploymentsstatefulsets-with-replicas-2 for more information.
